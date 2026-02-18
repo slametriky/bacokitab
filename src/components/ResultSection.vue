@@ -16,6 +16,7 @@
     >
       <div class="flex items-start justify-between w-full">
         <button
+          @click="copyToClipboard(result.teks_berharokat)"
           class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-primary focus:outline-none"
           title="Salin Semua"
         >
@@ -90,8 +91,14 @@
               <td class="p-4 text-right align-top w-1/4">
                 <div class="flex items-center justify-end gap-3">
                   <button
+                    @click="
+                      copyToClipboard(
+                        `${item.kata}\n\n${item.irab_lengkap}`,
+                        'Kata & I\'rab',
+                      )
+                    "
                     class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-md transition-colors shrink-0"
-                    title="Salin Kata"
+                    title="Salin Kata & I'rab"
                   >
                     <span class="material-symbols-outlined text-lg"
                       >content_copy</span
@@ -108,14 +115,58 @@
         </table>
       </div>
     </div>
+    <!-- Toast Notification -->
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="transform opacity-0 translate-y-2"
+      enter-to-class="transform opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="transform opacity-100 translate-y-0"
+      leave-to-class="transform opacity-0 translate-y-2"
+    >
+      <div
+        v-if="showToast"
+        class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 min-w-max"
+      >
+        <span class="material-symbols-outlined text-green-400"
+          >check_circle</span
+        >
+        <span class="text-sm font-medium">{{ toastMessage }}</span>
+      </div>
+    </Transition>
   </section>
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 defineProps({
   result: {
     type: Object,
     required: true,
   },
 });
+
+const showToast = ref(false);
+const toastMessage = ref("");
+let toastTimeout = null;
+
+const triggerToast = (message) => {
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastMessage.value = message;
+  showToast.value = true;
+  toastTimeout = setTimeout(() => {
+    showToast.value = false;
+  }, 2000);
+};
+
+const copyToClipboard = async (text, type = "Teks") => {
+  try {
+    await navigator.clipboard.writeText(text);
+    triggerToast(`${type} berhasil disalin!`);
+  } catch (err) {
+    triggerToast(`Gagal menyalin ${type}`);
+    console.error("Failed to copy: ", err);
+  }
+};
 </script>
