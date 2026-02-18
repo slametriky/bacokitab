@@ -27,6 +27,14 @@
             >
               <span class="material-symbols-outlined">mic</span>
             </button>
+            <button
+              v-if="inputText.length > 0"
+              @click="inputText = ''"
+              class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors border border-red-200 dark:border-red-900/30 flex items-center justify-center"
+              title="Hapus Teks"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </button>
           </div>
           <span class="text-xs text-gray-500 font-medium"
             >{{ inputText.length }} / 300 karakter</span
