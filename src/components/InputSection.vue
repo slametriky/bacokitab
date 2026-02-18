@@ -8,7 +8,7 @@
         <textarea
           v-model="inputText"
           class="w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent text-lg placeholder:text-gray-400 transition-all resize-none dark:text-white"
-          maxlength="500"
+          maxlength="300"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
         ></textarea>
         <div class="flex items-center justify-between mt-2 px-1">
@@ -29,7 +29,7 @@
             </button>
           </div>
           <span class="text-xs text-gray-500 font-medium"
-            >{{ inputText.length }} / 500 karakter</span
+            >{{ inputText.length }} / 300 karakter</span
           >
         </div>
       </div>
