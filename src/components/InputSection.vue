@@ -14,12 +14,24 @@
         <div class="flex items-center justify-between mt-2 px-1">
           <div class="flex gap-2">
             <button
-              @click="triggerToast('Fitur belum tersedia, segera hadir')"
-              class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors border border-primary/20 flex items-center justify-center"
+              @click="triggerFileInput"
+              :disabled="isOcrLoading"
+              class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors border border-primary/20 flex items-center justify-center disabled:opacity-50 disabled:cursor-wait"
               title="Ambil Foto / OCR"
             >
-              <span class="material-symbols-outlined">photo_camera</span>
+              <span v-if="isOcrLoading" class="text-xs font-bold"
+                >{{ ocrProgress }}%</span
+              >
+              <span v-else class="material-symbols-outlined">photo_camera</span>
             </button>
+            <input
+              ref="fileInput"
+              type="file"
+              class="hidden"
+              accept="image/*"
+              capture="environment"
+              @change="handleImageUpload"
+            />
             <button
               @click="toggleSpeech"
               class="p-2 rounded-lg transition-colors border flex items-center justify-center transition-all duration-300"
@@ -85,6 +97,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import Tesseract from "tesseract.js";
 
 const props = defineProps({
   isLoading: Boolean,
@@ -128,21 +141,16 @@ const initSpeechRecognition = () => {
   recognition.interimResults = true;
 
   recognition.onresult = (event) => {
-    let interimTranscript = "";
-    let finalTranscript = "";
+    let fullTranscript = "";
 
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
+    // Iterate through ALL results to avoid duplication issues on some mobile browsers
+    for (let i = 0; i < event.results.length; ++i) {
       if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
-      } else {
-        interimTranscript += event.results[i][0].transcript;
+        fullTranscript += event.results[i][0].transcript;
       }
     }
 
-    // Accumulate final transcript in tempTranscript
-    if (finalTranscript) {
-      tempTranscript += (tempTranscript ? " " : "") + finalTranscript;
-    }
+    tempTranscript = fullTranscript;
   };
 
   recognition.onerror = (event) => {
@@ -156,10 +164,13 @@ const initSpeechRecognition = () => {
 
     // Commit the accumulated transcript to inputText
     if (tempTranscript) {
-      inputText.value =
-        (inputText.value ? inputText.value + " " : "") + tempTranscript;
-      tempTranscript = "";
-      triggerToast("Teks berhasil ditambahkan.");
+      if (tempTranscript.length > 300) {
+        tempTranscript = tempTranscript.substring(0, 300);
+        triggerToast("Teks dipotong (maks 300 karakter).");
+      } else {
+        triggerToast("Teks berhasil ditambahkan.");
+      }
+      inputText.value = tempTranscript;
     }
   };
 };
@@ -175,10 +186,68 @@ const toggleSpeech = () => {
     recognition.stop();
     // onend will handle the state update and text commit
   } else {
-    tempTranscript = ""; // Reset tempTranscript
+    inputText.value = ""; // Clear existing text
     recognition.start();
     isListening.value = true;
     triggerToast("Mendengarkan...");
+  }
+};
+
+// OCR Logic
+const isOcrLoading = ref(false);
+const ocrProgress = ref(0);
+const fileInput = ref(null);
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  isOcrLoading.value = true;
+  ocrProgress.value = 0;
+  triggerToast("Memproses gambar...");
+
+  try {
+    const {
+      data: { text },
+    } = await Tesseract.recognize(
+      file,
+      "ara", // Arabic
+      {
+        logger: (m) => {
+          if (m.status === "recognizing text") {
+            ocrProgress.value = Math.round(m.progress * 100);
+          }
+        },
+      },
+    );
+
+    if (text) {
+      // Clear existing text before adding new OCR result
+      let newText = text;
+
+      if (newText.length > 300) {
+        newText = newText.substring(0, 300);
+        triggerToast("Teks dipotong (maks 300 karakter).");
+      } else {
+        triggerToast("Teks berhasil diekstrak.");
+      }
+
+      inputText.value = newText;
+    } else {
+      triggerToast("Tidak ada teks yang ditemukan.");
+    }
+  } catch (err) {
+    console.error(err);
+    triggerToast("Gagal memproses gambar: " + err.message);
+  } finally {
+    isOcrLoading.value = false;
+    ocrProgress.value = 0;
+    // Reset file input so same file can be selected again if needed
+    if (fileInput.value) fileInput.value.value = "";
   }
 };
 

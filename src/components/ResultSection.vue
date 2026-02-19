@@ -12,7 +12,7 @@
 
     <!-- Sentence Card -->
     <div
-      class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-primary/10 p-6 text-center relative flex flex-col gap-4"
+      class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-primary/10 p-6 relative flex flex-col gap-4"
     >
       <div class="flex items-start justify-between w-full">
         <button
@@ -32,7 +32,7 @@
       </div>
 
       <p
-        class="arabic-text leading-[3.5rem] text-[#111814] dark:text-white text-xl md:text-2xl px-2 pb-2"
+        class="arabic-text leading-[3.5rem] md:leading-[3.5rem] text-[#111814] dark:text-white text-xl md:text-2xl px-2 pb-2 text-right"
         dir="rtl"
       >
         {{ result.teks_berharokat }}
@@ -46,9 +46,11 @@
       <span class="material-symbols-outlined text-primary mt-0.5"
         >translate</span
       >
-      <div class="space-y-1">
+      <div class="space-y-1 w-full">
         <p class="text-sm font-semibold text-primary">Terjemahan</p>
-        <p class="text-[#111814] dark:text-gray-300 italic">
+        <p
+          class="text-[#111814] dark:text-gray-300 italic text-sm text-justify leading-relaxed"
+        >
           "{{ result.terjemahan }}"
         </p>
       </div>
