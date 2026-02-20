@@ -589,10 +589,12 @@ const processOcr = async (file) => {
   triggerToast("Memproses teks...");
 
   try {
+    const processedFile = await preprocessImage(file);
+
     const {
       data: { text },
     } = await Tesseract.recognize(
-      file,
+      processedFile,
       "ara", // Arabic
       {
         logger: (m) => {
@@ -625,6 +627,51 @@ const processOcr = async (file) => {
     isOcrLoading.value = false;
     ocrProgress.value = 0;
   }
+};
+
+const preprocessImage = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        let totalBrightness = 0;
+
+        // 1. Grayscale
+        for (let i = 0; i < data.length; i += 4) {
+          const gray =
+            0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+          data[i] = data[i + 1] = data[i + 2] = gray;
+          totalBrightness += gray;
+        }
+
+        // 2. Adaptive Binarization
+        const avgBrightness = totalBrightness / (data.length / 4);
+        const threshold = avgBrightness * 0.9; // Adjustable factor
+
+        for (let i = 0; i < data.length; i += 4) {
+          const v = data[i] > threshold ? 255 : 0;
+          data[i] = data[i + 1] = data[i + 2] = v;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        canvas.toBlob((blob) => {
+          resolve(new File([blob], file.name, { type: file.type }));
+        }, file.type);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 };
 
 onMounted(() => {
