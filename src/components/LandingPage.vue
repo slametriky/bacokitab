@@ -83,39 +83,6 @@
                 >
               </router-link>
             </div>
-            <div
-              class="flex items-center justify-center md:justify-start gap-4 pt-4"
-            >
-              <div class="flex -space-x-3">
-                <div
-                  class="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden"
-                >
-                  <img
-                    alt="User 1"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4R-dUK12dzHlLiFOGfgMXM3_cSnEwhQbzRfTAjTdeDP0udRiFw3dZv58_uilPHsaO6dOrCRvyyDk3-NFDB2_B94M4NMxJtER_kbidrdJjUGUCynxXCzDA_QkH-Ki3KfhePYMxCv24Znzi38iWJDHnyrWgxxlW9YseDQr3zwnmyKiM2_9A7LleJCvlrF64zlvFAQnVZ8PBueI0FyFFhKYTNdVe_P_ZYSgPcWq4aYVI7F1RgvhzmOG3L3G-p17WvhMY3wRuv1AGq_Q"
-                  />
-                </div>
-                <div
-                  class="w-10 h-10 rounded-full border-2 border-white bg-gray-300 overflow-hidden"
-                >
-                  <img
-                    alt="User 2"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCT3BF9q8PGauMYKN4W4Sw1DYpPKVqQSSVzJAe30L8t8bNMG_YkZ0svkzJ2S4pgPF1EvQWuZEx6Lx_t2zANMqPQ3Z5MSmFnmNM5cydS8iET-m9Yw2ULbDdFhdCII81zVnVBmMIiRb1ScSib_ipHc0r2idDXo17LC_es8Dczr7zghedhtYU47HkhKwGXq_u0ZbE-QufNrt-9E2Br5wMAivEnB1ydAjlyN_gOYPeXdjWnF47aXu-lv4X4vAclzb0f97hK4I5fFy0HT0"
-                  />
-                </div>
-                <div
-                  class="w-10 h-10 rounded-full border-2 border-white bg-gray-400 overflow-hidden"
-                >
-                  <img
-                    alt="User 3"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7JFG-E4byhcH-_RMHOlvVPwHFOV8Uz3CZdsowUDyNT2RnZo2Bbq7ZOMMAmXUcuKyY7JMcxDO9785KxfgjcEBUXZJ3OlPkNrAKVhJn_WV9dR_ZBYaqeVa1qZbGR1Bu0HzmgDdfZU-LYtziRDNeNo9fMcFvnggjYv1yvxsaot379g3DLJ07ThDvp8KR3Od2gmg8CUp87WGz0KsAIEeftc_OpqQwnd_94qgN8KnLcVg3WD7WUoS_ItIrACWjdq18GjNU4SYiAboMInQ"
-                  />
-                </div>
-              </div>
-              <p class="text-sm font-medium dark:text-gray-200">
-                Dipercaya oleh 1,000+ Pelajar
-              </p>
-            </div>
           </div>
           <div class="flex-1 w-full relative">
             <div
@@ -170,20 +137,15 @@
       <section class="py-20 bg-white dark:bg-background-dark/50">
         <div class="max-w-7xl mx-auto px-4">
           <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <h2
-              class="text-primary text-base font-bold uppercase tracking-widest"
-            >
-              Fitur Unggulan
-            </h2>
             <h3
               class="text-3xl md:text-4xl font-black text-[#111814] dark:text-white leading-tight"
             >
-              Teknologi AI Terdepan untuk Pembelajaran Nahwu &amp; Shorof
+              Bedah Kitab Gundul dalam Genggaman
             </h3>
             <p class="text-lg dark:text-gray-200">
-              Bacokitab dirancang untuk memberikan kemudahan dalam memahami
-              struktur kalimat bahasa Arab secara mendalam melalui berbagai
-              kanal input.
+              Bacokitab hadir sebagai asisten digital cerdas untuk membantu Anda
+              memahami struktur kalimat bahasa Arab secara mendalam. Cukup input
+              teks, suara, atau foto, dan biarkan AI kami bekerja untuk Anda.
             </p>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -200,8 +162,7 @@
               </div>
               <h4 class="text-xl font-bold mb-3">Analisis AI Instan</h4>
               <p class="leading-relaxed dark:text-gray-200">
-                Dapatkan hasil breakdown gramatikal (I'rab) yang akurat hanya
-                dalam hitungan detik menggunakan engine AI tercanggih kami.
+                Bedah gramatikal (I'rab) akurat dalam hitungan detik.
               </p>
             </div>
             <div
@@ -217,8 +178,7 @@
               </div>
               <h4 class="text-xl font-bold mb-3">Multi-Input</h4>
               <p class="leading-relaxed dark:text-gray-200">
-                Dapatkan hasil breakdown gramatikal (I'rab) yang akurat hanya
-                dalam hitungan detik menggunakan engine AI tercanggih kami.
+                Masukkan teks melalui ketikan, rekaman suara, atau foto kitab.
               </p>
             </div>
             <div
@@ -234,8 +194,7 @@
               </div>
               <h4 class="text-xl font-bold mb-3">Penjelasan Lengkap</h4>
               <p class="leading-relaxed dark:text-gray-200">
-                Dapatkan hasil breakdown gramatikal (I'rab) yang akurat hanya
-                dalam hitungan detik menggunakan engine AI tercanggih kami.
+                Otomatis beri harakat, terjemah, dan i'rab Nahwu secara detail.
               </p>
             </div>
           </div>
@@ -278,7 +237,7 @@
                 <!-- Step 2 -->
                 <div class="flex gap-6">
                   <div
-                    class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/30 text-primary dark:text-white flex items-center justify-center font-bold text-lg"
+                    class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-white dark:text-white flex items-center justify-center font-bold text-lg"
                   >
                     2
                   </div>
@@ -293,7 +252,7 @@
                 <!-- Step 3 -->
                 <div class="flex gap-6">
                   <div
-                    class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/30 text-primary dark:text-white flex items-center justify-center font-bold text-lg"
+                    class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-white dark:text-white flex items-center justify-center font-bold text-lg"
                   >
                     3
                   </div>
@@ -308,7 +267,7 @@
               </div>
             </div>
             <div class="flex-1 w-full flex justify-center">
-              <div class="relative w-3/4 max-w-sm">
+              <div class="relative w-full max-w-lg">
                 <div
                   class="bg-white/50 dark:bg-white/5 rounded-3xl overflow-hidden border border-[#dbe6e0] dark:border-white/10 flex items-center justify-center shadow-xl shadow-primary/5"
                 >
@@ -327,113 +286,29 @@
 
     <!-- Footer -->
     <footer
-      class="bg-white dark:bg-background-dark border-t border-[#dbe6e0] dark:border-white/10 pt-20 pb-10"
+      class="bg-white dark:bg-background-dark border-t border-[#dbe6e0] dark:border-white/10 pt-10 pb-6"
     >
       <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-          <div class="col-span-1 md:col-span-1 space-y-6">
-            <div class="flex items-center gap-2">
-              <div
-                class="bg-primary p-1.5 rounded-lg flex items-center justify-center text-white"
+        <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+          <div class="flex items-center gap-2 shrink-0">
+            <div
+              class="bg-primary p-1.5 rounded-lg flex items-center justify-center text-white"
+            >
+              <span class="material-symbols-outlined dark:text-gray-200"
+                >menu_book</span
               >
-                <span class="material-symbols-outlined dark:text-gray-200"
-                  >menu_book</span
-                >
-              </div>
-              <h2 class="text-2xl font-bold tracking-tight">Bacokitab</h2>
             </div>
-            <p class="leading-relaxed dark:text-gray-200">
-              Solusi cerdas berbasis AI untuk menganalisis struktur bahasa Arab
-              secara instan dan akurat.
-            </p>
+            <h2 class="text-2xl font-bold tracking-tight">Bacokitab</h2>
           </div>
-          <div>
-            <h5 class="font-bold mb-6">Produk</h5>
-            <ul class="space-y-4">
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Fitur Utama</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >OCR Kitab</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Analisis Suara</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Mobile App</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h5 class="font-bold mb-6">Dukungan</h5>
-            <ul class="space-y-4">
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Pusat Bantuan</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Dokumentasi API</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Komunitas</a
-                >
-              </li>
-              <li>
-                <a
-                  class="hover:text-primary transition-colors dark:text-gray-200"
-                  href="#"
-                  >Kontak Kami</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h5 class="font-bold mb-6">Berlangganan</h5>
-            <p class="text-sm mb-4 dark:text-gray-200">
-              Dapatkan update terbaru seputar tips bahasa Arab dan AI.
-            </p>
-            <div class="flex flex-col gap-2">
-              <input
-                class="w-full bg-background-light dark:bg-background-dark/50 border border-[#dbe6e0] dark:border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Email Anda"
-                type="email"
-              />
-              <button
-                class="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Subscribe
-              </button>
-            </div>
-          </div>
+          <p
+            class="leading-relaxed dark:text-gray-200 text-center md:text-left text-sm md:text-base"
+          >
+            Solusi cerdas berbasis AI untuk menganalisis struktur bahasa Arab
+            secara instan dan akurat.
+          </p>
         </div>
         <div
-          class="pt-8 border-t border-[#dbe6e0] dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4"
+          class="pt-6 border-t border-[#dbe6e0] dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4"
         >
           <p class="text-sm dark:text-gray-200">
             © 2026 Bacokitab. Made with <span class="text-red-500">❤️</span> in

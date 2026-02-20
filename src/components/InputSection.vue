@@ -24,12 +24,21 @@
               >
               <span v-else class="material-symbols-outlined">photo_camera</span>
             </button>
+            <!-- Camera Input (Direct Capture) -->
             <input
-              ref="fileInput"
+              ref="cameraInput"
               type="file"
               class="hidden"
               accept="image/*"
               capture="environment"
+              @change="handleImageUpload"
+            />
+            <!-- Gallery Input (File Picker) -->
+            <input
+              ref="galleryInput"
+              type="file"
+              class="hidden"
+              accept="image/*"
               @change="handleImageUpload"
             />
             <button
@@ -75,6 +84,199 @@
       }}</span>
     </button>
 
+    <!-- Selection Modal -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <div
+        v-if="isSelectionModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        @click.self="isSelectionModalOpen = false"
+      >
+        <div
+          class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-xs overflow-hidden"
+        >
+          <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+            <h3 class="font-bold text-center text-gray-900 dark:text-white">
+              Pilih Sumber Gambar
+            </h3>
+          </div>
+          <div
+            class="grid grid-cols-2 divide-x divide-gray-100 dark:divide-gray-700"
+          >
+            <button
+              @click="selectCamera"
+              class="p-6 flex flex-col items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors active:bg-gray-100 group"
+            >
+              <div
+                class="p-3 rounded-full bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors"
+              >
+                <span class="material-symbols-outlined text-2xl"
+                  >photo_camera</span
+                >
+              </div>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                >Kamera</span
+              >
+            </button>
+            <button
+              @click="selectGallery"
+              class="p-6 flex flex-col items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors active:bg-gray-100 group"
+            >
+              <div
+                class="p-3 rounded-full bg-purple-50 text-purple-600 group-hover:bg-purple-100 transition-colors"
+              >
+                <span class="material-symbols-outlined text-2xl">image</span>
+              </div>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                >Galeri</span
+              >
+            </button>
+          </div>
+          <button
+            @click="isSelectionModalOpen = false"
+            class="w-full p-3 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700/50 transition-colors border-t border-gray-100 dark:border-gray-700"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Webcam Modal (Desktop) -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <div
+        v-if="isWebcamModalOpen"
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+        @click.self="closeWebcamModal"
+      >
+        <div
+          class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
+        >
+          <div
+            class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center"
+          >
+            <h3 class="font-bold text-gray-900 dark:text-white">Ambil Foto</h3>
+            <button
+              @click="closeWebcamModal"
+              class="text-gray-500 hover:text-red-500 transition-colors"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div
+            class="relative bg-black flex-1 flex items-center justify-center overflow-hidden"
+          >
+            <video
+              ref="videoRef"
+              autoplay
+              playsinline
+              class="w-full h-full object-contain"
+            ></video>
+            <canvas ref="canvasRef" class="hidden"></canvas>
+          </div>
+          <div
+            class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-center gap-4"
+          >
+            <button
+              @click="captureWebcam"
+              class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <span class="material-symbols-outlined">camera</span>
+              Ambil Gambar
+            </button>
+            <button
+              @click="closeWebcamModal"
+              class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Batal
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Crop Modal -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <div
+        v-if="isCropModalOpen"
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        @click.self="closeCropModal"
+      >
+        <div
+          class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col h-[80vh]"
+        >
+          <div
+            class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 z-10"
+          >
+            <h3 class="font-bold text-gray-900 dark:text-white">
+              Potong Gambar
+            </h3>
+            <button
+              @click="closeCropModal"
+              class="text-gray-500 hover:text-red-500 transition-colors"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div
+            class="flex-1 bg-black relative overflow-hidden flex items-center justify-center p-4"
+          >
+            <cropper
+              ref="cropImageRef"
+              :src="cropImageUrl"
+              class="max-h-[60vh] w-full"
+              :stencil-props="{
+                handlers: {},
+                movable: true,
+                scalable: true,
+              }"
+              :resize-image="{
+                adjustStencil: false,
+              }"
+              image-restriction="stencil"
+            />
+          </div>
+          <div
+            class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-center gap-4 bg-white dark:bg-gray-800 z-10"
+          >
+            <button
+              @click="confirmCrop"
+              class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <span class="material-symbols-outlined">crop</span>
+              Proses
+            </button>
+            <button
+              @click="closeCropModal"
+              class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              Batal
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Toast Notification -->
     <Transition
       enter-active-class="transition ease-out duration-300"
@@ -96,8 +298,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import Tesseract from "tesseract.js";
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
 
 const props = defineProps({
   isLoading: Boolean,
@@ -199,16 +403,190 @@ const ocrProgress = ref(0);
 const fileInput = ref(null);
 
 const triggerFileInput = () => {
-  fileInput.value.click();
+  // Instead of clicking input directly, open selection modal
+  isSelectionModalOpen.value = true;
+};
+
+// Selection Modal Logic
+const isSelectionModalOpen = ref(false);
+const cameraInput = ref(null);
+const galleryInput = ref(null);
+
+// Webcam Modal Logic
+const isWebcamModalOpen = ref(false);
+const videoRef = ref(null);
+const canvasRef = ref(null);
+let mediaStream = null;
+
+const startWebcam = async () => {
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    if (videoRef.value) {
+      videoRef.value.srcObject = mediaStream;
+    }
+  } catch (err) {
+    console.error("Error accessing webcam:", err);
+    triggerToast("Gagal mengakses kamera: " + err.message);
+    isWebcamModalOpen.value = false;
+  }
+};
+
+const stopWebcam = () => {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((track) => track.stop());
+    mediaStream = null;
+  }
+};
+
+const closeWebcamModal = () => {
+  stopWebcam();
+  isWebcamModalOpen.value = false;
+};
+
+const captureWebcam = () => {
+  if (!videoRef.value || !canvasRef.value) return;
+
+  const context = canvasRef.value.getContext("2d");
+  canvasRef.value.width = videoRef.value.videoWidth;
+  canvasRef.value.height = videoRef.value.videoHeight;
+  context.drawImage(videoRef.value, 0, 0);
+
+  canvasRef.value.toBlob((blob) => {
+    const file = new File([blob], "webcam-capture.png", { type: "image/png" });
+    const event = { target: { files: [file] } };
+    handleImageUpload(event);
+    closeWebcamModal();
+  }, "image/png");
+};
+
+const selectCamera = () => {
+  isSelectionModalOpen.value = false;
+
+  // Simple check for mobile device
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent,
+    );
+
+  if (isMobile) {
+    // Use native camera input on mobile
+    cameraInput.value.click();
+  } else {
+    // Open custom webcam modal on desktop
+    isWebcamModalOpen.value = true;
+    // Wait for modal transition then start camera
+    setTimeout(() => {
+      startWebcam();
+    }, 300);
+  }
+};
+
+const selectGallery = () => {
+  isSelectionModalOpen.value = false;
+  galleryInput.value.click();
+};
+
+const resizeImage = (file, maxDimension = 1024) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            resolve(blob);
+          },
+          file.type,
+          0.7, // Quality compression
+        );
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+// Crop Logic
+const isCropModalOpen = ref(false);
+const cropImageRef = ref(null); // Ref to the cropper component
+const cropImageUrl = ref("");
+
+const openCropModal = (file) => {
+  isCropModalOpen.value = true;
+  // Create URL for the file
+  cropImageUrl.value = URL.createObjectURL(file);
+};
+
+const closeCropModal = () => {
+  isCropModalOpen.value = false;
+  if (cropImageUrl.value) {
+    URL.revokeObjectURL(cropImageUrl.value);
+    cropImageUrl.value = "";
+  }
+  // Reset inputs
+  if (cameraInput.value) cameraInput.value.value = "";
+  if (galleryInput.value) galleryInput.value.value = "";
+};
+
+const confirmCrop = () => {
+  if (!cropImageRef.value) {
+    console.error("Cropper component not found");
+    return;
+  }
+
+  const { canvas } = cropImageRef.value.getResult();
+
+  if (canvas) {
+    canvas.toBlob((blob) => {
+      const file = new File([blob], "cropped-image.png", { type: "image/png" });
+      processOcr(file);
+      closeCropModal();
+    }, "image/png");
+  }
 };
 
 const handleImageUpload = async (event) => {
-  const file = event.target.files[0];
+  let file = event.target.files[0];
   if (!file) return;
 
+  // Resize first for performance, then crop
+  if (file.size > 1024 * 1024 || file.type.startsWith("image/")) {
+    triggerToast("Mengoptimalkan gambar...");
+    try {
+      const resizedBlob = await resizeImage(file);
+      file = new File([resizedBlob], file.name, { type: file.type });
+    } catch (e) {
+      console.error("Resize error", e);
+    }
+  }
+
+  // Open Crop Modal instead of direct processing
+  openCropModal(file);
+};
+
+const processOcr = async (file) => {
   isOcrLoading.value = true;
   ocrProgress.value = 0;
-  triggerToast("Memproses gambar...");
+  triggerToast("Memproses teks...");
 
   try {
     const {
@@ -246,8 +624,6 @@ const handleImageUpload = async (event) => {
   } finally {
     isOcrLoading.value = false;
     ocrProgress.value = 0;
-    // Reset file input so same file can be selected again if needed
-    if (fileInput.value) fileInput.value.value = "";
   }
 };
 
