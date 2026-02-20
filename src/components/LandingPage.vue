@@ -43,19 +43,6 @@
           class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center gap-12"
         >
           <div class="flex-1 space-y-6 text-center md:text-left">
-            <div
-              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider"
-            >
-              <span class="relative flex h-2 w-2 dark:text-gray-200">
-                <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 dark:text-gray-200"
-                ></span>
-                <span
-                  class="relative inline-flex rounded-full h-2 w-2 bg-primary dark:text-gray-200"
-                ></span>
-              </span>
-              Didukung AI Terkini
-            </div>
             <h1
               class="text-4xl md:text-6xl font-black leading-[1.1] tracking-tight text-[#111814] dark:text-white"
             >
