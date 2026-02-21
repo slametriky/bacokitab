@@ -7,6 +7,7 @@
       <div class="relative">
         <textarea
           v-model="inputText"
+          @paste="handlePaste"
           class="w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent text-lg placeholder:text-gray-400 transition-all resize-none dark:text-white"
           maxlength="300"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
@@ -561,6 +562,35 @@ const confirmCrop = () => {
       processOcr(file);
       closeCropModal();
     }, "image/png");
+  }
+};
+
+const handlePaste = async (event) => {
+  const items = event.clipboardData?.items;
+  if (!items) return;
+
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf("image") !== -1) {
+      event.preventDefault();
+      let file = items[i].getAsFile();
+      if (!file) continue;
+
+      if (file.size > 1024 * 1024 || file.type.startsWith("image/")) {
+        triggerToast("Mengoptimalkan gambar dari clipboard...");
+        try {
+          const resizedBlob = await resizeImage(file);
+          file = new File([resizedBlob], "pasted-image.png", {
+            type: file.type,
+          });
+        } catch (e) {
+          console.error("Resize error", e);
+        }
+      }
+
+      // Bypass crop modal and process directly
+      processOcr(file);
+      break;
+    }
   }
 };
 
