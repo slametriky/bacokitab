@@ -345,17 +345,25 @@ const initSpeechRecognition = () => {
   recognition.continuous = true;
   recognition.interimResults = true;
 
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
   recognition.onresult = (event) => {
     let fullTranscript = "";
 
-    // Iterate through ALL results to avoid duplication issues on some mobile browsers
-    for (let i = 0; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
+    if (isAndroid) {
+      // Android Chrome bug: the recognizer returns the cumulative transcript
+      // of the entire session in the very last result item.
+      fullTranscript = event.results[event.results.length - 1][0].transcript;
+    } else {
+      // Desktop Chrome: the recognizer returns incremental chunks,
+      // so we must concatenate them all.
+      for (let i = 0; i < event.results.length; ++i) {
         fullTranscript += event.results[i][0].transcript;
       }
     }
 
     tempTranscript = fullTranscript;
+    inputText.value = tempTranscript; // Show real-time feedback
   };
 
   recognition.onerror = (event) => {
