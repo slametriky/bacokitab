@@ -7,6 +7,10 @@ export default defineConfig({
     host: "0.0.0.0",
     allowedHosts: ["beloved-noticeably-blowfish.ngrok-free.app"],
   },
+  preview: {
+    host: "0.0.0.0",
+    allowedHosts: ["beloved-noticeably-blowfish.ngrok-free.app"]
+  },
   plugins: [
     vue(),
     VitePWA({
