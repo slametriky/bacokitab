@@ -67,7 +67,7 @@ const dismissInstall = () => {
             >menu_book</span
           >
         </div>
-        <div class="flex flex-col min-w-0">
+        <!-- <div class="flex flex-col min-w-0">
           <span
             class="font-bold text-xs sm:text-sm leading-tight text-gray-300 truncate"
             >Akses Lebih Cepat</span
@@ -76,7 +76,7 @@ const dismissInstall = () => {
             class="font-bold text-sm sm:text-lg leading-tight text-white sm:tracking-wider truncate"
             >Instal BACOKITAB</span
           >
-        </div>
+        </div> -->
       </div>
 
       <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
