@@ -20,11 +20,11 @@ import TheFooter from "./TheFooter.vue";
           Aplikasi ini menggunakan teknologi AI untuk menganalisis struktur
           kalimat dan menghasilkan i‘rab secara otomatis berdasarkan kaidah
           nahwu. Hasil analisis mungkin masih memerlukan peninjauan kembali
-          sebagai bagian dari proses belajar.
+          sebagai bagian dari proses training model AI.
         </p>
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
-          Jika terdapat kesalahan atau kekeliruan dalam hasil analisis, silakan
-          hubungi kami:
+          Jika terdapat kesalahan atau kekeliruan dalam hasil analisis, maupun
+          saran untuk pengembangan aplikasi, silakan hubungi kami:
         </p>
         <ul class="list-none space-y-3 mb-6 text-gray-700 dark:text-gray-300">
           <li class="flex items-center gap-3">
