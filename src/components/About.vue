@@ -13,20 +13,18 @@ import TheFooter from "./TheFooter.vue";
       >
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
           <strong>Bacokitab</strong> adalah aplikasi pembelajaran i‘rab bahasa
-          Arab yang membantu Anda memahami dan membaca kitab gundul dengan lebih
+          Arab untuk membantu memahami dan membaca kitab gundul dengan lebih
           mudah dan sistematis.
         </p>
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
-          Aplikasi ini memanfaatkan teknologi Artificial Intelligence (AI) untuk
-          menganalisis struktur kalimat serta menghasilkan i‘rab secara otomatis
-          berdasarkan kaidah nahwu. Kami terus berupaya meningkatkan akurasi dan
-          kualitas analisis yang diberikan. Namun demikian, karena proses ini
-          dilakukan oleh sistem AI, hasil yang ditampilkan mungkin masih
-          memerlukan peninjauan kembali sebagai bagian dari proses pembelajaran.
+          Aplikasi ini menggunakan teknologi AI untuk menganalisis struktur
+          kalimat dan menghasilkan i‘rab secara otomatis berdasarkan kaidah
+          nahwu. Hasil analisis mungkin masih memerlukan peninjauan kembali
+          sebagai bagian dari proses belajar.
         </p>
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
-          Apabila Anda menemukan kesalahan atau kekeliruan dalam hasil analisis
-          yang ditampilkan, silakan hubungi kami:
+          Jika terdapat kesalahan atau kekeliruan dalam hasil analisis, silakan
+          hubungi kami:
         </p>
         <ul class="list-none space-y-3 mb-6 text-gray-700 dark:text-gray-300">
           <li class="flex items-center gap-3">
