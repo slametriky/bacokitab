@@ -11,9 +11,6 @@ import TheFooter from "./TheFooter.vue";
       <section
         class="bg-white/80 dark:bg-gray-800/80 rounded-lg shadow-md backdrop-blur-md p-6"
       >
-        <h1 class="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-          Tentang Bacokitab
-        </h1>
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
           <strong>Bacokitab</strong> adalah aplikasi pembelajaran i‘rab bahasa
           Arab yang membantu Anda memahami dan membaca kitab gundul dengan lebih
@@ -51,10 +48,10 @@ import TheFooter from "./TheFooter.vue";
             </svg>
             <span class="font-medium">WhatsApp:</span>
             <a
-              href="https://wa.me/62895452414040"
+              href="https://wa.me/62895352414040"
               class="text-primary hover:underline"
               target="_blank"
-              >+62 895-4524-14040</a
+              >+62895352414040</a
             >
           </li>
           <li class="flex items-center gap-3">
