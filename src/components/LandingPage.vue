@@ -53,9 +53,8 @@
             <p
               class="text-lg md:text-xl dark:text-gray-300 leading-relaxed max-w-2xl"
             >
-              Analisis I'rab otomatis dari teks, foto, atau suara dengan akurasi
-              tinggi. Solusi cerdas untuk pelajar dan pengajar bahasa Arab di
-              era digital.
+              Analisis I'rab otomatis dari teks, foto, atau suara. Solusi cerdas
+              untuk pelajar dan pengajar bahasa Arab di era digital.
             </p>
             <div
               class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4"
