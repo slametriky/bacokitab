@@ -9,7 +9,7 @@
           v-model="inputText"
           @paste="handlePaste"
           class="w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent text-lg placeholder:text-gray-400 transition-all resize-none dark:text-white"
-          maxlength="300"
+          maxlength="400"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
         ></textarea>
         <div class="flex items-center justify-between mt-2 px-1">
@@ -67,7 +67,7 @@
             </button>
           </div>
           <span class="text-xs text-gray-500 font-medium"
-            >{{ inputText.length }} / 300 karakter</span
+            >{{ inputText.length }} / 400 karakter</span
           >
         </div>
       </div>
@@ -377,9 +377,9 @@ const initSpeechRecognition = () => {
 
     // Commit the accumulated transcript to inputText
     if (tempTranscript) {
-      if (tempTranscript.length > 300) {
-        tempTranscript = tempTranscript.substring(0, 300);
-        triggerToast("Teks dipotong (maks 300 karakter).");
+      if (tempTranscript.length > 400) {
+        tempTranscript = tempTranscript.substring(0, 400);
+        triggerToast("Teks dipotong (maks 400 karakter).");
       } else {
         triggerToast("Teks berhasil ditambahkan.");
       }
@@ -647,9 +647,9 @@ const processOcr = async (file) => {
       // Clear existing text before adding new OCR result
       let newText = text;
 
-      if (newText.length > 300) {
-        newText = newText.substring(0, 300);
-        triggerToast("Teks dipotong (maks 300 karakter).");
+      if (newText.length > 400) {
+        newText = newText.substring(0, 400);
+        triggerToast("Teks dipotong (maks 400 karakter).");
       } else {
         triggerToast("Teks berhasil diekstrak.");
       }
