@@ -66,19 +66,54 @@
             </p>
 
             <div
-              v-if="word?.detail?.jenis_kata"
-              class="mt-2 flex justify-center"
+              class="mt-2 flex flex-wrap justify-center gap-2"
+              v-if="word?.detail"
             >
+              <!-- Jenis Kata -->
               <span
+                v-if="
+                  word?.detail?.jenis_kata && word?.detail?.jenis_kata !== '-'
+                "
                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20"
               >
                 <span class="material-symbols-outlined text-[14px]"
                   >account_tree</span
                 >
-                {{ word.detail.jenis_kata
-                }}<template v-if="word?.detail?.bina">
-                  - {{ word.detail.bina }}</template
+                {{ word.detail.jenis_kata }}
+              </span>
+
+              <!-- Kategori Huruf -->
+              <span
+                v-if="
+                  word?.detail?.kategori_huruf &&
+                  word?.detail?.kategori_huruf !== '-'
+                "
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800/50"
+              >
+                <span class="material-symbols-outlined text-[14px]"
+                  >category</span
                 >
+                {{ word.detail.kategori_huruf }}
+              </span>
+
+              <!-- Shighat -->
+              <span
+                v-if="word?.detail?.shighat && word?.detail?.shighat !== '-'"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800"
+              >
+                <span class="material-symbols-outlined text-[14px]">sell</span>
+                {{ word.detail.shighat }}
+              </span>
+
+              <!-- Bina -->
+              <span
+                v-if="word?.detail?.bina && word?.detail?.bina !== '-'"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+              >
+                <span class="material-symbols-outlined text-[14px]"
+                  >architecture</span
+                >
+                {{ word.detail.bina }}
               </span>
             </div>
           </div>
@@ -164,7 +199,7 @@
             >
               <span
                 class="block text-xs font-bold text-primary uppercase tracking-wider mb-2"
-                >Tashrif Ishtilahi</span
+                >Tashrif</span
               >
               <span
                 class="arabic-text text-2xl text-[#111814] dark:text-white block text-right leading-relaxed"

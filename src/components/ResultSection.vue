@@ -93,6 +93,21 @@
               <td class="p-4 text-right align-top w-1/4">
                 <div class="flex items-center justify-end gap-3">
                   <button
+                    @click="showWordDetail(item, index)"
+                    :disabled="loadingWordIndex === index"
+                    class="p-1.5 text-primary/60 hover:text-primary hover:bg-primary/10 rounded-md transition-colors shrink-0 disabled:opacity-50"
+                    title="Detail Kata"
+                  >
+                    <span
+                      v-if="loadingWordIndex === index"
+                      class="material-symbols-outlined text-lg animate-spin"
+                      >progress_activity</span
+                    >
+                    <span v-else class="material-symbols-outlined text-lg"
+                      >info</span
+                    >
+                  </button>
+                  <button
                     @click="
                       copyToClipboard(
                         `${item.kata}\n\n${item.irab_lengkap}`,
@@ -117,6 +132,12 @@
         </table>
       </div>
     </div>
+    <!-- Word Detail Modal -->
+    <WordDetailModal
+      :show="showDetailModal"
+      :word="selectedWordDetail"
+      @close="closeWordDetail"
+    />
     <!-- Toast Notification -->
     <Transition
       enter-active-class="transition ease-out duration-300"
@@ -141,6 +162,8 @@
 
 <script setup>
 import { ref } from "vue";
+import WordDetailModal from "./WordDetailModal.vue";
+import { getWordDetail } from "../services/api";
 
 defineProps({
   result: {
@@ -152,6 +175,61 @@ defineProps({
 const showToast = ref(false);
 const toastMessage = ref("");
 let toastTimeout = null;
+
+const showDetailModal = ref(false);
+const selectedWordDetail = ref(null);
+const loadingWordIndex = ref(null);
+
+const showWordDetail = async (item, index) => {
+  if (loadingWordIndex.value !== null) return;
+
+  loadingWordIndex.value = index;
+  try {
+    const detailResponse = await getWordDetail(item.kata);
+
+    // Conform exactly to the provided `{ analisis_shorof: { kata: "...", detail: {...} } }` structure
+    let detailData = null;
+    let actualWord = item.kata;
+
+    if (detailResponse?.analisis_shorof) {
+      if (detailResponse.analisis_shorof.detail) {
+        detailData = detailResponse.analisis_shorof.detail;
+      }
+      if (detailResponse.analisis_shorof.kata) {
+        actualWord = detailResponse.analisis_shorof.kata;
+      }
+    } else if (detailResponse?.analisis_irab) {
+      if (detailResponse.analisis_irab.detail) {
+        detailData = detailResponse.analisis_irab.detail;
+      }
+      if (detailResponse.analisis_irab.kata) {
+        actualWord = detailResponse.analisis_irab.kata;
+      }
+    } else if (detailResponse?.detail) {
+      // Fallbacks just in case
+      detailData = detailResponse.detail;
+    }
+
+    selectedWordDetail.value = {
+      ...item,
+      kata: actualWord,
+      detail: detailData,
+    };
+    showDetailModal.value = true;
+  } catch (err) {
+    console.error("Gagal mendapatkan detail kata:", err);
+    triggerToast("Gagal memuat detail kata.");
+  } finally {
+    loadingWordIndex.value = null;
+  }
+};
+
+const closeWordDetail = () => {
+  showDetailModal.value = false;
+  setTimeout(() => {
+    selectedWordDetail.value = null;
+  }, 300); // Wait for transition
+};
 
 const triggerToast = (message) => {
   if (toastTimeout) clearTimeout(toastTimeout);
