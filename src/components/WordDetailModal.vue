@@ -98,7 +98,11 @@
 
               <!-- Shighat -->
               <span
-                v-if="word?.detail?.shighat && word?.detail?.shighat !== '-'"
+                v-if="
+                  word?.detail?.shighat &&
+                  word?.detail?.shighat !== '-' &&
+                  word?.detail?.jenis_kata !== 'Huruf'
+                "
                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800"
               >
                 <span class="material-symbols-outlined text-[14px]">sell</span>
