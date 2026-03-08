@@ -461,11 +461,11 @@ const captureWebcam = () => {
   context.drawImage(videoRef.value, 0, 0);
 
   canvasRef.value.toBlob((blob) => {
-    const file = new File([blob], "webcam-capture.png", { type: "image/png" });
+    const file = new File([blob], "webcam-capture.jpg", { type: "image/jpeg" });
     const event = { target: { files: [file] } };
     handleImageUpload(event);
     closeWebcamModal();
-  }, "image/png");
+  }, "image/jpeg", 0.8);
 };
 
 const selectCamera = () => {
@@ -495,7 +495,7 @@ const selectGallery = () => {
   galleryInput.value.click();
 };
 
-const resizeImage = (file, maxDimension = 1024) => {
+const resizeImage = (file, maxDimension = 2048) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -524,8 +524,8 @@ const resizeImage = (file, maxDimension = 1024) => {
           (blob) => {
             resolve(blob);
           },
-          file.type,
-          0.7, // Quality compression
+          file.type === "image/png" ? file.type : "image/jpeg",
+          0.8, // Quality compression
         );
       };
       img.src = e.target.result;
@@ -566,10 +566,10 @@ const confirmCrop = () => {
 
   if (canvas) {
     canvas.toBlob((blob) => {
-      const file = new File([blob], "cropped-image.png", { type: "image/png" });
+      const file = new File([blob], "cropped-image.jpg", { type: "image/jpeg" });
       processOcr(file);
       closeCropModal();
-    }, "image/png");
+    }, "image/jpeg", 0.9);
   }
 };
 
@@ -587,8 +587,8 @@ const handlePaste = async (event) => {
         triggerToast("Mengoptimalkan gambar dari clipboard...");
         try {
           const resizedBlob = await resizeImage(file);
-          file = new File([resizedBlob], "pasted-image.png", {
-            type: file.type,
+          file = new File([resizedBlob], "pasted-image.jpg", {
+            type: "image/jpeg",
           });
         } catch (e) {
           console.error("Resize error", e);
@@ -621,31 +621,82 @@ const handleImageUpload = async (event) => {
   openCropModal(file);
 };
 
+const getBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 const processOcr = async (file) => {
   isOcrLoading.value = true;
-  ocrProgress.value = 0;
-  triggerToast("Memproses teks...");
+  ocrProgress.value = 10; // Start progress indicator
+  triggerToast("Memproses gambar...");
 
   try {
-    const processedFile = await preprocessImage(file);
+    const base64Image = await getBase64(file);
+    let ocrResultText = "";
 
-    const {
-      data: { text },
-    } = await Tesseract.recognize(
-      processedFile,
-      "ara", // Arabic
-      {
-        logger: (m) => {
-          if (m.status === "recognizing text") {
-            ocrProgress.value = Math.round(m.progress * 100);
-          }
+    try {
+      // 1. Try OCR Space API First
+      ocrProgress.value = 40;
+
+      // OCR Space Free Tier Limit is 1024KB. Base64 adds ~33% overhead.
+      // So if the raw file size is > ~750KB, it will likely fail.
+      if (file.size > 800 * 1024) {
+         throw new Error("File too large for free API limits. Size: " + Math.round(file.size/1024) + "KB");
+      }
+      
+      const formData = new FormData();
+      formData.append('base64image', base64Image);
+      formData.append('language', 'ara');
+      formData.append('OCREngine', '1'); // Default engine
+
+      const apiKey = import.meta.env.VITE_OCR_SPACE_API_KEY || 'helloworld';
+      formData.append('apikey', apiKey);
+
+      const apiUrl = import.meta.env.VITE_OCR_SPACE_API_URL || 'https://api.ocr.space/parse/image';
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        body: formData
+      });
+
+      ocrProgress.value = 80;
+      const result = await response.json();
+
+      if (result.IsErroredOnProcessing || !result.ParsedResults || result.ParsedResults.length === 0) {
+         throw new Error("OCR API failed or returned empty: " + (result.ErrorMessage || "Unknown Error"));
+      }
+
+      ocrResultText = result.ParsedResults[0].ParsedText;
+
+    } catch (apiError) {
+      console.warn("OCR API failed, falling back to Tesseract.js:", apiError);
+      
+      // 2. Fallback to Tesseract.js
+      const {
+        data: { text },
+      } = await Tesseract.recognize(
+        file,
+        "ara", // Arabic
+        {
+          logger: (m) => {
+            if (m.status === "recognizing text") {
+              // Map tesseract progress (0-1) to our remaining 80-100%
+              ocrProgress.value = Math.round(80 + (m.progress * 20));
+            }
+          },
         },
-      },
-    );
+      );
+      
+      ocrResultText = text;
+    }
 
-    if (text) {
-      // Clear existing text before adding new OCR result
-      let newText = text;
+    if (ocrResultText) {
+      // Clean up common OCR noise and errors for Arabic
+      let newText = cleanOcrText(ocrResultText);
 
       if (newText.length > 400) {
         newText = newText.substring(0, 400);
@@ -667,49 +718,42 @@ const processOcr = async (file) => {
   }
 };
 
-const preprocessImage = (file) => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        let totalBrightness = 0;
-
-        // 1. Grayscale
-        for (let i = 0; i < data.length; i += 4) {
-          const gray =
-            0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-          data[i] = data[i + 1] = data[i + 2] = gray;
-          totalBrightness += gray;
-        }
-
-        // 2. Adaptive Binarization
-        const avgBrightness = totalBrightness / (data.length / 4);
-        const threshold = avgBrightness * 0.9; // Adjustable factor
-
-        for (let i = 0; i < data.length; i += 4) {
-          const v = data[i] > threshold ? 255 : 0;
-          data[i] = data[i + 1] = data[i + 2] = v;
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-
-        canvas.toBlob((blob) => {
-          resolve(new File([blob], file.name, { type: file.type }));
-        }, file.type);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+const cleanOcrText = (text) => {
+  if (!text) return "";
+  
+  let lines = text.split('\n');
+  
+  let validLines = lines.filter(line => {
+    let trimmed = line.trim();
+    if (!trimmed) return false;
+    
+    // Remove lines with no Arabic characters (usually noise from borders)
+    let hasArabic = /[\u0600-\u06FF]/.test(trimmed);
+    if (!hasArabic) return false;
+    
+    // Remove lines that are mostly noise/diacritics
+    let lettersOnly = trimmed.replace(/[^a-zA-Z\u0621-\u064A]/g, '');
+    if (lettersOnly.length < 3 && trimmed.length > 5) {
+      return false; // Very few valid letters but long string (noise)
+    }
+    
+    return true;
   });
+
+  let cleaned = validLines.join('\n');
+
+  // Fix common Tesseract misreadings for Arabic
+  cleaned = cleaned.replace(/(^|\s)قالى(?=\s|$)/g, '$1قال');
+  cleaned = cleaned.replace(/(^|\s)ال(?=\s|$)/g, '$1الله');
+  cleaned = cleaned.replace(/(^|\s)تعالمى(?=\s|$)/g, '$1تعالى');
+  cleaned = cleaned.replace(/(^|\s)جهيتم(?=\s|$)/g, '$1جهنم');
+  cleaned = cleaned.replace(/(^|\s)ب(?=\s)جهنم/g, '$1في جهنم');
+  
+  // Condense multiple spaces and newlines
+  cleaned = cleaned.replace(/[ \t]+/g, ' ');
+  cleaned = cleaned.replace(/\s+([,:؛.؟!])/g, '$1');
+
+  return cleaned.trim();
 };
 
 onMounted(() => {
