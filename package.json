@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.78.0",
     "flowbite": "^4.0.1",
     "flowbite-vue": "^0.2.1",
     "tesseract.js": "^7.0.0",

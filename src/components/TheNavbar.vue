@@ -2,7 +2,7 @@
   <nav
     class="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10"
   >
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <router-link
         to="/"
         class="flex items-center gap-2 hover:opacity-80 transition-opacity block"
@@ -20,10 +20,40 @@
           Bacokitab
         </h1>
       </router-link>
+
+      <!-- Auth Section -->
+      <div class="flex items-center gap-4">
+        <div v-if="user" class="flex items-center gap-3">
+          <img
+            v-if="user.user_metadata?.avatar_url"
+            :src="user.user_metadata.avatar_url"
+            alt="Profile"
+            class="w-8 h-8 rounded-full border border-gray-200"
+          />
+          <span
+            class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block"
+            >{{ user.user_metadata?.full_name || user.email }}</span
+          >
+          <button
+            @click="handleLogout"
+            class="text-xs sm:text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-// Navbar logic here if needed
+import { user, signOut } from "../lib/supabase.js";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const handleLogout = async () => {
+  await signOut();
+  router.push("/");
+};
 </script>

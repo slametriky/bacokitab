@@ -21,17 +21,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-          <button
-            class="text-sm font-bold text-primary px-4 py-2 rounded-lg hover:bg-primary/10 transition-colors"
-          >
-            Masuk
-          </button>
-          <router-link
-            to="/analisa"
-            class="bg-primary text-white text-sm font-bold px-5 py-2.5 rounded-lg shadow-sm hover:brightness-105 transition-all text-center flex items-center"
-          >
-            Mulai
-          </router-link>
+          <!-- Buttons removed as requested -->
         </div>
       </div>
     </header>
@@ -60,7 +50,7 @@
               class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4"
             >
               <router-link
-                to="/analisa"
+                :to="user ? '/analisa' : '/login'"
                 class="w-full sm:w-auto min-w-[200px] h-14 bg-primary text-white text-lg font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <span class="dark:text-gray-200">Coba Sekarang</span>
@@ -318,4 +308,6 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { user } from '../lib/supabase.js'
+</script>
