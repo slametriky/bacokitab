@@ -5,6 +5,7 @@ import TheFooter from "./TheFooter.vue";
 import InputSection from "./InputSection.vue";
 import ResultSection from "./ResultSection.vue";
 import { analyzeText } from "../services/api";
+import { user, saveAnalysisToHistory } from "../lib/supabase.js";
 
 const isLoading = ref(false);
 const result = ref(null);
@@ -15,6 +16,11 @@ const handleAnalyze = async (text) => {
   try {
     const response = await analyzeText(text);
     result.value = response;
+    
+    // Save to history if logged in
+    if (user.value) {
+      await saveAnalysisToHistory(user.value.id, text, response);
+    }
   } catch (error) {
     alert("Terjadi kesalahan: " + error.message);
   } finally {

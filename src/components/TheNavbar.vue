@@ -23,7 +23,15 @@
 
       <!-- Auth Section -->
       <div class="flex items-center gap-4">
-        <div v-if="user" class="flex items-center gap-3">
+        <div v-if="user" class="flex items-center gap-4">
+          <router-link to="/history" class="text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors flex items-center gap-1.5" active-class="text-primary dark:text-primary">
+            <span class="material-symbols-outlined text-[20px]">history</span>
+            <span class="hidden sm:inline">Riwayat</span>
+          </router-link>
+          
+          <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
+          
+          <div class="flex items-center gap-3">
           <img
             v-if="user.user_metadata?.avatar_url"
             :src="user.user_metadata.avatar_url"
@@ -40,6 +48,7 @@
           >
             Logout
           </button>
+        </div>
         </div>
       </div>
     </div>

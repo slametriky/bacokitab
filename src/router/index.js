@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AboutPage from '../components/About.vue';
 import LandingPage from '../components/LandingPage.vue';
 import AppPage from '../components/AppPage.vue';
+import HistoryPage from '../components/HistoryPage.vue';
 import LoginPage from '../components/LoginPage.vue';
 import { supabase } from '../lib/supabase.js';
 
@@ -15,6 +16,12 @@ const routes = [
     path: '/analisa',
     name: 'App',
     component: AppPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/history',
+    name: 'History',
+    component: HistoryPage,
     meta: { requiresAuth: true },
   },
   {

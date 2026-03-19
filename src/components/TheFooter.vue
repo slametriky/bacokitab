@@ -21,6 +21,24 @@
     </router-link>
 
     <router-link
+      v-if="user"
+      class="flex flex-col items-center gap-1 transition-colors"
+      active-class="text-primary"
+      exact-active-class="text-primary"
+      :class="[
+        $route.path === '/history'
+          ? 'text-primary'
+          : 'text-[#111814] dark:text-white hover:text-primary',
+      ]"
+      to="/history"
+    >
+      <span class="material-symbols-outlined text-[28px]">history</span>
+      <span class="text-[10px] font-bold uppercase tracking-widest"
+        >Riwayat</span
+      >
+    </router-link>
+
+    <router-link
       class="flex flex-col items-center gap-1 transition-colors"
       active-class="text-primary"
       exact-active-class="text-primary"
@@ -40,5 +58,5 @@
 </template>
 
 <script setup>
-// Footer logic here if needed
+import { user } from "../lib/supabase.js";
 </script>
