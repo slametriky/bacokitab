@@ -4,6 +4,8 @@ import LandingPage from '../components/LandingPage.vue';
 import AppPage from '../components/AppPage.vue';
 import HistoryPage from '../components/HistoryPage.vue';
 import LoginPage from '../components/LoginPage.vue';
+import PracticePage from '../components/PracticePage.vue';
+import PracticeListPage from '../components/PracticeListPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -23,6 +25,16 @@ const routes = [
     name: 'History',
     component: HistoryPage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/latihan',
+    name: 'PracticeList',
+    component: PracticeListPage,
+  },
+  {
+    path: '/latihan/:id',
+    name: 'Practice',
+    component: PracticePage,
   },
   {
     path: '/about',

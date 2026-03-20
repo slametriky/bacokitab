@@ -56,6 +56,70 @@ export const getAnalysisHistory = async (userId, page = 0, limit = 10) => {
   return data
 }
 
+// Latihan / Practice Functions
+export const getPractices = async () => {
+  const { data, error } = await supabase
+    .from('practices')
+    .select('id, title, level, description')
+    .order('created_at', { ascending: true })
+    
+  if (error) {
+    console.error('Error fetching practices:', error)
+    return []
+  }
+  return data
+}
+
+export const getPracticeById = async (id) => {
+  const { data, error } = await supabase
+    .from('practices')
+    .select('*')
+    .eq('id', id)
+    .single()
+    
+  if (error) {
+    console.error('Error fetching practice detail:', error)
+    return null
+  }
+  return data
+}
+
+export const savePracticeScore = async (practiceId, score, total) => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const { data, error } = await supabase
+    .from('practice_scores')
+    .upsert({
+      user_id: user.id,
+      practice_id: practiceId,
+      score: score,
+      total: total,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id, practice_id' })
+    
+  if (error) {
+    console.error('Error saving score:', error)
+  }
+  return data
+}
+
+export const getUserPracticeScores = async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data, error } = await supabase
+    .from('practice_scores')
+    .select('practice_id, score, total')
+    .eq('user_id', user.id)
+    
+  if (error) {
+    console.error('Error fetching scores:', error)
+    return []
+  }
+  return data
+}
+
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error('Error logging out:', error.message)
