@@ -398,6 +398,7 @@ const router = useRouter();
 
 const title = ref("");
 const practiceLevel = ref("Pemula");
+const rawLevel = ref("mubtadi");
 const isLoading = ref(true);
 
 const hasNextPractice = ref(false);
@@ -435,9 +436,10 @@ const initRandomPractice = () => {
     });
   });
 
-  // Shuffle array and pick Top 6
+  // Shuffle array and pick questions based on level
+  const questionCount = rawLevel.value === 'mutawassith' ? 20 : 10;
   const shuffled = allParams.sort(() => 0.5 - Math.random());
-  const selected = shuffled.slice(0, 10);
+  const selected = shuffled.slice(0, questionCount);
 
   selected.forEach((q) => {
     selectedQuestionIds.value.push(q.id);
@@ -475,8 +477,10 @@ const loadPracticeData = async (id) => {
 
     if (practiceData) {
       title.value = practiceData.title;
+      rawLevel.value = practiceData.level;
       practiceLevel.value =
-        practiceData.level === "mubtadi" ? "Mubtadi'" : practiceData.level;
+        practiceData.level === "mubtadi" ? "Mubtadi'" : 
+        practiceData.level === "mutawassith" ? "Mutawassith" : practiceData.level;
       rawParagraphs = practiceData.content_data;
       fullHarakatParagraphs.value = practiceData.full_harakat_text;
       translationParagraphs.value = practiceData.translation_text;
