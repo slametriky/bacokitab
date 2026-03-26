@@ -34,6 +34,17 @@
 import { watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { user, signInWithGoogle } from '../lib/supabase.js'
+import { useHead } from '@unhead/vue'
+
+useHead({
+  title: 'Masuk - BacoKitab',
+  meta: [
+    {
+      name: 'description',
+      content: 'Masuk ke akun BacoKitab Anda untuk mulai menganalisis teks bahasa Arab, menyimpan riwayat, dan mengikuti latihan.'
+    }
+  ]
+})
 
 const router = useRouter()
 

@@ -392,12 +392,24 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPracticeById, savePracticeScore, getPractices } from "../lib/supabase.js";
+import { useHead } from "@unhead/vue";
 
 const route = useRoute();
 const router = useRouter();
 
 const title = ref("");
 const practiceLevel = ref("Pemula");
+
+useHead({
+  title: computed(() => title.value ? `${title.value} - Latihan BacoKitab` : 'Latihan Membaca - BacoKitab'),
+  meta: [
+    {
+      name: 'description',
+      content: 'Latihan membaca kitab gundul dan menentukan harakat yang tepat dengan BacoKitab.'
+    }
+  ]
+});
+
 const rawLevel = ref("mubtadi");
 const isLoading = ref(true);
 

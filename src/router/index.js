@@ -6,6 +6,7 @@ import HistoryPage from '../components/HistoryPage.vue';
 import LoginPage from '../components/LoginPage.vue';
 import PracticePage from '../components/PracticePage.vue';
 import PracticeListPage from '../components/PracticeListPage.vue';
+import PublicIrabPage from '../components/PublicIrabPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -45,6 +46,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: LoginPage,
+  },
+  {
+    path: '/irab/:slug',
+    name: 'PublicIrab',
+    component: PublicIrabPage,
   },
 ];
 

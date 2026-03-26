@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.analysis_history (
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   input_text text NOT NULL,
   result_data jsonb NOT NULL,
+  slug text UNIQUE,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -28,3 +29,7 @@ USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete their own history" 
 ON public.analysis_history FOR DELETE 
 USING (auth.uid() = user_id);
+
+CREATE POLICY "Public can view any history"
+ON public.analysis_history FOR SELECT
+USING (true);

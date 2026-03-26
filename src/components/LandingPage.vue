@@ -310,4 +310,23 @@
 
 <script setup>
 import { user } from '../lib/supabase.js'
+import { useHead } from '@unhead/vue'
+
+useHead({
+  title: 'BacoKitab - Bedah Kitab Gundul dengan AI',
+  meta: [
+    {
+      name: 'description',
+      content: 'BacoKitab adalah asisten AI untuk menganalisis i\'rab bahasa Arab secara instan dari teks, foto, atau suara. Membantu pelajar dan pengajar memahami tata bahasa Arab.'
+    },
+    {
+      property: 'og:title',
+      content: 'BacoKitab - Bedah Kitab Gundul dengan AI'
+    },
+    {
+      property: 'og:description',
+      content: 'BacoKitab adalah asisten AI untuk menganalisis i\'rab bahasa Arab secara instan dari teks, foto, atau suara.'
+    }
+  ]
+})
 </script>

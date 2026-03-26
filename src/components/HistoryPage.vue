@@ -58,7 +58,7 @@
         </div>
         <div class="max-w-2xl mx-auto w-full px-4 py-8 pb-24">
           <!-- Reuse Result Section -->
-          <ResultSection :result="selectedResult.result_data" />
+          <ResultSection :result="selectedResult.result_data" :inputText="selectedResult.input_text" :historyId="selectedResult.id" :publicSlug="selectedResult.slug" />
         </div>
       </div>
     </Transition>
@@ -69,9 +69,20 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { user, getAnalysisHistory } from '../lib/supabase.js'
+import { useHead } from '@unhead/vue'
 import TheNavbar from './TheNavbar.vue'
 import TheFooter from './TheFooter.vue'
 import ResultSection from './ResultSection.vue'
+
+useHead({
+  title: 'Riwayat Analisa - BacoKitab',
+  meta: [
+    {
+      name: 'description',
+      content: 'Lihat riwayat analisis i\'rab dan terjemahan teks bahasa Arab yang telah Anda lakukan di BacoKitab.'
+    }
+  ]
+})
 
 const router = useRouter()
 const isLoading = ref(true)

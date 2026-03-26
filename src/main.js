@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createHead } from '@unhead/vue/client'
 import './style.css'
 import 'flowbite'
 import App from './App.vue'
@@ -7,4 +8,9 @@ import { registerSW } from 'virtual:pwa-register'
 
 registerSW({ immediate: true })
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App)
+const head = createHead()
+
+app.use(router)
+app.use(head)
+app.mount('#app')

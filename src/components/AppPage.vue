@@ -6,12 +6,29 @@ import InputSection from "./InputSection.vue";
 import ResultSection from "./ResultSection.vue";
 import { analyzeText } from "../services/api";
 import { user, saveAnalysisToHistory } from "../lib/supabase.js";
+import { useHead } from "@unhead/vue";
+
+useHead({
+  title: 'Analisa I\'rab - BacoKitab',
+  meta: [
+    {
+      name: 'description',
+      content: 'Analisis tata bahasa dan i\'rab teks Arab secara instan. Masukkan teks, unggah foto, atau gunakan suara.'
+    }
+  ]
+});
 
 const isLoading = ref(false);
 const result = ref(null);
+const lastInputText = ref("");
+const lastHistoryId = ref(null);
+const lastPublicSlug = ref(null);
 
 const handleAnalyze = async (text) => {
   isLoading.value = true;
+  lastInputText.value = text;
+  lastHistoryId.value = null;
+  lastPublicSlug.value = null;
   result.value = null; // Reset result
   try {
     const response = await analyzeText(text);
@@ -19,7 +36,9 @@ const handleAnalyze = async (text) => {
     
     // Save to history if logged in
     if (user.value) {
-      await saveAnalysisToHistory(user.value.id, text, response);
+      const saved = await saveAnalysisToHistory(user.value.id, text, response);
+      lastHistoryId.value = saved?.id || null;
+      lastPublicSlug.value = saved?.slug || null;
     }
   } catch (error) {
     alert("Terjadi kesalahan: " + error.message);
@@ -34,7 +53,7 @@ const handleAnalyze = async (text) => {
     <TheNavbar />
     <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6 space-y-8 pb-24">
       <InputSection @analyze="handleAnalyze" :isLoading="isLoading" />
-      <ResultSection v-if="result" :result="result" />
+      <ResultSection v-if="result" :result="result" :inputText="lastInputText" :historyId="lastHistoryId" :publicSlug="lastPublicSlug" />
     </main>
     <TheFooter />
   </div>

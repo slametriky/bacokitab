@@ -27,10 +27,28 @@ export const signInWithGoogle = async () => {
   if (error) console.error('Error logging in with Google:', error.message)
 }
 
+const generateSlug = (text) => {
+  const words = text.split(/\s+/).slice(0, 5).join('-');
+  
+  const cleanedWords = words
+    .normalize('NFKD')
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '') // hapus harakat
+    .replace(/[^\p{L}\p{N}\s-]/gu, '') // hapus tanda baca, biarkan huruf (termasuk Arab), angka, spasi, dan strip
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .toLowerCase();
+  
+  const randomId = Math.random().toString(36).substring(2, 8);
+  return cleanedWords ? `${cleanedWords}-${randomId}` : `irab-${randomId}`;
+};
+
 export const saveAnalysisToHistory = async (userId, text, result) => {
+  const slug = generateSlug(text);
   const { data, error } = await supabase
     .from('analysis_history')
-    .insert([{ user_id: userId, input_text: text, result_data: result }])
+    .insert([{ user_id: userId, input_text: text, result_data: result, slug: slug }])
+    .select('id, slug')
+    .single()
   if (error) {
     console.error('Error saving history:', error)
     return null
@@ -53,6 +71,21 @@ export const getAnalysisHistory = async (userId, page = 0, limit = 10) => {
     console.error('Error fetching history:', error)
     return []
   }
+  return data
+}
+
+export const getHistoryBySlug = async (slug) => {
+  const { data, error } = await supabase
+    .from('analysis_history')
+    .select('id, input_text, result_data, created_at, slug')
+    .eq('slug', slug)
+    .single()
+
+  if (error) {
+    console.error('Error fetching history by slug:', error)
+    return null
+  }
+
   return data
 }
 

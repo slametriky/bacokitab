@@ -15,14 +15,27 @@
       class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-primary/10 p-6 relative flex flex-col gap-4"
     >
       <div class="flex items-start justify-between w-full">
-        <button
-          @click="copyToClipboard(result.teks_berharokat)"
-          class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-primary focus:outline-none"
-          title="Salin Semua"
-        >
-          <span class="material-symbols-outlined text-xl">content_copy</span>
-          <span class="text-xs font-bold uppercase tracking-wider">Salin</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            @click="copyToClipboard(result.teks_berharokat)"
+            class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-primary focus:outline-none"
+            title="Salin Semua"
+          >
+            <span class="material-symbols-outlined text-xl">content_copy</span>
+            <span class="text-xs font-bold uppercase tracking-wider">Salin</span>
+          </button>
+          <button
+            v-if="inputText && inputText.trim()"
+            @click="handleCreatePublicPage"
+            :disabled="isGeneratingLink"
+            class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-primary focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+            title="Buat Link Publik"
+          >
+            <span v-if="isGeneratingLink" class="material-symbols-outlined text-xl animate-spin">progress_activity</span>
+            <span v-else class="material-symbols-outlined text-xl">link</span>
+            <span class="text-xs font-bold uppercase tracking-wider">Link</span>
+          </button>
+        </div>
         <div class="opacity-10">
           <span
             class="material-symbols-outlined text-5xl text-[#111814] dark:text-white"
@@ -165,10 +178,22 @@ import { ref } from "vue";
 import WordDetailModal from "./WordDetailModal.vue";
 import { getWordDetail } from "../services/api";
 
-defineProps({
+const props = defineProps({
   result: {
     type: Object,
     required: true,
+  },
+  inputText: {
+    type: String,
+    default: "",
+  },
+  historyId: {
+    type: String,
+    default: null,
+  },
+  publicSlug: {
+    type: String,
+    default: null,
   },
 });
 
@@ -238,6 +263,29 @@ const triggerToast = (message) => {
   toastTimeout = setTimeout(() => {
     showToast.value = false;
   }, 2000);
+};
+
+const isGeneratingLink = ref(false);
+
+const handleCreatePublicPage = async () => {
+  if (isGeneratingLink.value) return;
+  
+  if (!props.publicSlug) {
+    triggerToast("Gagal membuat link, riwayat tidak ditemukan.");
+    return;
+  }
+
+  isGeneratingLink.value = true;
+  
+  try {
+    const url = `${window.location.origin}/irab/${props.publicSlug}`;
+    await copyToClipboard(url, "Link");
+  } catch (e) {
+    console.error(e);
+    triggerToast("Gagal membuat link.");
+  } finally {
+    isGeneratingLink.value = false;
+  }
 };
 
 const copyToClipboard = async (text, type = "Teks") => {

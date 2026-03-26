@@ -2,6 +2,25 @@
 import { ref } from "vue";
 import TheNavbar from "./TheNavbar.vue";
 import TheFooter from "./TheFooter.vue";
+import { useHead } from "@unhead/vue";
+
+useHead({
+  title: 'Tentang Kami - BacoKitab',
+  meta: [
+    {
+      name: 'description',
+      content: 'Pelajari lebih lanjut tentang BacoKitab, aplikasi pembelajaran i\'rab bahasa Arab yang menggunakan AI untuk membantu memahami dan membaca kitab gundul.'
+    },
+    {
+      property: 'og:title',
+      content: 'Tentang Kami - BacoKitab'
+    },
+    {
+      property: 'og:description',
+      content: 'Pelajari lebih lanjut tentang BacoKitab, aplikasi pembelajaran i\'rab bahasa Arab yang menggunakan AI.'
+    }
+  ]
+});
 </script>
 
 <template>
