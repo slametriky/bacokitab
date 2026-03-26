@@ -9,7 +9,7 @@ import { user, saveAnalysisToHistory } from "../lib/supabase.js";
 import { useHead } from "@unhead/vue";
 
 useHead({
-  title: 'Analisa I\'rab Bahasa Arab Otomatis - BacoKitab',
+  title: 'Analisa I\'rab Bahasa Arab dengan AI - BacoKitab',
   meta: [
     {
       name: 'description',
@@ -17,7 +17,7 @@ useHead({
     },
     {
       property: 'og:title',
-      content: 'Analisa I\'rab Bahasa Arab Otomatis - BacoKitab'
+      content: 'Analisa I\'rab Bahasa Arab dengan AI - BacoKitab'
     },
     {
       property: 'og:description',
