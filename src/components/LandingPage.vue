@@ -313,19 +313,19 @@ import { user } from '../lib/supabase.js'
 import { useHead } from '@unhead/vue'
 
 useHead({
-  title: 'BacoKitab - Bedah Kitab Gundul dengan AI',
+  title: 'BacoKitab - Aplikasi Analisa I\'rab Bahasa Arab dengan AI',
   meta: [
     {
       name: 'description',
-      content: 'BacoKitab adalah asisten AI untuk menganalisis i\'rab bahasa Arab secara instan dari teks, foto, atau suara. Membantu pelajar dan pengajar memahami tata bahasa Arab.'
+      content: 'Aplikasi AI terbaik untuk analisa I\'rab, Nahwu, dan Shorof secara instan. Membantu pelajar, santri, dan pengajar membaca kitab gundul dan memahami tata bahasa Arab dengan mudah.'
     },
     {
       property: 'og:title',
-      content: 'BacoKitab - Bedah Kitab Gundul dengan AI'
+      content: 'BacoKitab - Aplikasi Analisa I\'rab Bahasa Arab dengan AI'
     },
     {
       property: 'og:description',
-      content: 'BacoKitab adalah asisten AI untuk menganalisis i\'rab bahasa Arab secara instan dari teks, foto, atau suara.'
+      content: 'Aplikasi AI terbaik untuk analisa I\'rab, Nahwu, dan Shorof secara instan. Cara termudah belajar membaca kitab gundul.'
     }
   ]
 })

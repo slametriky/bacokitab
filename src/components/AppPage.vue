@@ -9,11 +9,19 @@ import { user, saveAnalysisToHistory } from "../lib/supabase.js";
 import { useHead } from "@unhead/vue";
 
 useHead({
-  title: 'Analisa I\'rab - BacoKitab',
+  title: 'Analisa I\'rab Bahasa Arab Otomatis - BacoKitab',
   meta: [
     {
       name: 'description',
-      content: 'Analisis tata bahasa dan i\'rab teks Arab secara instan. Masukkan teks, unggah foto, atau gunakan suara.'
+      content: 'Gunakan AI untuk analisa I\'rab, Nahwu, dan Shorof secara instan. Cukup ketik, unggah foto kitab, atau ucapkan teks Arab Anda.'
+    },
+    {
+      property: 'og:title',
+      content: 'Analisa I\'rab Bahasa Arab Otomatis - BacoKitab'
+    },
+    {
+      property: 'og:description',
+      content: 'Gunakan AI untuk analisa I\'rab, Nahwu, dan Shorof secara instan. Cukup ketik, unggah foto kitab, atau ucapkan teks Arab Anda.'
     }
   ]
 });

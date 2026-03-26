@@ -59,10 +59,10 @@ const load = async () => {
 
 useHead(() => {
   const inputText = record.value?.input_text || ''
-  const title = inputText ? `I'rab ${inputText} - BacoKitab` : "Hasil I'rab - BacoKitab"
+  const title = inputText ? `Analisa I'rab: ${inputText} - BacoKitab` : "Hasil Analisa I'rab - BacoKitab"
   const description = inputText
-    ? `Hasil analisis i'rab untuk: ${inputText}`
-    : "Hasil analisis i'rab dari BacoKitab."
+    ? `Lihat hasil analisa i'rab, nahwu, shorof, dan terjemahan dari teks bahasa Arab "${inputText}" menggunakan AI BacoKitab.`
+    : "Lihat hasil analisa i'rab dan tata bahasa Arab dari BacoKitab."
 
   return {
     title,
