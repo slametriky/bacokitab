@@ -74,20 +74,36 @@ import TheNavbar from './TheNavbar.vue'
 import TheFooter from './TheFooter.vue'
 import ResultSection from './ResultSection.vue'
 
-useHead({
-  title: 'Riwayat Analisa - BacoKitab',
-  meta: [
-    {
-      name: 'description',
-      content: 'Lihat riwayat analisis i\'rab dan terjemahan teks bahasa Arab yang telah Anda lakukan di BacoKitab.'
-    }
-  ]
-})
-
 const router = useRouter()
 const isLoading = ref(true)
 const history = ref([])
 const selectedResult = ref(null)
+
+useHead(() => {
+  if (selectedResult.value) {
+    const text = selectedResult.value.input_text;
+    const title = `Analisa I'rab: ${text} - BacoKitab`;
+    const description = `Lihat hasil analisa i'rab, nahwu, shorof, dan terjemahan dari teks bahasa Arab "${text}" di riwayat Anda.`;
+    return {
+      title,
+      meta: [
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+      ]
+    }
+  }
+
+  return {
+    title: 'Riwayat Analisa - BacoKitab',
+    meta: [
+      {
+        name: 'description',
+        content: 'Lihat riwayat analisis i\'rab dan terjemahan teks bahasa Arab yang telah Anda lakukan di BacoKitab.'
+      }
+    ]
+  }
+})
 
 const page = ref(0)
 const hasMore = ref(true)
