@@ -255,7 +255,7 @@
                   <img
                     alt="App Screenshot"
                     class="w-full h-auto object-cover"
-                    src="/screen-sm.webp"
+                    src="/screen.webp"
                     width="400"
                     height="436"
                     fetchpriority="high"
