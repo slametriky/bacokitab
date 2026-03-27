@@ -17,28 +17,53 @@
     <meta property="og:url" content="https://bacokitab.com/" />
     <meta property="og:title" content="BacoKitab - Analisa I'rab Bahasa Arab dengan AI" />
     <meta property="og:description" content="Aplikasi AI untuk analisa I'rab, Nahwu, dan Shorof secara instan. Cara termudah belajar membaca kitab gundul." />
-    <meta property="og:image" content="/screen.png" />
+    <meta property="og:image" content="/screen.webp" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://bacokitab.com/" />
     <meta property="twitter:title" content="BacoKitab - Analisa I'rab Bahasa Arab dengan AI" />
     <meta property="twitter:description" content="Aplikasi AI untuk analisa I'rab, Nahwu, dan Shorof secara instan. Cara termudah belajar membaca kitab gundul." />
-    <meta property="twitter:image" content="/screen.png" />
+    <meta property="twitter:image" content="/screen.webp" />
+
+    <!-- Preconnect to Google Fonts and Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- Material Symbols -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    </noscript>
+
     <!-- Google Fonts: Inter & Amiri (Arabic) -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" />
+    </noscript>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/main.js" defer></script>
   </body>
 </html>

@@ -68,15 +68,20 @@
                 class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"
               ></div>
               <div
-                class="absolute inset-0 flex items-center justify-center"
-                style="
-                  background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuALg6l3Y4LneNl4RZtDYQphjXh4NInPSPwo0V9Zq9OFhHEBH14YitWPe-YfqGtt6Q9cMmkhbz0Mk81vRC5toB6yNALsAPhV34LpKKR3R7RZM0q4p3eaRUf1e-pzD6VmYAh7kaHWbdjk0yBesqDInQIcUEJ-gYMUG9iJDKLs6pk9fGlv6wXcYdyGCSVqYtu8X5RLIcKuDk5caxgMwhZMTYDwj02rp_UYxqjEzJyeizmW8ctS2QpsySS3BFc7QNyuHkajY4mzIRb51I8&quot;);
-                  background-size: cover;
-                  background-position: center;
-                "
+                class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-emerald-800 to-[#1a2f24]"
               >
+                <!-- Decorative Arabic Typography Background -->
+                <div class="absolute inset-0 flex flex-wrap items-center justify-center opacity-5 select-none pointer-events-none overflow-hidden" aria-hidden="true">
+                  <span class="text-6xl md:text-8xl font-amiri text-white m-4 rotate-12">النحو</span>
+                  <span class="text-7xl md:text-9xl font-amiri text-white m-4 -rotate-6">الصرف</span>
+                  <span class="text-5xl md:text-7xl font-amiri text-white m-4 rotate-45">الإعراب</span>
+                  <span class="text-8xl md:text-9xl font-amiri text-white m-4 -rotate-12">الكلمة</span>
+                  <span class="text-6xl md:text-8xl font-amiri text-white m-4 rotate-6">الفعل</span>
+                  <span class="text-7xl md:text-9xl font-amiri text-white m-4 -rotate-12">الاسم</span>
+                </div>
+                
                 <div
-                  class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+                  class="absolute inset-0 bg-black/20"
                 ></div>
                 <div
                   class="relative z-20 text-center p-8 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20"
@@ -249,8 +254,11 @@
                 >
                   <img
                     alt="App Screenshot"
-                    class="w-full h-full object-cover"
-                    src="/screen.png"
+                    class="w-full h-auto object-cover"
+                    src="/screen-sm.webp"
+                    width="400"
+                    height="436"
+                    fetchpriority="high"
                   />
                 </div>
               </div>
