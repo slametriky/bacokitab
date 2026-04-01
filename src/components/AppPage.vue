@@ -28,15 +28,9 @@ useHead({
 
 const isLoading = ref(false);
 const result = ref(null);
-const lastInputText = ref("");
-const lastHistoryId = ref(null);
-const lastPublicSlug = ref(null);
 
 const handleAnalyze = async (text) => {
   isLoading.value = true;
-  lastInputText.value = text;
-  lastHistoryId.value = null;
-  lastPublicSlug.value = null;
   result.value = null; // Reset result
   try {
     const response = await analyzeText(text);
@@ -44,9 +38,7 @@ const handleAnalyze = async (text) => {
     
     // Save to history if logged in
     if (user.value) {
-      const saved = await saveAnalysisToHistory(user.value.id, text, response);
-      lastHistoryId.value = saved?.id || null;
-      lastPublicSlug.value = saved?.slug || null;
+      await saveAnalysisToHistory(user.value.id, text, response);
     }
   } catch (error) {
     alert("Terjadi kesalahan: " + error.message);
@@ -61,7 +53,7 @@ const handleAnalyze = async (text) => {
     <TheNavbar />
     <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6 space-y-8 pb-24">
       <InputSection @analyze="handleAnalyze" :isLoading="isLoading" />
-      <ResultSection v-if="result" :result="result" :inputText="lastInputText" :historyId="lastHistoryId" :publicSlug="lastPublicSlug" />
+      <ResultSection v-if="result" :result="result" />
     </main>
     <TheFooter />
   </div>

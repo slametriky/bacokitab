@@ -58,7 +58,7 @@
         </div>
         <div class="max-w-2xl mx-auto w-full px-4 py-8 pb-24">
           <!-- Reuse Result Section -->
-          <ResultSection :result="selectedResult.result_data" :inputText="selectedResult.input_text" :historyId="selectedResult.id" :publicSlug="selectedResult.slug" />
+          <ResultSection :result="selectedResult.result_data" />
         </div>
       </div>
     </Transition>

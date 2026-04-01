@@ -25,7 +25,7 @@
         <h1 class="text-xl md:text-2xl font-black tracking-tight text-[#111814] dark:text-white">
           Hasil I'rab
         </h1>
-        <ResultSection :result="record.result_data" :inputText="record.input_text" :publicSlug="record.public_slug" />
+        <ResultSection :result="record.result_data" />
       </div>
     </main>
     <TheFooter />
