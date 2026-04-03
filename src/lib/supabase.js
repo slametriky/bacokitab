@@ -56,6 +56,37 @@ export const saveAnalysisToHistory = async (userId, text, result) => {
   return data
 }
 
+export const saveUserReview = async (userId, source, feedback) => {
+  const { data, error } = await supabase
+    .from('user_reviews')
+    .upsert([{ user_id: userId, source, feedback }], { onConflict: 'user_id' })
+    .select('id')
+    .single()
+
+  if (error) {
+    console.error('Error saving user review:', error)
+    return null
+  }
+
+  return data
+}
+
+export const hasUserReview = async (userId) => {
+  const { data, error } = await supabase
+    .from('user_reviews')
+    .select('id')
+    .eq('user_id', userId)
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    console.error('Error checking user review:', error)
+    return false
+  }
+
+  return !!data
+}
+
 export const getAnalysisHistory = async (userId, page = 0, limit = 10) => {
   const start = page * limit
   const end = start + limit - 1
