@@ -31,15 +31,8 @@ useHead({
         class="bg-white/80 dark:bg-gray-800/80 rounded-lg shadow-md backdrop-blur-md p-6"
       >
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
-          <strong>Bacokitab</strong> adalah aplikasi pembelajaran i‘rab bahasa
-          Arab untuk membantu memahami dan membaca kitab gundul dengan lebih
-          mudah dan sistematis.
-        </p>
-        <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
-          Aplikasi ini menggunakan teknologi AI untuk menganalisis struktur
-          kalimat dan menghasilkan i‘rab secara otomatis berdasarkan kaidah
-          nahwu. Hasil analisis mungkin masih memerlukan peninjauan kembali
-          sebagai bagian dari proses training model AI.
+          <strong>Bacokitab</strong> adalah aplikasi untuk membantu belajar i‘rab dan membaca kitab gundul dengan bantuan AI.
+          Analisis i‘rab dibuat otomatis, namun masih dalam tahap pengembangan sehingga mungkin belum selalu tepat.
         </p>
         <p class="mb-4 text-gray-700 dark:text-gray-300 text-justify">
           Jika terdapat kesalahan atau kekeliruan dalam hasil analisis, maupun
