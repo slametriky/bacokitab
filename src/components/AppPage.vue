@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import TheNavbar from "./TheNavbar.vue";
 import TheFooter from "./TheFooter.vue";
 import InputSection from "./InputSection.vue";
@@ -38,6 +38,9 @@ const GUEST_REVIEW_KEY = "bacokitab_review_submitted_guest";
 const showToast = ref(false);
 const toastMessage = ref("");
 let toastTimeout = null;
+const canSubmitReview = computed(
+  () => reviewSource.value.trim().length > 0 && reviewFeedback.value.trim().length > 0
+);
 
 const runAnalyze = async (text) => {
   isLoading.value = true;
@@ -169,7 +172,8 @@ watch(
           </div>
           <button
             @click="submitReviewAndContinue"
-            class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98]"
+            :disabled="!canSubmitReview"
+            class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:active:scale-100"
           >
             Kirim Review & Lanjut Analisa
           </button>
