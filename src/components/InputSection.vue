@@ -258,8 +258,15 @@
             />
           </div>
           <div
-            class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-center gap-4 bg-white dark:bg-gray-800 z-10"
+            class="p-3 border-t border-gray-100 dark:border-gray-700 flex justify-center gap-2 bg-white dark:bg-gray-800 z-10"
           >
+            <button
+              @click="confirmCrop"
+              class="p-2 bg-primary hover:bg-primary/90 text-white rounded-lg flex items-center justify-center transition-transform active:scale-95"
+              title="Proses"
+            >
+              <span class="material-symbols-outlined">crop</span>
+            </button>
             <button
               @click="rotateCropLeft"
               class="p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
@@ -275,17 +282,11 @@
               <span class="material-symbols-outlined">rotate_90_degrees_cw</span>
             </button>
             <button
-              @click="confirmCrop"
-              class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold flex items-center gap-2 transition-transform active:scale-95"
-            >
-              <span class="material-symbols-outlined">crop</span>
-              Proses
-            </button>
-            <button
               @click="closeCropModal"
-              class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              class="p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+              title="Batal"
             >
-              Batal
+              <span class="material-symbols-outlined">close</span>
             </button>
           </div>
         </div>
