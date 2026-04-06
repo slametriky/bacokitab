@@ -162,7 +162,7 @@ watch(
             />
           </div>
           <div class="space-y-2">
-            <label class="text-sm font-semibold text-[#111814] dark:text-white">Review Anda</label>
+            <label class="text-sm font-semibold text-[#111814] dark:text-white">Review anda tentang aplikasi ini</label>
             <textarea
               v-model="reviewFeedback"
               rows="4"

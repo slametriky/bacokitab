@@ -261,6 +261,20 @@
             class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-center gap-4 bg-white dark:bg-gray-800 z-10"
           >
             <button
+              @click="rotateCropLeft"
+              class="p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+              title="Putar Kiri"
+            >
+              <span class="material-symbols-outlined">rotate_90_degrees_ccw</span>
+            </button>
+            <button
+              @click="rotateCropRight"
+              class="p-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+              title="Putar Kanan"
+            >
+              <span class="material-symbols-outlined">rotate_90_degrees_cw</span>
+            </button>
+            <button
               @click="confirmCrop"
               class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold flex items-center gap-2 transition-transform active:scale-95"
             >
@@ -554,6 +568,22 @@ const closeCropModal = () => {
   // Reset inputs
   if (cameraInput.value) cameraInput.value.value = "";
   if (galleryInput.value) galleryInput.value.value = "";
+};
+
+const rotateCropLeft = () => {
+  if (cropImageRef.value?.rotate) {
+    cropImageRef.value.rotate(-90);
+  } else {
+    triggerToast("Fitur putar belum tersedia.");
+  }
+};
+
+const rotateCropRight = () => {
+  if (cropImageRef.value?.rotate) {
+    cropImageRef.value.rotate(90);
+  } else {
+    triggerToast("Fitur putar belum tersedia.");
+  }
 };
 
 const confirmCrop = () => {
