@@ -6,9 +6,14 @@
       </h2>
       <div class="relative">
         <textarea
+          ref="textareaRef"
           v-model="inputText"
           @paste="handlePaste"
-          class="w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent text-lg placeholder:text-gray-400 transition-all resize-none dark:text-white"
+          dir="auto"
+          :class="[
+            'w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 transition-colors resize-none dark:text-white',
+            isArabicText ? 'arabic-text text-lg md:text-xl leading-[3.5rem] md:leading-[3.5rem]' : 'text-lg'
+          ]"
           maxlength="400"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
         ></textarea>
@@ -314,7 +319,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import Tesseract from "tesseract.js";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
@@ -326,6 +331,23 @@ const props = defineProps({
 const emit = defineEmits(["analyze"]);
 
 const inputText = ref("");
+const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
+const textareaRef = ref(null);
+
+const adjustTextareaHeight = () => {
+  const textarea = textareaRef.value;
+  if (!textarea) return;
+  // Reset height to allow shrinking
+  textarea.style.height = "160px";
+  // Set to scroll height if it's larger than the minimum
+  textarea.style.height = `${Math.max(textarea.scrollHeight, 160)}px`;
+};
+
+watch(inputText, () => {
+  nextTick(() => {
+    adjustTextareaHeight();
+  });
+});
 const showToast = ref(false);
 const toastMessage = ref("");
 let toastTimeout = null;
@@ -771,7 +793,8 @@ const cleanOcrText = (text) => {
     return true;
   });
 
-  let cleaned = validLines.join('\n');
+  // Join lines with a space instead of a newline
+  let cleaned = validLines.map(line => line.trim()).join(' ');
 
   // Fix common Tesseract misreadings for Arabic
   cleaned = cleaned.replace(/(^|\s)قالى(?=\s|$)/g, '$1قال');
@@ -780,8 +803,8 @@ const cleanOcrText = (text) => {
   cleaned = cleaned.replace(/(^|\s)جهيتم(?=\s|$)/g, '$1جهنم');
   cleaned = cleaned.replace(/(^|\s)ب(?=\s)جهنم/g, '$1في جهنم');
   
-  // Condense multiple spaces and newlines
-  cleaned = cleaned.replace(/[ \t]+/g, ' ');
+  // Condense multiple spaces and newlines into a single space
+  cleaned = cleaned.replace(/\s+/g, ' ');
   cleaned = cleaned.replace(/\s+([,:؛.؟!])/g, '$1');
 
   return cleaned.trim();
