@@ -5,7 +5,7 @@ import TheFooter from "./TheFooter.vue";
 import InputSection from "./InputSection.vue";
 import ResultSection from "./ResultSection.vue";
 import { analyzeText } from "../services/api";
-import { user, saveAnalysisToHistory, saveUserReview, hasUserReview } from "../lib/supabase.js";
+import { user, saveAnalysisToHistory, saveUserReview, hasUserReview, getAnalysisHistory } from "../lib/supabase.js";
 import { useHead } from "@unhead/vue";
 
 useHead({
@@ -28,13 +28,14 @@ useHead({
 
 const isLoading = ref(false);
 const result = ref(null);
-const hasSuccessfulAnalysis = ref(false);
+const hasAnalyzedBefore = ref(false);
 const reviewSubmitted = ref(false);
 const showReviewModal = ref(false);
 const reviewSource = ref("");
 const reviewFeedback = ref("");
 const pendingAnalyzeText = ref("");
 const GUEST_REVIEW_KEY = "bacokitab_review_submitted_guest";
+const HAS_ANALYZED_KEY = "bacokitab_has_analyzed_guest";
 const showToast = ref(false);
 const toastMessage = ref("");
 let toastTimeout = null;
@@ -48,7 +49,8 @@ const runAnalyze = async (text) => {
   try {
     const response = await analyzeText(text);
     result.value = response;
-    hasSuccessfulAnalysis.value = true;
+    hasAnalyzedBefore.value = true;
+    localStorage.setItem(HAS_ANALYZED_KEY, "1");
     
     // Save to history if logged in
     if (user.value) {
@@ -62,7 +64,7 @@ const runAnalyze = async (text) => {
 };
 
 const handleAnalyze = async (text) => {
-  if (hasSuccessfulAnalysis.value && !reviewSubmitted.value) {
+  if (hasAnalyzedBefore.value && !reviewSubmitted.value) {
     pendingAnalyzeText.value = text;
     showReviewModal.value = true;
     return;
@@ -74,9 +76,12 @@ const handleAnalyze = async (text) => {
 const refreshReviewStatus = async () => {
   if (user.value?.id) {
     reviewSubmitted.value = await hasUserReview(user.value.id);
+    const history = await getAnalysisHistory(user.value.id, 0, 1);
+    hasAnalyzedBefore.value = history && history.length > 0;
     return;
   }
   reviewSubmitted.value = localStorage.getItem(GUEST_REVIEW_KEY) === "1";
+  hasAnalyzedBefore.value = localStorage.getItem(HAS_ANALYZED_KEY) === "1";
 };
 
 const triggerToast = (message) => {
