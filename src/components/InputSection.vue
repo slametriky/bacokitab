@@ -6,12 +6,13 @@
       </h2>
       <div class="relative">
         <textarea
+          ref="textareaRef"
           v-model="inputText"
           @paste="handlePaste"
           dir="auto"
           :class="[
             'w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 transition-colors resize-none dark:text-white',
-            isArabicText ? 'arabic-text text-xl md:text-2xl leading-[3.5rem] md:leading-[3.5rem]' : 'text-lg'
+            isArabicText ? 'arabic-text text-lg md:text-xl leading-[3.5rem] md:leading-[3.5rem]' : 'text-lg'
           ]"
           maxlength="400"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
@@ -318,7 +319,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import Tesseract from "tesseract.js";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
@@ -331,6 +332,22 @@ const emit = defineEmits(["analyze"]);
 
 const inputText = ref("");
 const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
+const textareaRef = ref(null);
+
+const adjustTextareaHeight = () => {
+  const textarea = textareaRef.value;
+  if (!textarea) return;
+  // Reset height to allow shrinking
+  textarea.style.height = "160px";
+  // Set to scroll height if it's larger than the minimum
+  textarea.style.height = `${Math.max(textarea.scrollHeight, 160)}px`;
+};
+
+watch(inputText, () => {
+  nextTick(() => {
+    adjustTextareaHeight();
+  });
+});
 const showToast = ref(false);
 const toastMessage = ref("");
 let toastTimeout = null;
