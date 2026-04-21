@@ -184,6 +184,33 @@ export const getUserPracticeScores = async () => {
   return data
 }
 
+export const getHiwars = async () => {
+  const { data, error } = await supabase
+    .from('hiwars')
+    .select('id, title')
+    .order('created_at', { ascending: true })
+    
+  if (error) {
+    console.error('Error fetching hiwars:', error)
+    return []
+  }
+  return data
+}
+
+export const getHiwarById = async (id) => {
+  const { data, error } = await supabase
+    .from('hiwars')
+    .select('*')
+    .eq('id', id)
+    .single()
+    
+  if (error) {
+    console.error('Error fetching hiwar detail:', error)
+    return null
+  }
+  return data
+}
+
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error('Error logging out:', error.message)

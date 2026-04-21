@@ -7,6 +7,8 @@ import LoginPage from '../components/LoginPage.vue';
 import PracticePage from '../components/PracticePage.vue';
 import PracticeListPage from '../components/PracticeListPage.vue';
 import PublicIrabPage from '../components/PublicIrabPage.vue';
+import HiwarPage from '../components/HiwarPage.vue';
+import HiwarRoleplayPage from '../components/HiwarRoleplayPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -36,6 +38,16 @@ const routes = [
     path: '/latihan/:id',
     name: 'Practice',
     component: PracticePage,
+  },
+  {
+    path: '/hiwar',
+    name: 'Hiwar',
+    component: HiwarPage,
+  },
+  {
+    path: '/hiwar/:id',
+    name: 'HiwarRoleplay',
+    component: HiwarRoleplayPage,
   },
   {
     path: '/about',

@@ -27,6 +27,11 @@
           <span class="material-symbols-outlined text-[20px]">quiz</span>
           <span class="hidden sm:inline">Latihan</span>
         </router-link>
+
+        <router-link to="/hiwar" class="text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors flex items-center gap-1.5" active-class="text-primary dark:text-primary">
+          <span class="material-symbols-outlined text-[20px]">forum</span>
+          <span class="hidden sm:inline">Hiwar</span>
+        </router-link>
         
         <div v-if="user" class="flex items-center gap-4">
           <router-link to="/history" class="text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors flex items-center gap-1.5" active-class="text-primary dark:text-primary">
