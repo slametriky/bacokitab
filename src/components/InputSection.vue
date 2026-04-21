@@ -12,7 +12,7 @@
           dir="auto"
           :class="[
             'w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 transition-colors resize-none dark:text-white',
-            isArabicText ? 'arabic-text text-lg md:text-xl leading-[3.5rem] md:leading-[3.5rem]' : 'text-lg'
+            isArabicText ? 'arabic-text text-lg md:text-xl leading-[2.5rem] md:leading-[2.5rem]' : 'text-lg'
           ]"
           maxlength="400"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
