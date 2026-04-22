@@ -26,15 +26,15 @@
       active-class="text-primary"
       exact-active-class="text-primary"
       :class="[
-        $route.path.startsWith('/latihan')
+        $route.path === '/hiwar'
           ? 'text-primary'
           : 'text-[#111814] dark:text-white hover:text-primary',
       ]"
-      to="/latihan"
+      to="/hiwar"
     >
-      <span class="material-symbols-outlined text-[28px]">menu_book</span>
+      <span class="material-symbols-outlined text-[28px]">forum</span>
       <span class="text-[10px] font-bold uppercase tracking-widest"
-        >Latihan</span
+        >Hiwar</span
       >
     </router-link>
 
@@ -44,15 +44,15 @@
       active-class="text-primary"
       exact-active-class="text-primary"
       :class="[
-        $route.path === '/history'
+        $route.path.startsWith('/latihan')
           ? 'text-primary'
           : 'text-[#111814] dark:text-white hover:text-primary',
       ]"
-      to="/history"
+      to="/latihan"
     >
-      <span class="material-symbols-outlined text-[28px]">history</span>
+      <span class="material-symbols-outlined text-[28px]">menu_book</span>
       <span class="text-[10px] font-bold uppercase tracking-widest"
-        >Riwayat</span
+        >Latihan</span
       >
     </router-link>
 
