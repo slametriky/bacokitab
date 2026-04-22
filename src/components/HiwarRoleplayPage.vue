@@ -230,7 +230,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getHiwarById } from "../lib/supabase.js";
+import { getHiwarById, upsertHiwarHistory } from "../lib/supabase.js";
 import { useHead } from "@unhead/vue";
 
 const route = useRoute();
@@ -381,6 +381,12 @@ const initSpeechRecognition = () => {
         } else {
           // Tidak ada blob (respons JSON { "is_valid": "true" }) berarti percakapan selesai
           isConversationFinished.value = true;
+          
+          // Save history
+          if (hiwar.value?.id) {
+            upsertHiwarHistory(hiwar.value.id).catch(console.error);
+          }
+
           setTimeout(() => {
             messages.value.push({
               sender: "bot",

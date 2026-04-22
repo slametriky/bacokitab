@@ -211,6 +211,25 @@ export const getHiwarById = async (id) => {
   return data
 }
 
+export const upsertHiwarHistory = async (hiwarId) => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const { data, error } = await supabase
+    .from('hiwar_histories')
+    .upsert({
+      user_id: user.id,
+      hiwar_id: hiwarId,
+      completed: true,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id, hiwar_id' })
+    
+  if (error) {
+    console.error('Error saving hiwar history:', error)
+  }
+  return data
+}
+
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error('Error logging out:', error.message)
