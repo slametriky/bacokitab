@@ -87,6 +87,31 @@ export const hasUserReview = async (userId) => {
   return !!data
 }
 
+export const getVisibleReviews = async () => {
+  const { data, error } = await supabase
+    .from('visible_reviews')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching visible reviews:', error)
+    return []
+  }
+
+  return data
+}
+
+export const getTotalUsers = async () => {
+  const { data, error } = await supabase.rpc('get_total_users')
+
+  if (error) {
+    console.error('Error fetching total users:', error)
+    return 0
+  }
+
+  return data || 0
+}
+
 export const getAnalysisHistory = async (userId, page = 0, limit = 10) => {
   const start = page * limit
   const end = start + limit - 1

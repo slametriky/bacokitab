@@ -46,6 +46,19 @@
               Analisis I'rab otomatis dari teks, foto, atau suara. Solusi cerdas
               untuk pelajar dan pengajar bahasa Arab di era digital.
             </p>
+            <!-- Social Proof -->
+            <div v-if="totalUsers > 0" class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 mb-2">
+              <div class="flex -space-x-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 border-2 border-white dark:border-background-dark flex items-center justify-center text-blue-600 text-xs font-bold z-30">U</div>
+                <div class="w-8 h-8 rounded-full bg-green-100 border-2 border-white dark:border-background-dark flex items-center justify-center text-green-600 text-xs font-bold z-20">A</div>
+                <div class="w-8 h-8 rounded-full bg-purple-100 border-2 border-white dark:border-background-dark flex items-center justify-center text-purple-600 text-xs font-bold z-10">S</div>
+                <div class="w-8 h-8 rounded-full bg-gray-100 border-2 border-white dark:border-background-dark flex items-center justify-center text-gray-600 text-xs font-bold z-0">+</div>
+              </div>
+              <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium">
+                Bergabunglah bersama <strong class="text-[#111814] dark:text-white">{{ totalUsers }}+</strong> pengguna lainnya
+              </p>
+            </div>
+
             <div
               class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4"
             >
@@ -110,6 +123,61 @@
             <div
               class="absolute -bottom-10 -left-10 w-48 h-48 bg-primary/10 rounded-full blur-3xl"
             ></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews Section -->
+      <section v-if="reviews.length > 0" class="py-16 bg-gray-50/50 dark:bg-background-dark/20 overflow-hidden border-y border-[#dbe6e0] dark:border-white/5">
+        <div class="max-w-7xl mx-auto px-4 mb-10 text-center">
+          <h3 class="text-3xl font-black text-[#111814] dark:text-white tracking-tight">Apa Kata Mereka?</h3>
+        </div>
+        
+        <div class="marquee-container">
+          <!-- First track -->
+          <div class="marquee-content">
+            <div v-for="review in reviews" :key="review.id" class="flex flex-col bg-white dark:bg-background-dark/60 p-6 rounded-2xl border border-[#dbe6e0] dark:border-white/10 shadow-sm w-80 shrink-0 transition-transform hover:-translate-y-1">
+              <div class="flex items-center gap-4 mb-4">
+                <img v-if="review.user_avatar" :src="review.user_avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700" alt="Avatar" />
+                <div v-else class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+                  {{ review.user_name ? review.user_name.charAt(0).toUpperCase() : 'U' }}
+                </div>
+                <div>
+                  <h4 class="font-bold text-[#111814] dark:text-white truncate max-w-[180px]">{{ review.user_name || 'Pengguna BacoKitab' }}</h4>
+                  <div class="flex text-yellow-400 text-sm">
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                  </div>
+                </div>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 italic text-[15px] leading-relaxed line-clamp-4">"{{ review.feedback }}"</p>
+            </div>
+          </div>
+
+          <!-- Second track for seamless loop -->
+          <div class="marquee-content" aria-hidden="true">
+            <div v-for="review in reviews" :key="'copy-'+review.id" class="flex flex-col bg-white dark:bg-background-dark/60 p-6 rounded-2xl border border-[#dbe6e0] dark:border-white/10 shadow-sm w-80 shrink-0 transition-transform hover:-translate-y-1">
+              <div class="flex items-center gap-4 mb-4">
+                <img v-if="review.user_avatar" :src="review.user_avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700" alt="Avatar" />
+                <div v-else class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-lg">
+                  {{ review.user_name ? review.user_name.charAt(0).toUpperCase() : 'U' }}
+                </div>
+                <div>
+                  <h4 class="font-bold text-[#111814] dark:text-white truncate max-w-[180px]">{{ review.user_name || 'Pengguna BacoKitab' }}</h4>
+                  <div class="flex text-yellow-400 text-sm">
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                    <span class="material-symbols-outlined text-[16px]">star</span>
+                  </div>
+                </div>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 italic text-[15px] leading-relaxed line-clamp-4">"{{ review.feedback }}"</p>
+            </div>
           </div>
         </div>
       </section>
@@ -317,8 +385,29 @@
 </template>
 
 <script setup>
-import { user } from '../lib/supabase.js'
+import { user, getVisibleReviews, getTotalUsers } from '../lib/supabase.js'
 import { useHead } from '@unhead/vue'
+import { ref, onMounted } from 'vue'
+
+const reviews = ref([])
+const totalUsers = ref(0)
+
+onMounted(async () => {
+  try {
+    totalUsers.value = await getTotalUsers()
+    
+    const data = await getVisibleReviews()
+    // Duplicate reviews to make the marquee longer if there are too few reviews
+    // so it doesn't leave an empty space at the end of the scrolling list.
+    if (data && data.length > 0 && data.length < 5) {
+      reviews.value = [...data, ...data, ...data].slice(0, 5)
+    } else {
+      reviews.value = data || []
+    }
+  } catch (err) {
+    console.error('Error fetching reviews:', err)
+  }
+})
 
 useHead({
   title: 'BacoKitab - Aplikasi Analisa I\'rab Bahasa Arab dengan AI',
@@ -338,3 +427,32 @@ useHead({
   ]
 })
 </script>
+
+<style scoped>
+.marquee-container {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: 1.5rem;
+  padding-left: 1.5rem;
+}
+.marquee-content {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  min-width: 100%;
+  gap: 1.5rem;
+  animation: scroll 80s linear infinite;
+}
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - 1.5rem));
+  }
+}
+</style>
