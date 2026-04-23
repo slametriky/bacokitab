@@ -73,7 +73,7 @@
               </router-link>
             </div>
           </div>
-          <div class="flex-1 w-full relative">
+          <div class="hidden md:block flex-1 w-full relative">
             <div
               class="relative z-10 w-full aspect-square md:aspect-video rounded-3xl bg-white dark:bg-[#1a2f24] shadow-2xl border border-[#dbe6e0] dark:border-white/10 overflow-hidden group"
             >
