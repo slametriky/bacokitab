@@ -291,8 +291,7 @@ const scrollToBottom = () => {
   }, 100);
 };
 
-const API_URL =
-  "https://n8n-fzbuaxc5ergn.perak.sumopod.my.id/webhook/voice-agent";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/voice-agent`;
 
 let recognition = null;
 const tempTranscript = ref("");
