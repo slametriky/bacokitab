@@ -693,37 +693,26 @@ const processOcr = async (file) => {
     let ocrResultText = "";
 
     try {
-      // 1. Try OCR Space API First
+      // 1. Try N8N OCR Webhook First
       ocrProgress.value = 40;
-
-      // OCR Space Free Tier Limit is 1024KB. Base64 adds ~33% overhead.
-      // So if the raw file size is > ~750KB, it will likely fail.
-      if (file.size > 800 * 1024) {
-         throw new Error("File too large for free API limits. Size: " + Math.round(file.size/1024) + "KB");
-      }
       
-      const formData = new FormData();
-      formData.append('base64image', base64Image);
-      formData.append('language', 'ara');
-      formData.append('OCREngine', '1'); // Default engine
-
-      const apiKey = import.meta.env.VITE_OCR_SPACE_API_KEY || 'helloworld';
-      formData.append('apikey', apiKey);
-
-      const apiUrl = import.meta.env.VITE_OCR_SPACE_API_URL || 'https://api.ocr.space/parse/image';
+      const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/ocr`;
       const response = await fetch(apiUrl, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image: base64Image })
       });
 
       ocrProgress.value = 80;
       const result = await response.json();
 
-      if (result.IsErroredOnProcessing || !result.ParsedResults || result.ParsedResults.length === 0) {
-         throw new Error("OCR API failed or returned empty: " + (result.ErrorMessage || "Unknown Error"));
+      if (!result.text) {
+         throw new Error("OCR API failed or returned empty.");
       }
 
-      ocrResultText = result.ParsedResults[0].ParsedText;
+      ocrResultText = result.text;
 
     } catch (apiError) {
       console.warn("OCR API failed, falling back to Tesseract.js:", apiError);
