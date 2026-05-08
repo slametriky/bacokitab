@@ -9,6 +9,7 @@ import PracticeListPage from '../components/PracticeListPage.vue';
 import PublicIrabPage from '../components/PublicIrabPage.vue';
 import HiwarPage from '../components/HiwarPage.vue';
 import HiwarRoleplayPage from '../components/HiwarRoleplayPage.vue';
+import TransactionLogsPage from '../components/TransactionLogsPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -16,6 +17,12 @@ const routes = [
     path: '/',
     name: 'Landing',
     component: LandingPage,
+  },
+  {
+    path: '/transaksi',
+    name: 'TransactionLogs',
+    component: TransactionLogsPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/analisa',

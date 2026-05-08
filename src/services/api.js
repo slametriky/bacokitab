@@ -1,10 +1,20 @@
+import { supabase } from '../lib/supabase.js';
+
+const getAuthHeaders = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session ? { 'x-auth': `Bearer ${session.access_token}` } : {};
+};
+
 export const analyzeText = async (text) => {
   try {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const authHeaders = await getAuthHeaders();
+    
     const response = await fetch(`${baseUrl}/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders
       },
       body: JSON.stringify({ text }),
     });
@@ -24,10 +34,13 @@ export const analyzeText = async (text) => {
 export const getWordDetail = async (text) => {
   try {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const authHeaders = await getAuthHeaders();
+
     const response = await fetch(`${baseUrl}/detail`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders
       },
       body: JSON.stringify({ text }),
     });

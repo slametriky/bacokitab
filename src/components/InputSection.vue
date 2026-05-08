@@ -1,9 +1,20 @@
 <template>
   <section class="space-y-4">
     <div class="space-y-2">
-      <h2 class="text-xl font-bold px-1 text-[#111814] dark:text-white">
-        Input Kalimat
-      </h2>
+      <div class="flex items-center justify-between px-1">
+        <h2 class="text-xl font-bold text-[#111814] dark:text-white">
+          Input Kalimat
+        </h2>
+        <div v-if="tokenStats" class="text-xs font-medium px-3 py-1 rounded-full flex items-center" :class="tokenStats.isLimitReached ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-primary/10 text-primary'">
+          <span v-if="tokenStats.isPremium">
+            <span class="material-symbols-outlined text-[14px] align-middle mr-1">workspace_premium</span>
+            Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }}
+          </span>
+          <span v-else>
+            Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }} / {{ (tokenStats.limit || 0).toLocaleString('id-ID') }}
+          </span>
+        </div>
+      </div>
       <div class="relative">
         <textarea
           ref="textareaRef"
@@ -14,20 +25,25 @@
             'w-full min-h-[160px] p-4 rounded-xl border border-primary/20 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-gray-400 transition-colors resize-none dark:text-white',
             isArabicText ? 'arabic-text text-lg md:text-xl leading-[2.5rem] md:leading-[2.5rem]' : 'text-lg'
           ]"
-          maxlength="400"
+          :maxlength="maxCharacters"
           placeholder="Masukkan kalimat bahasa Arab atau Latin di sini..."
         ></textarea>
+        
+        <!-- OCR Loading Overlay -->
+        <div v-if="isOcrLoading" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl border border-primary/20">
+          <span class="material-symbols-outlined animate-spin text-4xl text-primary mb-2">progress_activity</span>
+          <p class="text-sm font-bold text-gray-700 dark:text-gray-200">Mengekstrak Teks...</p>
+        </div>
+
         <div class="flex items-center justify-between mt-2 px-1">
           <div class="flex gap-2">
             <button
               @click="triggerFileInput"
-              :disabled="isOcrLoading"
+              :disabled="isOcrLoading || (tokenStats?.isLimitReached ?? false)"
               class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors border border-primary/20 flex items-center justify-center disabled:opacity-50 disabled:cursor-wait"
-              title="Ambil Foto / OCR"
+              :title="(tokenStats?.isLimitReached ?? false) ? 'Limit token habis' : 'Ambil Foto / OCR'"
             >
-              <span v-if="isOcrLoading" class="text-xs font-bold"
-                >{{ ocrProgress }}%</span
-              >
+              <span v-if="isOcrLoading" class="material-symbols-outlined animate-spin">progress_activity</span>
               <span v-else class="material-symbols-outlined">photo_camera</span>
             </button>
             <!-- Camera Input (Direct Capture) -->
@@ -49,13 +65,14 @@
             />
             <button
               @click="toggleSpeech"
-              class="p-2 rounded-lg transition-colors border flex items-center justify-center transition-all duration-300"
+              :disabled="tokenStats?.isLimitReached ?? false"
+              class="p-2 rounded-lg transition-colors border flex items-center justify-center transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               :class="
                 isListening
                   ? 'bg-red-500 text-white border-red-500 animate-pulse ring-2 ring-red-300'
                   : 'text-primary hover:bg-primary/10 border-primary/20'
               "
-              title="Input Suara"
+              :title="(tokenStats?.isLimitReached ?? false) ? 'Limit token habis' : 'Input Suara'"
             >
               <span class="material-symbols-outlined">{{
                 isListening ? "mic_off" : "mic"
@@ -72,21 +89,21 @@
             </button>
           </div>
           <span class="text-xs text-gray-500 font-medium"
-            >{{ inputText.length }} / 400 karakter</span
+            >{{ inputText.length }} / {{ maxCharacters }} karakter</span
           >
         </div>
       </div>
     </div>
     <button
       @click="$emit('analyze', inputText)"
-      :disabled="isLoading || !inputText.trim()"
+      :disabled="isLoading || !inputText.trim() || (tokenStats?.isLimitReached ?? false)"
       class="w-full bg-primary hover:bg-primary/90 font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all text-white disabled:opacity-70 disabled:cursor-not-allowed"
     >
       <span v-if="isLoading" class="material-symbols-outlined animate-spin"
         >progress_activity</span
       >
       <span>{{
-        isLoading ? "Sedang Menganalisis..." : "Analisis Kalimat"
+        isLoading ? "Sedang Menganalisis..." : ((tokenStats?.isLimitReached ?? false) ? "Limit Habis" : "Analisis Kalimat")
       }}</span>
     </button>
 
@@ -323,15 +340,21 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import Tesseract from "tesseract.js";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
+import { supabase } from "../lib/supabase.js";
 
 const props = defineProps({
   isLoading: Boolean,
+  tokenStats: {
+    type: Object,
+    default: null
+  }
 });
 
-const emit = defineEmits(["analyze"]);
+const emit = defineEmits(["analyze", "refresh-stats"]);
 
 const inputText = ref("");
 const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
+const maxCharacters = computed(() => props.tokenStats?.isPremium ? 1000 : 400);
 const textareaRef = ref(null);
 
 const adjustTextareaHeight = () => {
@@ -445,7 +468,6 @@ const toggleSpeech = () => {
 
 // OCR Logic
 const isOcrLoading = ref(false);
-const ocrProgress = ref(0);
 const fileInput = ref(null);
 
 const triggerFileInput = () => {
@@ -685,7 +707,6 @@ const getBase64 = (file) => {
 
 const processOcr = async (file) => {
   isOcrLoading.value = true;
-  ocrProgress.value = 10; // Start progress indicator
   triggerToast("Memproses gambar...");
 
   try {
@@ -694,18 +715,21 @@ const processOcr = async (file) => {
 
     try {
       // 1. Try N8N OCR Webhook First
-      ocrProgress.value = 40;
       
       const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/ocr`;
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      const authHeaders = session ? { 'x-auth': `Bearer ${session.access_token}` } : {};
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...authHeaders
         },
         body: JSON.stringify({ image: base64Image })
       });
 
-      ocrProgress.value = 80;
       const result = await response.json();
 
       if (!result.text) {
@@ -714,6 +738,8 @@ const processOcr = async (file) => {
 
       ocrResultText = result.text;
 
+      // Token logging is handled by BE, but we trigger a UI refresh to update stats
+      emit('refresh-stats');
     } catch (apiError) {
       console.warn("OCR API failed, falling back to Tesseract.js:", apiError);
       
@@ -722,15 +748,7 @@ const processOcr = async (file) => {
         data: { text },
       } = await Tesseract.recognize(
         file,
-        "ara", // Arabic
-        {
-          logger: (m) => {
-            if (m.status === "recognizing text") {
-              // Map tesseract progress (0-1) to our remaining 80-100%
-              ocrProgress.value = Math.round(80 + (m.progress * 20));
-            }
-          },
-        },
+        "ara" // Arabic
       );
       
       ocrResultText = text;
@@ -756,7 +774,6 @@ const processOcr = async (file) => {
     triggerToast("Gagal memproses gambar: " + err.message);
   } finally {
     isOcrLoading.value = false;
-    ocrProgress.value = 0;
   }
 };
 

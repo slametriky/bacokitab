@@ -80,6 +80,15 @@
                     </p>
                   </div>
                   
+                  <router-link
+                    to="/transaksi"
+                    @click="isDropdownOpen = false"
+                    class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 font-medium flex items-center gap-2 transition-colors border-b border-gray-100 dark:border-gray-700"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+                    Log Transaksi
+                  </router-link>
+
                   <button
                     @click="handleLogout"
                     class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 font-bold flex items-center gap-2 transition-colors"

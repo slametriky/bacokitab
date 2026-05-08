@@ -259,3 +259,63 @@ export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error('Error logging out:', error.message)
 }
+
+export const getUserTokenStats = async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  // 1. Fetch user plan details
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('plan_type, daily_token_limit, max_premium_tokens')
+    .eq('id', user.id)
+    .single()
+
+  if (userError || !userData) {
+    console.error('Error fetching user plan:', userError)
+    return null
+  }
+
+  const isPremium = userData.plan_type === 'premium'
+
+  if (isPremium) {
+    // For premium users, max_premium_tokens represents the REMAINING tokens,
+    // as it is directly deducted upon transaction.
+    return {
+      planType: userData.plan_type,
+      isPremium,
+      limit: userData.max_premium_tokens, // or initial limit, but we only know the current remaining
+      totalUsed: 0, 
+      remaining: userData.max_premium_tokens,
+      isLimitReached: userData.max_premium_tokens <= 0
+    }
+  }
+
+  const limit = userData.daily_token_limit
+
+  // 2. Fetch token usage for free user
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const { data: usageData, error: usageError } = await supabase
+    .from('user_transactions')
+    .select('total_tokens')
+    .eq('user_id', user.id)
+    .gte('created_at', today.toISOString())
+
+  if (usageError) {
+    console.error('Error fetching token usage:', usageError)
+    return null
+  }
+
+  const totalUsed = usageData.reduce((sum, row) => sum + row.total_tokens, 0)
+
+  return {
+    planType: userData.plan_type,
+    isPremium,
+    limit,
+    totalUsed,
+    remaining: Math.max(0, limit - totalUsed),
+    isLimitReached: totalUsed >= limit
+  }
+}

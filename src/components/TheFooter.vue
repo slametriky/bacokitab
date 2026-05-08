@@ -26,24 +26,6 @@
       active-class="text-primary"
       exact-active-class="text-primary"
       :class="[
-        $route.path === '/hiwar'
-          ? 'text-primary'
-          : 'text-[#111814] dark:text-white hover:text-primary',
-      ]"
-      to="/hiwar"
-    >
-      <span class="material-symbols-outlined text-[28px]">forum</span>
-      <span class="text-[10px] font-bold uppercase tracking-widest"
-        >Hiwar</span
-      >
-    </router-link>
-
-    <router-link
-      v-if="user"
-      class="flex flex-col items-center gap-1 transition-colors"
-      active-class="text-primary"
-      exact-active-class="text-primary"
-      :class="[
         $route.path.startsWith('/latihan')
           ? 'text-primary'
           : 'text-[#111814] dark:text-white hover:text-primary',
@@ -53,6 +35,24 @@
       <span class="material-symbols-outlined text-[28px]">menu_book</span>
       <span class="text-[10px] font-bold uppercase tracking-widest"
         >Latihan</span
+      >
+    </router-link>
+
+    <router-link
+      v-if="user"
+      class="flex flex-col items-center gap-1 transition-colors"
+      active-class="text-primary"
+      exact-active-class="text-primary"
+      :class="[
+        $route.path === '/hiwar'
+          ? 'text-primary'
+          : 'text-[#111814] dark:text-white hover:text-primary',
+      ]"
+      to="/hiwar"
+    >
+      <span class="material-symbols-outlined text-[28px]">forum</span>
+      <span class="text-[10px] font-bold uppercase tracking-widest"
+        >Hiwar</span
       >
     </router-link>
 

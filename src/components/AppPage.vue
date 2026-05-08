@@ -5,7 +5,7 @@ import TheFooter from "./TheFooter.vue";
 import InputSection from "./InputSection.vue";
 import ResultSection from "./ResultSection.vue";
 import { analyzeText } from "../services/api";
-import { user, saveAnalysisToHistory, saveUserReview, hasUserReview, getAnalysisHistory } from "../lib/supabase.js";
+import { user, saveAnalysisToHistory, saveUserReview, hasUserReview, getAnalysisHistory, getUserTokenStats } from "../lib/supabase.js";
 import { useHead } from "@unhead/vue";
 
 useHead({
@@ -42,6 +42,8 @@ let toastTimeout = null;
 const canSubmitReview = computed(
   () => reviewSource.value.trim().length > 0 && reviewFeedback.value.trim().length > 0
 );
+const tokenStats = ref(null);
+
 
 const runAnalyze = async (text) => {
   isLoading.value = true;
@@ -55,6 +57,7 @@ const runAnalyze = async (text) => {
     // Save to history if logged in
     if (user.value) {
       await saveAnalysisToHistory(user.value.id, text, response);
+      tokenStats.value = await getUserTokenStats();
     }
   } catch (error) {
     alert("Terjadi kesalahan: " + error.message);
@@ -78,8 +81,10 @@ const refreshReviewStatus = async () => {
     reviewSubmitted.value = await hasUserReview(user.value.id);
     const history = await getAnalysisHistory(user.value.id, 0, 1);
     hasAnalyzedBefore.value = history && history.length > 0;
+    tokenStats.value = await getUserTokenStats();
     return;
   }
+  tokenStats.value = null;
   reviewSubmitted.value = localStorage.getItem(GUEST_REVIEW_KEY) === "1";
   hasAnalyzedBefore.value = localStorage.getItem(HAS_ANALYZED_KEY) === "1";
 };
@@ -135,7 +140,7 @@ watch(
   <div class="min-h-screen flex flex-col">
     <TheNavbar />
     <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6 space-y-8 pb-24">
-      <InputSection @analyze="handleAnalyze" :isLoading="isLoading" />
+      <InputSection @analyze="handleAnalyze" @refresh-stats="refreshReviewStatus" :isLoading="isLoading" :tokenStats="tokenStats" />
       <ResultSection v-if="result" :result="result" />
     </main>
     <TheFooter />
