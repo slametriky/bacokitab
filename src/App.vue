@@ -4,6 +4,17 @@ import { ref, onMounted, onUnmounted } from "vue";
 const deferredPrompt = ref(null);
 const showInstallPrompt = ref(false);
 const isOldDomain = ref(false);
+const isCopied = ref(false);
+
+const copyDomain = async () => {
+  try {
+    await navigator.clipboard.writeText("https://bacokitab.web.id");
+    isCopied.value = true;
+    setTimeout(() => { isCopied.value = false; }, 3000);
+  } catch (err) {
+    console.error("Gagal menyalin: ", err);
+  }
+};
 
 const handleBeforeInstallPrompt = (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
@@ -76,18 +87,19 @@ const dismissInstall = () => {
         >
           Aplikasi BacoKitab telah berpindah ke
           <strong>bacokitab.web.id</strong>. <br /><br />
-          Silakan klik tombol di bawah untuk membuka domain baru. Setelah
-          terbuka, <strong>install ulang aplikasinya</strong> (Tambahkan ke
-          Layar Utama), lalu hapus aplikasi yang lama ini dari perangkat Anda.
+          Karena batasan sistem, Anda harus <strong>menyalin link di bawah ini</strong> dan membukanya secara manual di aplikasi browser utama (seperti Chrome/Safari). Setelah terbuka, <strong>install ulang aplikasinya</strong> lalu hapus aplikasi lama ini.
         </p>
-        <a
-          href="https://bacokitab.web.id"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition-colors mb-3"
-        >
-          Buka Domain Baru (bacokitab.web.id)
-        </a>
+        
+        <div class="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
+          <input type="text" readonly value="https://bacokitab.web.id" class="w-full bg-transparent text-sm font-medium text-gray-700 dark:text-gray-200 outline-none px-2">
+          <button 
+            @click="copyDomain" 
+            class="flex-shrink-0 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm font-bold flex items-center gap-1.5 transition-colors"
+          >
+            <span class="material-symbols-outlined text-[18px]">{{ isCopied ? 'check' : 'content_copy' }}</span>
+            {{ isCopied ? 'Tersalin' : 'Salin URL' }}
+          </button>
+        </div>
       </div>
     </div>
   </Transition>
