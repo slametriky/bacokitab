@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 
 const deferredPrompt = ref(null);
 const showInstallPrompt = ref(false);
+const isOldDomain = ref(false);
 
 const handleBeforeInstallPrompt = (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
@@ -14,6 +15,9 @@ const handleBeforeInstallPrompt = (e) => {
 };
 
 onMounted(() => {
+  if (window.location.hostname === "bacokitab.vercel.app" || window.location.hostname === "localhost") {
+    isOldDomain.value = true;
+  }
   window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 });
 
@@ -43,6 +47,49 @@ const dismissInstall = () => {
 </script>
 
 <template>
+  <!-- Old Domain Migration Modal -->
+  <Transition
+    enter-active-class="transition ease-out duration-300"
+    enter-from-class="opacity-0 scale-95"
+    enter-to-class="opacity-100 scale-100"
+    leave-active-class="transition ease-in duration-200"
+    leave-from-class="opacity-100 scale-100"
+    leave-to-class="opacity-0 scale-95"
+  >
+    <div
+      v-if="isOldDomain"
+      class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 text-center border-2 border-red-500"
+      >
+        <div
+          class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <span class="material-symbols-outlined text-3xl">warning</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          Pindah Domain Baru
+        </h3>
+        <p
+          class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed"
+        >
+          Aplikasi BacoKitab telah berpindah ke
+          <strong>bacokitab.web.id</strong>. <br /><br />
+          Silakan klik tombol di bawah untuk membuka domain baru. Setelah
+          terbuka, <strong>install ulang aplikasinya</strong> (Tambahkan ke
+          Layar Utama), lalu hapus aplikasi yang lama ini dari perangkat Anda.
+        </p>
+        <a
+          href="https://bacokitab.web.id"
+          class="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition-colors mb-3"
+        >
+          Buka Domain Baru (bacokitab.web.id)
+        </a>
+      </div>
+    </div>
+  </Transition>
+
   <router-view></router-view>
 
   <!-- Custom PWA Install Banner -->
