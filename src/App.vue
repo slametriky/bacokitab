@@ -15,7 +15,7 @@ const handleBeforeInstallPrompt = (e) => {
 };
 
 onMounted(() => {
-  if (window.location.hostname === "bacokitab.vercel.app" || window.location.hostname === "localhost") {
+  if (window.location.hostname === "bacokitab.vercel.app") {
     isOldDomain.value = true;
   }
   window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -82,6 +82,8 @@ const dismissInstall = () => {
         </p>
         <a
           href="https://bacokitab.web.id"
+          target="_blank"
+          rel="noopener noreferrer"
           class="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition-colors mb-3"
         >
           Buka Domain Baru (bacokitab.web.id)
