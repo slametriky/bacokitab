@@ -28,14 +28,20 @@ const handleBeforeInstallPrompt = (e) => {
 };
 
 onMounted(() => {
-  // if (window.location.hostname === "bacokitab.vercel.app") {
-  //   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  //   if (!isStandalone) {
-  //     window.location.replace("https://bacokitab.web.id" + window.location.pathname + window.location.search);
-  //     return;
-  //   }
-  //   isOldDomain.value = true;
-  // }
+  if (window.location.hostname === "bacokitab.vercel.app") {
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone;
+    if (!isStandalone) {
+      window.location.replace(
+        "https://bacokitab.web.id" +
+          window.location.pathname +
+          window.location.search,
+      );
+      return;
+    }
+    isOldDomain.value = true;
+  }
   window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 });
 
