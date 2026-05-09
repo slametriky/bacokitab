@@ -5,15 +5,17 @@
         <h2 class="text-xl font-bold text-[#111814] dark:text-white">
           Input Kalimat
         </h2>
-        <div v-if="tokenStats" class="text-xs font-medium px-3 py-1 rounded-full flex items-center" :class="tokenStats.isLimitReached ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-primary/10 text-primary'">
-          <span v-if="tokenStats.isPremium">
-            <span class="material-symbols-outlined text-[14px] align-middle mr-1">workspace_premium</span>
-            Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }}
-          </span>
-          <span v-else class="flex items-center gap-1 group relative" title="Token gratis 10.000 akan di-reset setiap tengah malam">
-            Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }} / {{ (tokenStats.limit || 0).toLocaleString('id-ID') }}
-            <span class="material-symbols-outlined text-[14px] opacity-70 group-hover:opacity-100 cursor-help transition-opacity">info</span>
-          </span>
+        <div v-if="tokenStats" class="flex flex-col items-end">
+          <div class="text-xs font-medium px-3 py-1.5 rounded-full flex items-center" :class="tokenStats.isLimitReached ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-primary/10 text-primary'">
+            <span v-if="tokenStats.isPremium">
+              <span class="material-symbols-outlined text-[14px] align-middle mr-1">workspace_premium</span>
+              Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }}
+            </span>
+            <span v-else>
+              Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }} / {{ (tokenStats.limit || 0).toLocaleString('id-ID') }}
+            </span>
+          </div>
+          <span v-if="!tokenStats.isPremium" class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 mr-1 font-medium">Di-reset setiap hari</span>
         </div>
       </div>
       <div class="relative">
