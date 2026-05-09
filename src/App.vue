@@ -10,7 +10,9 @@ const copyDomain = async () => {
   try {
     await navigator.clipboard.writeText("https://bacokitab.web.id");
     isCopied.value = true;
-    setTimeout(() => { isCopied.value = false; }, 3000);
+    setTimeout(() => {
+      isCopied.value = false;
+    }, 3000);
   } catch (err) {
     console.error("Gagal menyalin: ", err);
   }
@@ -26,14 +28,14 @@ const handleBeforeInstallPrompt = (e) => {
 };
 
 onMounted(() => {
-  if (window.location.hostname === "bacokitab.vercel.app") {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (!isStandalone) {
-      window.location.replace("https://bacokitab.web.id" + window.location.pathname + window.location.search);
-      return;
-    }
-    isOldDomain.value = true;
-  }
+  // if (window.location.hostname === "bacokitab.vercel.app") {
+  //   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  //   if (!isStandalone) {
+  //     window.location.replace("https://bacokitab.web.id" + window.location.pathname + window.location.search);
+  //     return;
+  //   }
+  //   isOldDomain.value = true;
+  // }
   window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 });
 
@@ -87,26 +89,47 @@ const dismissInstall = () => {
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
           Pindah Domain Baru
         </h3>
-        <div class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed text-left bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+        <div
+          class="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed text-left bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700"
+        >
           <p class="mb-3 text-center">
-            Halo! Aplikasi BacoKitab sekarang punya alamat baru di <strong>bacokitab.web.id</strong> 🎉
+            Halo! Aplikasi BacoKitab sekarang punya alamat baru di
+            <strong>bacokitab.web.id</strong> 🎉
           </p>
-          <p class="font-medium mb-2">Yuk pindah ke aplikasi baru dengan 3 langkah mudah:</p>
-          <ol class="list-decimal pl-5 space-y-1 text-gray-500 dark:text-gray-400">
+          <p class="font-medium mb-2">
+            Yuk pindah ke aplikasi baru dengan 3 langkah mudah:
+          </p>
+          <ol
+            class="list-decimal pl-5 space-y-1 text-gray-500 dark:text-gray-400"
+          >
             <li><strong>Salin URL</strong> di bawah ini.</li>
-            <li>Buka browser (Chrome/Safari) lalu <strong>Paste/Tempel</strong> URL-nya.</li>
-            <li><strong>Install aplikasinya</strong> lalu hapus versi lama ini.</li>
+            <li>
+              Buka browser (Chrome/Safari) lalu
+              <strong>Paste/Tempel</strong> URL-nya.
+            </li>
+            <li>
+              <strong>Install aplikasinya</strong> lalu hapus versi lama ini.
+            </li>
           </ol>
         </div>
-        
-        <div class="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
-          <input type="text" readonly value="https://bacokitab.web.id" class="w-full bg-transparent text-sm font-medium text-gray-700 dark:text-gray-200 outline-none px-2">
-          <button 
-            @click="copyDomain" 
+
+        <div
+          class="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600"
+        >
+          <input
+            type="text"
+            readonly
+            value="https://bacokitab.web.id"
+            class="w-full bg-transparent text-sm font-medium text-gray-700 dark:text-gray-200 outline-none px-2"
+          />
+          <button
+            @click="copyDomain"
             class="flex-shrink-0 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm font-bold flex items-center gap-1.5 transition-colors"
           >
-            <span class="material-symbols-outlined text-[18px]">{{ isCopied ? 'check' : 'content_copy' }}</span>
-            {{ isCopied ? 'Tersalin' : 'Salin URL' }}
+            <span class="material-symbols-outlined text-[18px]">{{
+              isCopied ? "check" : "content_copy"
+            }}</span>
+            {{ isCopied ? "Tersalin" : "Salin URL" }}
           </button>
         </div>
       </div>
