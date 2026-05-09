@@ -27,6 +27,11 @@ const handleBeforeInstallPrompt = (e) => {
 
 onMounted(() => {
   if (window.location.hostname === "bacokitab.vercel.app") {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (!isStandalone) {
+      window.location.replace("https://bacokitab.web.id" + window.location.pathname + window.location.search);
+      return;
+    }
     isOldDomain.value = true;
   }
   window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -90,7 +95,7 @@ const dismissInstall = () => {
           <ol class="list-decimal pl-5 space-y-1 text-gray-500 dark:text-gray-400">
             <li><strong>Salin URL</strong> di bawah ini.</li>
             <li>Buka browser (Chrome/Safari) lalu <strong>Paste/Tempel</strong> URL-nya.</li>
-            <li><strong>Install aplikasinya</strong> lalu hapus versi lama ini. 😉</li>
+            <li><strong>Install aplikasinya</strong> lalu hapus versi lama ini.</li>
           </ol>
         </div>
         
