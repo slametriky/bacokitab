@@ -10,8 +10,9 @@
             <span class="material-symbols-outlined text-[14px] align-middle mr-1">workspace_premium</span>
             Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }}
           </span>
-          <span v-else>
+          <span v-else class="flex items-center gap-1 group relative" title="Token gratis 10.000 akan di-reset setiap tengah malam">
             Sisa Token: {{ (tokenStats.remaining || 0).toLocaleString('id-ID') }} / {{ (tokenStats.limit || 0).toLocaleString('id-ID') }}
+            <span class="material-symbols-outlined text-[14px] opacity-70 group-hover:opacity-100 cursor-help transition-opacity">info</span>
           </span>
         </div>
       </div>

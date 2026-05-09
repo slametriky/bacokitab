@@ -234,8 +234,8 @@ watch(
                 <span class="material-symbols-outlined text-orange-500">generating_tokens</span>
                 Tambah Token
               </h3>
-              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Limit harian Anda telah habis. Beli token untuk terus menggunakan fitur analisa.
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
+                Limit harian Anda telah habis. Anda akan mendapatkan <strong class="text-primary dark:text-primary/80">10.000 token gratis besok</strong>, atau beli token tambahan untuk lanjut analisa sekarang tanpa batas kadaluarsa.
               </p>
             </div>
             <button @click="showTokenModal = false" class="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors relative z-10 bg-gray-50 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
