@@ -226,48 +226,48 @@ watch(
         class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       >
         <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-primary/10">
-          <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center relative overflow-hidden">
+          <div class="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-start relative overflow-hidden gap-4">
              <!-- Background Decoration -->
             <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
             <div class="relative z-10">
-              <h3 class="text-xl font-bold text-[#111814] dark:text-white flex items-center gap-2">
+              <h3 class="text-lg sm:text-xl font-bold text-[#111814] dark:text-white flex items-center gap-2">
                 <span class="material-symbols-outlined text-orange-500">generating_tokens</span>
                 Tambah Token
               </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Limit harian Anda telah habis. Beli token untuk terus menggunakan fitur analisa.
               </p>
             </div>
-            <button @click="showTokenModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors relative z-10">
-              <span class="material-symbols-outlined">close</span>
+            <button @click="showTokenModal = false" class="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors relative z-10 bg-gray-50 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+              <span class="material-symbols-outlined block text-[20px]">close</span>
             </button>
           </div>
           
-          <div class="p-6 bg-gray-50 dark:bg-gray-800/50">
+          <div class="p-4 sm:p-6 bg-gray-50 dark:bg-gray-800/50">
             <div v-if="isLoadingPackages" class="flex flex-col items-center justify-center py-8">
               <span class="material-symbols-outlined animate-spin text-4xl text-primary mb-2">progress_activity</span>
               <p class="text-sm text-gray-500">Memuat paket...</p>
             </div>
-            <div v-else class="space-y-4">
-              <div v-for="pkg in tokenPackages" :key="pkg.id" class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 hover:border-primary/30 hover:shadow-md transition-all flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-2xl">workspace_premium</span>
+            <div v-else class="space-y-3 sm:space-y-4">
+              <div v-for="pkg in tokenPackages" :key="pkg.id" class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-100 dark:border-gray-700 hover:border-primary/30 hover:shadow-md transition-all flex items-center justify-between group gap-2">
+                <div class="flex items-center gap-3 sm:gap-4 overflow-hidden">
+                  <div class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-xl sm:text-2xl">workspace_premium</span>
                   </div>
-                  <div class="flex flex-col">
-                    <h4 class="font-bold text-lg text-gray-900 dark:text-white">{{ pkg.token_amount.toLocaleString('id-ID') }} Token</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Setara ~{{ ((pkg.token_amount / 5000) * 400).toLocaleString('id-ID') }} karakter</p>
-                    <p class="text-sm text-primary font-bold">Rp {{ pkg.price.toLocaleString('id-ID') }}</p>
+                  <div class="flex flex-col min-w-0">
+                    <h4 class="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">{{ pkg.token_amount.toLocaleString('id-ID') }} Token</h4>
+                    <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mb-0.5 truncate">~{{ ((pkg.token_amount / 5000) * 400).toLocaleString('id-ID') }} karakter</p>
+                    <p class="text-sm sm:text-base text-primary font-bold">Rp {{ pkg.price.toLocaleString('id-ID') }}</p>
                   </div>
                 </div>
-                <button @click="buyPackage(pkg)" class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-all">
+                <button @click="buyPackage(pkg)" class="flex-shrink-0 bg-primary hover:bg-primary/90 text-white px-4 sm:px-5 py-2 rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-all">
                   Beli
                 </button>
               </div>
             </div>
             
-            <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-6 flex items-center justify-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">info</span>
+            <p class="text-[11px] sm:text-xs text-center text-gray-500 dark:text-gray-400 mt-5 sm:mt-6 flex items-center justify-center gap-1">
+              <span class="material-symbols-outlined text-[14px] sm:text-[16px]">info</span>
               Pembelian saat ini diproses manual via WhatsApp
             </p>
           </div>
