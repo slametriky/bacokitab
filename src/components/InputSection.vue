@@ -95,15 +95,21 @@
       </div>
     </div>
     <button
-      @click="$emit('analyze', inputText)"
-      :disabled="isLoading || !inputText.trim() || (tokenStats?.isLimitReached ?? false)"
-      class="w-full bg-primary hover:bg-primary/90 font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-[0.98] transition-all text-white disabled:opacity-70 disabled:cursor-not-allowed"
+      @click="(tokenStats?.isLimitReached ?? false) ? $emit('limit-reached') : $emit('analyze', inputText)"
+      :disabled="isLoading || (!inputText.trim() && !(tokenStats?.isLimitReached ?? false))"
+      :class="[
+        'w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all text-white disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]',
+        (tokenStats?.isLimitReached ?? false) ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'bg-primary hover:bg-primary/90 shadow-primary/20'
+      ]"
     >
       <span v-if="isLoading" class="material-symbols-outlined animate-spin"
         >progress_activity</span
       >
+      <span v-else-if="(tokenStats?.isLimitReached ?? false)" class="material-symbols-outlined">
+        shopping_cart
+      </span>
       <span>{{
-        isLoading ? "Sedang Menganalisis..." : ((tokenStats?.isLimitReached ?? false) ? "Limit Habis" : "Analisis Kalimat")
+        isLoading ? "Sedang Menganalisis..." : ((tokenStats?.isLimitReached ?? false) ? "Token Habis - Tambah Token" : "Analisis Kalimat")
       }}</span>
     </button>
 
@@ -354,7 +360,7 @@ const emit = defineEmits(["analyze", "refresh-stats"]);
 
 const inputText = ref("");
 const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
-const maxCharacters = computed(() => props.tokenStats?.isPremium ? 1000 : 400);
+const maxCharacters = 400;
 const textareaRef = ref(null);
 
 const adjustTextareaHeight = () => {

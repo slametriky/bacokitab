@@ -319,3 +319,17 @@ export const getUserTokenStats = async () => {
     isLimitReached: totalUsed >= limit
   }
 }
+
+export const getTokenPackages = async () => {
+  const { data, error } = await supabase
+    .from('token_packages')
+    .select('*')
+    .eq('is_active', true)
+    .order('price', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching token packages:', error)
+    return []
+  }
+  return data
+}
