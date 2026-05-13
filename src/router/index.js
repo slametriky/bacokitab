@@ -6,7 +6,6 @@ import HistoryPage from '../components/HistoryPage.vue';
 import LoginPage from '../components/LoginPage.vue';
 import PracticePage from '../components/PracticePage.vue';
 import PracticeListPage from '../components/PracticeListPage.vue';
-import PublicIrabPage from '../components/PublicIrabPage.vue';
 import HiwarPage from '../components/HiwarPage.vue';
 import HiwarRoleplayPage from '../components/HiwarRoleplayPage.vue';
 import TransactionLogsPage from '../components/TransactionLogsPage.vue';
@@ -66,11 +65,7 @@ const routes = [
     name: 'Login',
     component: LoginPage,
   },
-  {
-    path: '/irab/:slug',
-    name: 'PublicIrab',
-    component: PublicIrabPage,
-  },
+
 ];
 
 const router = createRouter({
