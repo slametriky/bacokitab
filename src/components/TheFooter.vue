@@ -26,6 +26,24 @@
       active-class="text-primary"
       exact-active-class="text-primary"
       :class="[
+        $route.path === '/chat'
+          ? 'text-primary'
+          : 'text-[#111814] dark:text-white hover:text-primary',
+      ]"
+      to="/chat"
+    >
+      <span class="material-symbols-outlined text-[28px]">chat</span>
+      <span class="text-[10px] font-bold uppercase tracking-widest"
+        >Chat AI</span
+      >
+    </router-link>
+
+    <router-link
+      v-if="user"
+      class="flex flex-col items-center gap-1 transition-colors"
+      active-class="text-primary"
+      exact-active-class="text-primary"
+      :class="[
         $route.path.startsWith('/latihan')
           ? 'text-primary'
           : 'text-[#111814] dark:text-white hover:text-primary',

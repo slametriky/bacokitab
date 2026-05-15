@@ -17,7 +17,7 @@
       </div>
 
       <!-- Token Stats Summary -->
-      <div v-if="tokenStats" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div v-if="tokenStats" class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-symbols-outlined text-primary" v-if="tokenStats.isPremium">workspace_premium</span>
@@ -34,6 +34,28 @@
         </div>
       </div>
 
+      <!-- Filter Controls -->
+      <div class="mb-4 flex flex-col sm:flex-row items-center justify-end gap-4">
+        <div class="flex items-center gap-2 w-full sm:w-auto bg-white dark:bg-gray-800 px-4 py-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+          <label for="dateFilter" class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Filter Tanggal:</label>
+          <input 
+            type="date" 
+            id="dateFilter" 
+            v-model="dateFilter" 
+            @change="handleFilterChange"
+            class="px-2 py-1 border-none bg-transparent text-sm text-gray-900 dark:text-white focus:ring-0 outline-none w-full sm:w-auto"
+          />
+          <button 
+            v-if="dateFilter"
+            @click="clearFilter"
+            class="p-1 text-gray-400 hover:text-red-500 transition-colors flex items-center justify-center rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+            title="Hapus Filter"
+          >
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Transaction List -->
       <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div v-if="isLoading" class="p-8 text-center text-gray-500">
@@ -45,8 +67,12 @@
           <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
             <span class="material-symbols-outlined text-gray-400 text-3xl">receipt_long</span>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Belum ada transaksi</h3>
-          <p class="text-gray-500 dark:text-gray-400 max-w-xs mx-auto">Anda belum pernah menggunakan token untuk fitur apapun.</p>
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">
+            {{ dateFilter ? 'Tidak ada transaksi' : 'Belum ada transaksi' }}
+          </h3>
+          <p class="text-gray-500 dark:text-gray-400 max-w-xs mx-auto">
+            {{ dateFilter ? 'Tidak ditemukan transaksi pada tanggal yang dipilih.' : 'Anda belum pernah menggunakan token untuk fitur apapun.' }}
+          </p>
         </div>
         
         <div v-else class="overflow-x-auto">
@@ -90,12 +116,46 @@
           </table>
         </div>
       </div>
+
+      <!-- Pagination Controls -->
+      <div v-if="totalPages > 1 && !isLoading" class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <span class="text-sm text-gray-600 dark:text-gray-400">
+          Menampilkan <span class="font-bold text-gray-900 dark:text-white">{{ ((currentPage - 1) * itemsPerPage) + 1 }}</span> - 
+          <span class="font-bold text-gray-900 dark:text-white">{{ Math.min(currentPage * itemsPerPage, totalItems) }}</span> 
+          dari <span class="font-bold text-gray-900 dark:text-white">{{ totalItems }}</span> transaksi
+        </span>
+        
+        <div class="flex items-center gap-2">
+          <button 
+            @click="prevPage" 
+            :disabled="currentPage === 1"
+            class="p-2 border border-gray-200 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300 flex items-center justify-center"
+            title="Halaman Sebelumnya"
+          >
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+          </button>
+          
+          <div class="px-4 py-2 bg-gray-50 dark:bg-gray-900 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+            Halaman {{ currentPage }} / {{ totalPages }}
+          </div>
+
+          <button 
+            @click="nextPage" 
+            :disabled="currentPage === totalPages"
+            class="p-2 border border-gray-200 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300 flex items-center justify-center"
+            title="Halaman Selanjutnya"
+          >
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { supabase, getUserTokenStats } from '../lib/supabase.js';
 import TheNavbar from './TheNavbar.vue';
 
@@ -103,9 +163,48 @@ const isLoading = ref(true);
 const transactions = ref([]);
 const tokenStats = ref(null);
 
+// Pagination & Filter state
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const totalItems = ref(0);
+const dateFilter = ref('');
+
+const totalPages = computed(() => {
+  return Math.ceil(totalItems.value / itemsPerPage) || 1;
+});
+
 onMounted(async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    tokenStats.value = await getUserTokenStats();
+  }
   await fetchTransactions();
 });
+
+const handleFilterChange = () => {
+  currentPage.value = 1;
+  fetchTransactions();
+};
+
+const clearFilter = () => {
+  dateFilter.value = '';
+  currentPage.value = 1;
+  fetchTransactions();
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    fetchTransactions();
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+    fetchTransactions();
+  }
+};
 
 const fetchTransactions = async () => {
   isLoading.value = true;
@@ -113,19 +212,36 @@ const fetchTransactions = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Fetch stats
-    tokenStats.value = await getUserTokenStats();
-
-    // Fetch transactions
-    const { data, error } = await supabase
+    let query = supabase
       .from('user_transactions')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
+
+    // Apply date filter
+    if (dateFilter.value) {
+      const startOfDay = new Date(dateFilter.value);
+      startOfDay.setHours(0, 0, 0, 0);
+      
+      const endOfDay = new Date(dateFilter.value);
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      query = query
+        .gte('created_at', startOfDay.toISOString())
+        .lte('created_at', endOfDay.toISOString());
+    }
+
+    // Apply pagination
+    const from = (currentPage.value - 1) * itemsPerPage;
+    const to = from + itemsPerPage - 1;
+    query = query.range(from, to);
+
+    const { data, count, error } = await query;
 
     if (error) throw error;
     
     transactions.value = data || [];
+    totalItems.value = count || 0;
   } catch (error) {
     console.error('Error fetching transactions:', error);
   } finally {

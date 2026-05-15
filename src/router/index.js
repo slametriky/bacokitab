@@ -9,6 +9,7 @@ import PracticeListPage from '../components/PracticeListPage.vue';
 import HiwarPage from '../components/HiwarPage.vue';
 import HiwarRoleplayPage from '../components/HiwarRoleplayPage.vue';
 import TransactionLogsPage from '../components/TransactionLogsPage.vue';
+import ChatPage from '../components/ChatPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -65,7 +66,12 @@ const routes = [
     name: 'Login',
     component: LoginPage,
   },
-
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: ChatPage,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
