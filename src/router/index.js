@@ -10,6 +10,7 @@ import HiwarPage from '../components/HiwarPage.vue';
 import HiwarRoleplayPage from '../components/HiwarRoleplayPage.vue';
 import TransactionLogsPage from '../components/TransactionLogsPage.vue';
 import ChatPage from '../components/ChatPage.vue';
+import HomePage from '../components/HomePage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -17,6 +18,12 @@ const routes = [
     path: '/',
     name: 'Landing',
     component: LandingPage,
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: HomePage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/transaksi',
@@ -82,9 +89,9 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const { data: { session } } = await supabase.auth.getSession();
   
-  // Jika user sudah login dan mencoba ke halaman login atau landing, redirect ke analisa
+  // Jika user sudah login dan mencoba ke halaman login atau landing, redirect ke home
   if ((to.name === 'Login' || to.name === 'Landing') && session) {
-    return next({ name: 'App' });
+    return next({ name: 'Home' });
   }
 
   // Jika halaman butuh auth tetapi user belum login, redirect ke login

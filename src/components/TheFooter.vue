@@ -8,11 +8,11 @@
       inactive-class="text-[#111814] dark:text-white"
       exact-active-class="text-primary"
       :class="[
-        $route.path === '/analisa' || $route.path === '/'
+        $route.path === '/home' || $route.path === '/'
           ? 'text-primary'
           : 'text-[#111814] dark:text-white hover:text-primary',
       ]"
-      to="/analisa"
+      to="/home"
     >
       <span class="material-symbols-outlined text-[24px] md:text-[28px]">home</span>
       <span class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider md:tracking-widest"
