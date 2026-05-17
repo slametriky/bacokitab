@@ -1,8 +1,7 @@
 <template>
   <div class="h-[100dvh] overflow-hidden flex flex-col bg-background-light dark:bg-background-dark font-display">
-    <TheNavbar />
     
-    <main class="flex-1 max-w-3xl mx-auto w-full flex flex-col pt-[64px] pb-[75px] md:pb-[70px] min-h-0">
+    <main class="flex-1 max-w-3xl mx-auto w-full flex flex-col pb-[75px] md:pb-[70px] min-h-0">
       
       <!-- Messages Area -->
       <div 
@@ -89,7 +88,6 @@
 <script setup>
 import { ref, nextTick, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import TheNavbar from './TheNavbar.vue';
 import TheFooter from './TheFooter.vue';
 import { sendChatMessage } from '../services/api.js';
 import { useHead } from '@unhead/vue';
