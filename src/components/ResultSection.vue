@@ -97,7 +97,7 @@
                 dir="rtl"
               >
                 <span class="arabic-text text-base leading-[3rem]">{{
-                  item.irab_lengkap
+                  item.irab || item.irab_lengkap
                 }}</span>
               </td>
               <td class="p-4 text-right align-top w-1/4">
@@ -120,7 +120,7 @@
                   <button
                     @click="
                       copyToClipboard(
-                        `${item.kata}\n\n${item.irab_lengkap}`,
+                        `${item.kata}\n\n${item.irab || item.irab_lengkap}`,
                         'Kata & I\'rab',
                       )
                     "
@@ -252,7 +252,7 @@ const triggerToast = (message) => {
 
 const buildShareText = () => {
   const irabText = (props.result?.analisis_irab || [])
-    .map((item) => `${item.kata}: ${item.irab_lengkap}`)
+    .map((item) => `${item.kata}: ${item.irab || item.irab_lengkap}`)
     .join("\n");
 
   return [
