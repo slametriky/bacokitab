@@ -253,7 +253,7 @@ const triggerToast = (message) => {
 const buildShareText = () => {
   const irabText = (props.result?.analisis_irab || [])
     .map((item) => `${item.kata}: ${item.irab || item.irab_lengkap}`)
-    .join("\n");
+    .join("\n\n");
 
   return [
     props.result?.teks_berharokat || "-",
