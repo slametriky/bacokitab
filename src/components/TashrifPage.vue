@@ -22,6 +22,65 @@ const searchQuery = ref("");
 // Virtual Keyboard state
 const showKeyboard = ref(false);
 
+// --- FE Dhomir Mapping ---
+const dhomir14 = [
+  { pronoun: "هُوَ", meaning: "Dia (Lk)" },
+  { pronoun: "هُمَا", meaning: "Mereka berdua (Lk)" },
+  { pronoun: "هُمْ", meaning: "Mereka (Lk)" },
+  { pronoun: "هِيَ", meaning: "Dia (Pr)" },
+  { pronoun: "هُمَا", meaning: "Mereka berdua (Pr)" },
+  { pronoun: "هُنَّ", meaning: "Mereka (Pr)" },
+  { pronoun: "أَنْتَ", meaning: "Kamu (Lk)" },
+  { pronoun: "أَنْتُمَا", meaning: "Kamu berdua (Lk)" },
+  { pronoun: "أَنْتُمْ", meaning: "Kalian (Lk)" },
+  { pronoun: "أَنْتِ", meaning: "Kamu (Pr)" },
+  { pronoun: "أَنْتُمَا", meaning: "Kamu berdua (Pr)" },
+  { pronoun: "أَنْتُنَّ", meaning: "Kalian (Pr)" },
+  { pronoun: "أَنَا", meaning: "Saya" },
+  { pronoun: "نَحْنُ", meaning: "Kami/Kita" },
+];
+
+const dhomirAmrNahyi = [
+  { pronoun: "أَنْتَ", meaning: "Kamu (Lk)" },
+  { pronoun: "أَنْتُمَا", meaning: "Kamu berdua (Lk)" },
+  { pronoun: "أَنْتُمْ", meaning: "Kalian (Lk)" },
+  { pronoun: "أَنْتِ", meaning: "Kamu (Pr)" },
+  { pronoun: "أَنْتُمَا", meaning: "Kamu berdua (Pr)" },
+  { pronoun: "أَنْتُنَّ", meaning: "Kalian (Pr)" },
+];
+
+const dhomirFailMaful = [
+  { pronoun: "مُفْرَدْ مُذَكَّرْ", meaning: "Tunggal (Lk)" },
+  { pronoun: "تَثْنِيَةْ مُذَكَّرْ", meaning: "Ganda (Lk)" },
+  { pronoun: "جَمْعْ مُذَكَّرْ", meaning: "Jamak (Lk)" },
+  { pronoun: "مُفْرَدْ مُؤَنَّثْ", meaning: "Tunggal (Pr)" },
+  { pronoun: "تَثْنِيَةْ مُؤَنَّثْ", meaning: "Ganda (Pr)" },
+  { pronoun: "جَمْعْ مُؤَنَّثْ", meaning: "Jamak (Pr)" },
+];
+
+const dhomirMasdarZamanMakan = [
+  { pronoun: "مُفْرَدْ", meaning: "Tunggal" },
+  { pronoun: "تَثْنِيَةْ", meaning: "Ganda" },
+  { pronoun: "جَمْعْ", meaning: "Jamak" },
+];
+
+const getPronounInfo = (formId, index) => {
+  let mapping = [];
+  const normalizedForm = formId.replace(/[^a-zA-Z]/g, '').toLowerCase();
+
+  if (["madhi", "madi", "mudhari"].includes(normalizedForm)) {
+    mapping = dhomir14;
+  } else if (["amr", "nahyi", "nahi"].includes(normalizedForm)) {
+    mapping = dhomirAmrNahyi;
+  } else if (["fail", "maful"].includes(normalizedForm)) {
+    mapping = dhomirFailMaful;
+  } else if (["mashdar", "masdar", "zamanmakan", "alat", "alah"].includes(normalizedForm)) {
+    mapping = dhomirMasdarZamanMakan;
+  }
+
+  return mapping[index] || { pronoun: "-", meaning: "-" };
+};
+
 // Sample Data for Tashrif
 const tashrifData = {
   nasara: {
@@ -749,46 +808,146 @@ const tashrifData = {
   },
 };
 
-// Active word computed based on searchQuery or suggestions
-const currentWordKey = ref("nasara");
+// API mapping function
+const mapApiResponseToActiveWord = (apiResponse) => {
+  const t = apiResponse.tashrif || {};
 
-const activeWord = computed(() => {
-  return tashrifData[currentWordKey.value] || tashrifData.nasara;
-});
+  const istilahiMap = [
+    { id: "madhi", title: "FI'IL MADHI", arabic: t.madi?.sh, meaning: t.madi?.arti },
+    { id: "mudhari", title: "FI'IL MUDHARI", arabic: t.mudhari?.sh, meaning: t.mudhari?.arti },
+    { id: "mashdar", title: "MASHDAR", arabic: t.masdar?.sh, meaning: t.masdar?.arti },
+    { id: "fa'il", title: "ISIM FA'IL", arabic: t.fail?.sh, meaning: t.fail?.arti },
+    { id: "maf'ul", title: "ISIM MAF'UL", arabic: t.maful?.sh, meaning: t.maful?.arti },
+    { id: "amr", title: "FI'IL AMR", arabic: t.amr?.sh, meaning: t.amr?.arti },
+    { id: "nahi", title: "FI'IL NAHI", arabic: t.nahyi?.sh, meaning: t.nahyi?.arti },
+    { id: "zaman_makan", title: "ISIM ZAMAN/MAKAN", arabic: t.zaman_makan?.sh, meaning: t.zaman_makan?.arti },
+    { id: "alat", title: "ISIM ALAT", arabic: t.alah?.sh, meaning: t.alah?.arti },
+  ].filter((item) => item.arabic && item.arabic !== "-");
+
+  const lughowiMap = {
+    madhi: t.madi?.lg || [],
+    mudhari: t.mudhari?.lg || [],
+    mashdar: t.masdar?.lg || [],
+    "fa'il": t.fail?.lg || [],
+    "maf'ul": t.maful?.lg || [],
+    amr: t.amr?.lg || [],
+    nahi: t.nahyi?.lg || [],
+    zaman_makan: t.zaman_makan?.lg || [],
+    alat: t.alah?.lg || [],
+  };
+
+  return {
+    id: "api_result",
+    arabic: apiResponse.in,
+    latin: apiResponse.meta?.wazan || "",
+    meaning: t.madi?.arti || "",
+    istilahi: istilahiMap,
+    lughowi: lughowiMap,
+  };
+};
+
+const dummyJalasaResponse = {
+  "in": "جَلَسَ",
+  "meta": {
+    "root": "ج ل س",
+    "wazan": "فَعَلَ - يَفْعِلُ"
+  },
+  "tashrif": {
+    "madi": {
+      "sh": "جَلَسَ",
+      "lg": ["جَلَسَ", "جَلَسَا", "جَلَسُوا", "جَلَسَتْ", "جَلَسَتَا", "جَلَسْنَا", "جَلَسْتَ", "جَلَسْتُمَا", "جَلَسْتُمْ", "جَلَسْتِ", "جَلَسْتُمَا", "جَلَسْتُنَّ", "جَلَسْتُ", "جَلَسْنَا"],
+      "arti": "telah duduk"
+    },
+    "mudhari": {
+      "sh": "يَجْلِسُ",
+      "lg": ["يَجْلِسُ", "يَجْلِسَانِ", "يَجْلِسُونَ", "تَجْلِسُ", "تَجْلِسَانِ", "يَجْلِسْنَا", "تَجْلِسُ", "تَجْلِسَانِ", "تَجْلِسُونَ", "تَجْلِسِينَ", "تَجْلِسَانِ", "تَجْلِسْنَا", "أَجْلِسُ", "نَجْلِسُ"],
+      "arti": "sedang/akan duduk"
+    },
+    "masdar": {
+      "sh": "جُلُوسٌ",
+      "lg": ["جُلُوسٌ", "جُلُوسَانِ", "جُلُوسَاتٌ"],
+      "arti": "hal duduk / duduk"
+    },
+    "fail": {
+      "sh": "جَالِسٌ",
+      "lg": ["جَالِسٌ", "جَالِسَانِ", "جَالِسُونَ / جُلَّاسٌ", "جَالِسَةٌ", "جَالِسَتَانِ", "جَالِسَاتٌ"],
+      "arti": "orang yang duduk"
+    },
+    "maful": {
+      "sh": "مَجْلُوسٌ",
+      "lg": ["مَجْلُوسٌ", "مَجْلُوسَانِ", "مَجْلُوسُونَ", "مَجْلُوسَةٌ", "مَجْلُوسَتَانِ", "مَجْلُوسَاتٌ"],
+      "arti": "yang diduduki"
+    },
+    "amr": {
+      "sh": "اِجْلِسْ",
+      "lg": ["اِجْلِسْ", "اِجْلِسَا", "اِجْلِسُوا", "اِجْلِسِي", "اِجْلِسَا", "اِجْلِسْنَا"],
+      "arti": "duduklah!"
+    },
+    "nahyi": {
+      "sh": "لَا تَجْلِسْ",
+      "lg": ["لَا تَجْلِسْ", "لَا تَجْلِسَا", "لَا تَجْلِسُوا", "لَا تَجْلِسِي", "لَا تَجْلِسَا", "لَا تَجْلِسْنَا"],
+      "arti": "jangan duduk!"
+    },
+    "zaman_makan": {
+      "sh": "مَجْلِسٌ",
+      "lg": ["مَجْلِسٌ", "مَجْلِسَانِ", "مَجَالِسُ"],
+      "arti": "tempat/waktu duduk (majelis)"
+    },
+    "alah": {
+      "sh": "-",
+      "lg": [],
+      "arti": "-"
+    }
+  }
+};
+
+const isSearching = ref(false);
+const activeWord = ref(mapApiResponseToActiveWord(dummyJalasaResponse));
 
 // Select word from suggestion pills
 const selectWord = (wordKey) => {
-  currentWordKey.value = wordKey;
   searchQuery.value = tashrifData[wordKey].arabic;
   showKeyboard.value = false;
+  performSearch();
 };
 
 // Clear search input
 const clearSearch = () => {
   searchQuery.value = "";
-  currentWordKey.value = "nasara";
+  activeWord.value = mapApiResponseToActiveWord(dummyJalasaResponse);
 };
 
-// Handle input search
-const handleSearchInput = () => {
-  const query = searchQuery.value.trim().toLowerCase();
+// Perform search to backend
+const performSearch = async () => {
+  const query = searchQuery.value.trim();
   if (!query) {
-    currentWordKey.value = "nasara";
+    activeWord.value = mapApiResponseToActiveWord(dummyJalasaResponse);
     return;
   }
 
-  // Find matching word key
-  const matchedKey = Object.keys(tashrifData).find((key) => {
-    const word = tashrifData[key];
-    return (
-      word.arabic.includes(query) ||
-      word.latin.toLowerCase().includes(query) ||
-      word.meaning.toLowerCase().includes(query)
-    );
-  });
+  isSearching.value = true;
+  try {
+    const url = `${import.meta.env.VITE_API_BASE_URL}/tashrif`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: query }),
+    });
 
-  if (matchedKey) {
-    currentWordKey.value = matchedKey;
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.tashrif) {
+        activeWord.value = mapApiResponseToActiveWord(data);
+      }
+    } else {
+      console.error("API error", response.status);
+    }
+  } catch (error) {
+    console.error("Failed to fetch tashrif", error);
+  } finally {
+    isSearching.value = false;
   }
 };
 
@@ -929,7 +1088,7 @@ const getFormTitle = (formId) => {
             <input
               type="text"
               v-model="searchQuery"
-              @input="handleSearchInput"
+              @keyup.enter="performSearch"
               dir="rtl"
               placeholder="نَصَرَ : (contoh) Cari kata Arab"
               class="w-full bg-transparent border-none p-0 focus:ring-0 text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-right font-arabic font-bold"
@@ -1002,11 +1161,13 @@ const getFormTitle = (formId) => {
 
         <!-- Search Button -->
         <button
-          @click="handleSearchInput"
-          class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 active:scale-[0.98]"
+          @click="performSearch"
+          :disabled="isSearching"
+          class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-75 disabled:cursor-not-allowed"
         >
-          <span class="material-symbols-outlined text-[20px]">search</span>
-          Cari Kata
+          <span v-if="isSearching" class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
+          <span v-else class="material-symbols-outlined text-[20px]">search</span>
+          {{ isSearching ? 'Mencari...' : 'Cari Kata' }}
         </button>
 
         <!-- Suggestions/Examples pills inside search card -->
@@ -1084,7 +1245,7 @@ const getFormTitle = (formId) => {
       <!-- TAB CONTENT: ISTILAHI -->
       <div v-if="activeTab === 'istilahi'" class="space-y-4">
         <!-- 3 columns on desktop/tablets, 2 on mobile -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" dir="rtl">
           <!-- Cards loop: All boxes restricted to primary blue -->
           <div
             v-for="card in activeWord.istilahi"
@@ -1187,12 +1348,12 @@ const getFormTitle = (formId) => {
                 <span
                   class="text-sm font-bold text-gray-800 dark:text-gray-200"
                 >
-                  {{ row.pronoun }}
+                  {{ getPronounInfo(selectedLughowiForm, idx).pronoun }}
                 </span>
                 <span
                   class="text-xs text-gray-400 dark:text-gray-500 font-medium"
                 >
-                  {{ row.meaning }}
+                  {{ getPronounInfo(selectedLughowiForm, idx).meaning }}
                 </span>
               </div>
 
@@ -1200,7 +1361,7 @@ const getFormTitle = (formId) => {
               <span
                 class="font-arabic text-2xl font-extrabold text-primary dark:text-blue-400 tracking-wide"
               >
-                {{ row.arabic }}
+                {{ typeof row === 'string' ? row : (row.arabic || '') }}
               </span>
             </div>
 
