@@ -42,6 +42,13 @@ const menus = [
       "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
   },
   {
+    title: "Tashrif",
+    description: "Pelajari konjugasi perubahan kata bahasa Arab (Istilahi & Lughowi).",
+    icon: "auto_stories",
+    link: "/tashrif",
+    color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
+  },
+  {
     title: "Tentang",
     description: "Informasi mengenai aplikasi dan fitur BacoKitab.",
     icon: "info",

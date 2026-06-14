@@ -11,6 +11,7 @@ import HiwarRoleplayPage from '../components/HiwarRoleplayPage.vue';
 import TransactionLogsPage from '../components/TransactionLogsPage.vue';
 import ChatPage from '../components/ChatPage.vue';
 import HomePage from '../components/HomePage.vue';
+import TashrifPage from '../components/TashrifPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -78,6 +79,11 @@ const routes = [
     name: 'Chat',
     component: ChatPage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/tashrif',
+    name: 'Tashrif',
+    component: TashrifPage,
   },
 ];
 
