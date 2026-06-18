@@ -66,7 +66,7 @@ const dhomirMasdarZamanMakan = [
 
 const getPronounInfo = (formId, index) => {
   let mapping = [];
-  const normalizedForm = formId.replace(/[^a-zA-Z]/g, '').toLowerCase();
+  const normalizedForm = formId.replace(/[^a-zA-Z]/g, "").toLowerCase();
 
   if (["madhi", "madi", "mudhari"].includes(normalizedForm)) {
     mapping = dhomir14;
@@ -74,7 +74,9 @@ const getPronounInfo = (formId, index) => {
     mapping = dhomirAmrNahyi;
   } else if (["fail", "maful"].includes(normalizedForm)) {
     mapping = dhomirFailMaful;
-  } else if (["mashdar", "masdar", "zamanmakan", "alat", "alah"].includes(normalizedForm)) {
+  } else if (
+    ["mashdar", "masdar", "zamanmakan", "alat", "alah"].includes(normalizedForm)
+  ) {
     mapping = dhomirMasdarZamanMakan;
   }
 
@@ -813,15 +815,55 @@ const mapApiResponseToActiveWord = (apiResponse) => {
   const t = apiResponse.tashrif || {};
 
   const istilahiMap = [
-    { id: "madhi", title: "FI'IL MADHI", arabic: t.madi?.sh, meaning: t.madi?.arti },
-    { id: "mudhari", title: "FI'IL MUDHARI", arabic: t.mudhari?.sh, meaning: t.mudhari?.arti },
-    { id: "mashdar", title: "MASHDAR", arabic: t.masdar?.sh, meaning: t.masdar?.arti },
-    { id: "fa'il", title: "ISIM FA'IL", arabic: t.fail?.sh, meaning: t.fail?.arti },
-    { id: "maf'ul", title: "ISIM MAF'UL", arabic: t.maful?.sh, meaning: t.maful?.arti },
+    {
+      id: "madhi",
+      title: "FI'IL MADHI",
+      arabic: t.madi?.sh,
+      meaning: t.madi?.arti,
+    },
+    {
+      id: "mudhari",
+      title: "FI'IL MUDHARI",
+      arabic: t.mudhari?.sh,
+      meaning: t.mudhari?.arti,
+    },
+    {
+      id: "mashdar",
+      title: "MASHDAR",
+      arabic: t.masdar?.sh,
+      meaning: t.masdar?.arti,
+    },
+    {
+      id: "fa'il",
+      title: "ISIM FA'IL",
+      arabic: t.fail?.sh,
+      meaning: t.fail?.arti,
+    },
+    {
+      id: "maf'ul",
+      title: "ISIM MAF'UL",
+      arabic: t.maful?.sh,
+      meaning: t.maful?.arti,
+    },
     { id: "amr", title: "FI'IL AMR", arabic: t.amr?.sh, meaning: t.amr?.arti },
-    { id: "nahi", title: "FI'IL NAHI", arabic: t.nahyi?.sh, meaning: t.nahyi?.arti },
-    { id: "zaman_makan", title: "ISIM ZAMAN/MAKAN", arabic: t.zaman_makan?.sh, meaning: t.zaman_makan?.arti },
-    { id: "alat", title: "ISIM ALAT", arabic: t.alah?.sh, meaning: t.alah?.arti },
+    {
+      id: "nahi",
+      title: "FI'IL NAHI",
+      arabic: t.nahyi?.sh,
+      meaning: t.nahyi?.arti,
+    },
+    {
+      id: "zaman_makan",
+      title: "ISIM ZAMAN/MAKAN",
+      arabic: t.zaman_makan?.sh,
+      meaning: t.zaman_makan?.arti,
+    },
+    {
+      id: "alat",
+      title: "ISIM ALAT",
+      arabic: t.alah?.sh,
+      meaning: t.alah?.arti,
+    },
   ].filter((item) => item.arabic && item.arabic !== "-");
 
   const lughowiMap = {
@@ -843,66 +885,125 @@ const mapApiResponseToActiveWord = (apiResponse) => {
     meaning: t.madi?.arti || "",
     istilahi: istilahiMap,
     lughowi: lughowiMap,
+    jenisKata: apiResponse.jenis_kata,
   };
 };
 
 const dummyJalasaResponse = {
-  "in": "جَلَسَ",
-  "meta": {
-    "root": "ج ل س",
-    "wazan": "فَعَلَ - يَفْعِلُ"
+  in: "جَلَسَ",
+  meta: {
+    root: "ج ل س",
+    wazan: "فَعَلَ - يَفْعِلُ",
   },
-  "tashrif": {
-    "madi": {
-      "sh": "جَلَسَ",
-      "lg": ["جَلَسَ", "جَلَسَا", "جَلَسُوا", "جَلَسَتْ", "جَلَسَتَا", "جَلَسْنَا", "جَلَسْتَ", "جَلَسْتُمَا", "جَلَسْتُمْ", "جَلَسْتِ", "جَلَسْتُمَا", "جَلَسْتُنَّ", "جَلَسْتُ", "جَلَسْنَا"],
-      "arti": "telah duduk"
+  tashrif: {
+    madi: {
+      sh: "جَلَسَ",
+      lg: [
+        "جَلَسَ",
+        "جَلَسَا",
+        "جَلَسُوا",
+        "جَلَسَتْ",
+        "جَلَسَتَا",
+        "جَلَسْنَا",
+        "جَلَسْتَ",
+        "جَلَسْتُمَا",
+        "جَلَسْتُمْ",
+        "جَلَسْتِ",
+        "جَلَسْتُمَا",
+        "جَلَسْتُنَّ",
+        "جَلَسْتُ",
+        "جَلَسْنَا",
+      ],
+      arti: "telah duduk",
     },
-    "mudhari": {
-      "sh": "يَجْلِسُ",
-      "lg": ["يَجْلِسُ", "يَجْلِسَانِ", "يَجْلِسُونَ", "تَجْلِسُ", "تَجْلِسَانِ", "يَجْلِسْنَا", "تَجْلِسُ", "تَجْلِسَانِ", "تَجْلِسُونَ", "تَجْلِسِينَ", "تَجْلِسَانِ", "تَجْلِسْنَا", "أَجْلِسُ", "نَجْلِسُ"],
-      "arti": "sedang/akan duduk"
+    mudhari: {
+      sh: "يَجْلِسُ",
+      lg: [
+        "يَجْلِسُ",
+        "يَجْلِسَانِ",
+        "يَجْلِسُونَ",
+        "تَجْلِسُ",
+        "تَجْلِسَانِ",
+        "يَجْلِسْنَا",
+        "تَجْلِسُ",
+        "تَجْلِسَانِ",
+        "تَجْلِسُونَ",
+        "تَجْلِسِينَ",
+        "تَجْلِسَانِ",
+        "تَجْلِسْنَا",
+        "أَجْلِسُ",
+        "نَجْلِسُ",
+      ],
+      arti: "sedang/akan duduk",
     },
-    "masdar": {
-      "sh": "جُلُوسٌ",
-      "lg": ["جُلُوسٌ", "جُلُوسَانِ", "جُلُوسَاتٌ"],
-      "arti": "hal duduk / duduk"
+    masdar: {
+      sh: "جُلُوسٌ",
+      lg: ["جُلُوسٌ", "جُلُوسَانِ", "جُلُوسَاتٌ"],
+      arti: "hal duduk / duduk",
     },
-    "fail": {
-      "sh": "جَالِسٌ",
-      "lg": ["جَالِسٌ", "جَالِسَانِ", "جَالِسُونَ / جُلَّاسٌ", "جَالِسَةٌ", "جَالِسَتَانِ", "جَالِسَاتٌ"],
-      "arti": "orang yang duduk"
+    fail: {
+      sh: "جَالِسٌ",
+      lg: [
+        "جَالِسٌ",
+        "جَالِسَانِ",
+        "جَالِسُونَ / جُلَّاسٌ",
+        "جَالِسَةٌ",
+        "جَالِسَتَانِ",
+        "جَالِسَاتٌ",
+      ],
+      arti: "orang yang duduk",
     },
-    "maful": {
-      "sh": "مَجْلُوسٌ",
-      "lg": ["مَجْلُوسٌ", "مَجْلُوسَانِ", "مَجْلُوسُونَ", "مَجْلُوسَةٌ", "مَجْلُوسَتَانِ", "مَجْلُوسَاتٌ"],
-      "arti": "yang diduduki"
+    maful: {
+      sh: "مَجْلُوسٌ",
+      lg: [
+        "مَجْلُوسٌ",
+        "مَجْلُوسَانِ",
+        "مَجْلُوسُونَ",
+        "مَجْلُوسَةٌ",
+        "مَجْلُوسَتَانِ",
+        "مَجْلُوسَاتٌ",
+      ],
+      arti: "yang diduduki",
     },
-    "amr": {
-      "sh": "اِجْلِسْ",
-      "lg": ["اِجْلِسْ", "اِجْلِسَا", "اِجْلِسُوا", "اِجْلِسِي", "اِجْلِسَا", "اِجْلِسْنَا"],
-      "arti": "duduklah!"
+    amr: {
+      sh: "اِجْلِسْ",
+      lg: [
+        "اِجْلِسْ",
+        "اِجْلِسَا",
+        "اِجْلِسُوا",
+        "اِجْلِسِي",
+        "اِجْلِسَا",
+        "اِجْلِسْنَا",
+      ],
+      arti: "duduklah!",
     },
-    "nahyi": {
-      "sh": "لَا تَجْلِسْ",
-      "lg": ["لَا تَجْلِسْ", "لَا تَجْلِسَا", "لَا تَجْلِسُوا", "لَا تَجْلِسِي", "لَا تَجْلِسَا", "لَا تَجْلِسْنَا"],
-      "arti": "jangan duduk!"
+    nahyi: {
+      sh: "لَا تَجْلِسْ",
+      lg: [
+        "لَا تَجْلِسْ",
+        "لَا تَجْلِسَا",
+        "لَا تَجْلِسُوا",
+        "لَا تَجْلِسِي",
+        "لَا تَجْلِسَا",
+        "لَا تَجْلِسْنَا",
+      ],
+      arti: "jangan duduk!",
     },
-    "zaman_makan": {
-      "sh": "مَجْلِسٌ",
-      "lg": ["مَجْلِسٌ", "مَجْلِسَانِ", "مَجَالِسُ"],
-      "arti": "tempat/waktu duduk (majelis)"
+    zaman_makan: {
+      sh: "مَجْلِسٌ",
+      lg: ["مَجْلِسٌ", "مَجْلِسَانِ", "مَجَالِسُ"],
+      arti: "tempat/waktu duduk (majelis)",
     },
-    "alah": {
-      "sh": "-",
-      "lg": [],
-      "arti": "-"
-    }
-  }
+    alah: {
+      sh: "-",
+      lg: [],
+      arti: "-",
+    },
+  },
 };
 
 const isSearching = ref(false);
-const activeWord = ref(mapApiResponseToActiveWord(dummyJalasaResponse));
+const activeWord = ref(null);
 
 // Select word from suggestion pills
 const selectWord = (wordKey) => {
@@ -914,14 +1015,12 @@ const selectWord = (wordKey) => {
 // Clear search input
 const clearSearch = () => {
   searchQuery.value = "";
-  activeWord.value = mapApiResponseToActiveWord(dummyJalasaResponse);
 };
 
 // Perform search to backend
 const performSearch = async () => {
   const query = searchQuery.value.trim();
   if (!query) {
-    activeWord.value = mapApiResponseToActiveWord(dummyJalasaResponse);
     return;
   }
 
@@ -938,7 +1037,7 @@ const performSearch = async () => {
 
     if (response.ok) {
       const data = await response.json();
-      if (data && data.tashrif) {
+      if (data && (data.tashrif || data.jenis_kata)) {
         activeWord.value = mapApiResponseToActiveWord(data);
       }
     } else {
@@ -1165,9 +1264,15 @@ const getFormTitle = (formId) => {
           :disabled="isSearching"
           class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-75 disabled:cursor-not-allowed"
         >
-          <span v-if="isSearching" class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
-          <span v-else class="material-symbols-outlined text-[20px]">search</span>
-          {{ isSearching ? 'Mencari...' : 'Cari Kata' }}
+          <span
+            v-if="isSearching"
+            class="material-symbols-outlined text-[20px] animate-spin"
+            >progress_activity</span
+          >
+          <span v-else class="material-symbols-outlined text-[20px]"
+            >search</span
+          >
+          {{ isSearching ? "Mencari..." : "Tashrif Kata" }}
         </button>
 
         <!-- Suggestions/Examples pills inside search card -->
@@ -1214,169 +1319,210 @@ const getFormTitle = (formId) => {
         </div>
       </div>
 
-      <!-- Custom Tabs -->
-      <div
-        class="grid grid-cols-2 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-3xl border border-gray-200/30 dark:border-gray-700/30"
-      >
-        <button
-          @click="activeTab = 'istilahi'"
-          :class="[
-            'py-3 px-4 rounded-2xl text-sm font-bold text-center transition-all',
-            activeTab === 'istilahi'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50',
-          ]"
+      <!-- Result Container (Only show when there is data) -->
+      <div v-if="activeWord" class="space-y-6">
+        <!-- Jamid Information -->
+        <div
+          v-if="activeWord.jenisKata === 'jamid'"
+          class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 p-6 rounded-3xl text-center shadow-sm flex flex-col items-center gap-3"
         >
-          Tashrif Istilahi
-        </button>
-        <button
-          @click="activeTab = 'lughowi'"
-          :class="[
-            'py-3 px-4 rounded-2xl text-sm font-bold text-center transition-all',
-            activeTab === 'lughowi'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50',
-          ]"
-        >
-          Tashrif Lughowi
-        </button>
-      </div>
-
-      <!-- TAB CONTENT: ISTILAHI -->
-      <div v-if="activeTab === 'istilahi'" class="space-y-4">
-        <!-- 3 columns on desktop/tablets, 2 on mobile -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" dir="rtl">
-          <!-- Cards loop: All boxes restricted to primary blue -->
-          <div
-            v-for="card in activeWord.istilahi"
-            :key="card.title"
-            class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(37,99,235,0.08)] hover:border-primary/50 transition-all flex flex-col items-center justify-between text-center relative overflow-hidden h-[180px] border-t-4 border-t-primary"
+          <span
+            class="material-symbols-outlined text-primary dark:text-blue-400 text-4xl"
+            >info</span
           >
-            <!-- Card Header -->
+          <p
+            class="text-blue-800 dark:text-blue-300 font-medium leading-relaxed"
+          >
+            Kata
             <span
-              class="text-[10px] font-extrabold tracking-wider text-gray-400 dark:text-gray-500 uppercase"
+              class="font-arabic font-bold text-2xl mx-1 text-primary dark:text-blue-400"
+              >{{ activeWord.arabic }}</span
             >
-              {{ card.title }}
-            </span>
+            tidak memiliki <span class="italic">tashrif</span> karena termasuk isim jamid.
+          </p>
+        </div>
 
-            <!-- Arabic Text (Always Blue) -->
-            <span
-              class="font-arabic text-3xl font-bold my-1 cursor-pointer select-all text-primary dark:text-blue-400"
-            >
-              {{ card.arabic }}
-            </span>
-
-            <!-- Translation -->
-            <span
-              class="text-xs text-gray-500 dark:text-gray-400 italic font-medium leading-tight"
-            >
-              {{ card.meaning }}
-            </span>
-
-            <!-- Action Link -->
+        <template v-else>
+          <!-- Custom Tabs -->
+          <div
+            class="grid grid-cols-2 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-3xl border border-gray-200/30 dark:border-gray-700/30"
+          >
             <button
-              @click="viewLughowi(card.id)"
-              class="mt-2 text-[10px] font-bold text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 group"
+              @click="activeTab = 'istilahi'"
+              :class="[
+                'py-3 px-4 rounded-2xl text-sm font-bold text-center transition-all',
+                activeTab === 'istilahi'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50',
+              ]"
             >
-              <span
-                class="material-symbols-outlined text-[12px] transition-transform group-hover:translate-x-0.5"
-                >arrow_forward</span
-              >
-              Lihat Tashrif Lughowi
+              Tashrif Istilahi
+            </button>
+            <button
+              @click="activeTab = 'lughowi'"
+              :class="[
+                'py-3 px-4 rounded-2xl text-sm font-bold text-center transition-all',
+                activeTab === 'lughowi'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50',
+              ]"
+            >
+              Tashrif Lughowi
             </button>
           </div>
-        </div>
-      </div>
 
-      <!-- TAB CONTENT: LUGHOWI -->
-      <div v-else class="space-y-4">
-        <!-- Form selector for Lughowi -->
-        <div
-          class="bg-white dark:bg-gray-900 p-5 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col gap-2"
-        >
-          <label
-            class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider"
-            >Pilih Bentuk Kata:</label
-          >
-          <div class="relative">
-            <select
-              v-model="selectedLughowiForm"
-              class="w-full bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer"
-            >
-              <option value="madhi">Fi'il Madhi (فعل ماض)</option>
-              <option value="mudhari">Fi'il Mudhari (فعل مضارع)</option>
-              <option value="fa'il">Isim Fa'il (اسم فاعل)</option>
-              <option value="mashdar">Mashdar (مصدر)</option>
-              <option value="amr">Fi'il Amr (فعل أمر)</option>
-              <option value="maf'ul">Isim Maf'ul (اسم مفعول)</option>
-              <option value="zaman_makan">
-                Isim Zaman/Makan (اسم زمان/مكان)
-              </option>
-              <option value="nahi">Fi'il Nahi (فعل نهي)</option>
-              <option value="alat">Isim Alat (اسم آلة)</option>
-            </select>
-          </div>
-        </div>
+          <!-- TAB CONTENT: ISTILAHI -->
+          <div v-if="activeTab === 'istilahi'" class="space-y-4">
+            <!-- 3 columns on desktop/tablets, 2 on mobile -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" dir="rtl">
+              <!-- Cards loop: All boxes restricted to primary blue -->
+              <div
+                v-for="card in activeWord.istilahi"
+                :key="card.title"
+                class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(37,99,235,0.08)] hover:border-primary/50 transition-all flex flex-col items-center justify-between text-center relative overflow-hidden h-[180px] border-t-4 border-t-primary"
+              >
+                <!-- Card Header -->
+                <span
+                  class="text-[10px] font-extrabold tracking-wider text-gray-400 dark:text-gray-500 uppercase"
+                >
+                  {{ card.title }}
+                </span>
 
-        <!-- Lughowi table for active word & selected form -->
-        <div
-          class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.02)]"
-        >
-          <div
-            class="bg-blue-50/50 dark:bg-blue-950/20 px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center"
-          >
-            <span
-              class="text-xs font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-wider"
-            >
-              {{ getFormTitle(selectedLughowiForm) }}
-            </span>
-            <span
-              class="text-xs text-primary dark:text-blue-400 font-bold font-arabic"
-            >
-              {{ activeWord.arabic }}
-            </span>
+                <!-- Arabic Text (Always Blue) -->
+                <span
+                  class="font-arabic text-3xl font-bold my-4 cursor-pointer select-all text-primary dark:text-blue-400"
+                >
+                  {{ card.arabic }}
+                </span>
+
+                <!-- Translation -->
+                <span
+                  class="text-xs text-gray-500 dark:text-gray-400 italic font-medium leading-tight"
+                >
+                  {{ card.meaning }}
+                </span>
+
+                <!-- Action Link -->
+                <button
+                  @click="viewLughowi(card.id)"
+                  class="mt-2 text-[10px] font-bold text-primary dark:text-blue-400 hover:underline flex items-center justify-center gap-1 group"
+                >
+                  <span
+                    class="material-symbols-outlined text-[12px] transition-transform group-hover:translate-x-0.5"
+                    >arrow_forward</span
+                  >
+                  Lihat Tashrif Lughowi
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div class="divide-y divide-gray-100 dark:divide-gray-800/60">
+          <!-- TAB CONTENT: LUGHOWI -->
+          <div v-else class="space-y-4">
+            <!-- Form selector for Lughowi -->
             <div
-              v-for="(row, idx) in activeWord.lughowi[selectedLughowiForm]"
-              :key="idx"
-              class="p-4 flex items-center justify-between hover:bg-blue-50/10 dark:hover:bg-blue-950/5 transition-colors"
+              class="bg-white dark:bg-gray-900 p-5 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col gap-2"
             >
-              <!-- Meaning / Pronoun info -->
-              <div class="flex flex-col items-start gap-0.5">
-                <span
-                  class="text-sm font-bold text-gray-800 dark:text-gray-200"
+              <label
+                class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider"
+                >Pilih Bentuk Kata:</label
+              >
+              <div class="relative">
+                <select
+                  v-model="selectedLughowiForm"
+                  class="w-full bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer"
                 >
-                  {{ getPronounInfo(selectedLughowiForm, idx).pronoun }}
-                </span>
+                  <option value="madhi">Fi'il Madhi (فعل ماض)</option>
+                  <option value="mudhari">Fi'il Mudhari (فعل مضارع)</option>
+                  <option value="mashdar">Mashdar (مصدر)</option>
+                  <option value="fa'il">Isim Fa'il (اسم فاعل)</option>
+                  <option value="maf'ul">Isim Maf'ul (اسم مفعول)</option>
+                  <option value="amr">Fi'il Amr (فعل أمر)</option>
+                  <option value="nahi">Fi'il Nahi (فعل نهي)</option>
+                  <option value="zaman_makan">
+                    Isim Zaman/Makan (اسم زمان/مكان)
+                  </option>
+                  <option value="alat">Isim Alat (اسم آلة)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Lughowi table for active word & selected form -->
+            <div
+              class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.02)]"
+            >
+              <div
+                class="bg-blue-50/50 dark:bg-blue-950/20 px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center"
+              >
                 <span
-                  class="text-xs text-gray-400 dark:text-gray-500 font-medium"
+                  class="text-xs font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-wider"
                 >
-                  {{ getPronounInfo(selectedLughowiForm, idx).meaning }}
+                  {{ getFormTitle(selectedLughowiForm) }}
                 </span>
+                <div class="flex flex-col items-end gap-1 text-right">
+                  <span
+                    class="text-lg text-primary dark:text-blue-400 font-bold font-arabic"
+                  >
+                    {{
+                      activeWord.istilahi.find(
+                        (i) => i.id === selectedLughowiForm,
+                      )?.arabic || activeWord.arabic
+                    }}
+                  </span>
+                  <span
+                    class="text-xs text-gray-500 dark:text-gray-400 italic leading-tight"
+                  >
+                    {{
+                      activeWord.istilahi.find(
+                        (i) => i.id === selectedLughowiForm,
+                      )?.meaning
+                    }}
+                  </span>
+                </div>
               </div>
 
-              <!-- Arabic Conjugated Text (Blue) -->
-              <span
-                class="font-arabic text-2xl font-extrabold text-primary dark:text-blue-400 tracking-wide"
-              >
-                {{ typeof row === 'string' ? row : (row.arabic || '') }}
-              </span>
-            </div>
+              <div class="divide-y divide-gray-100 dark:divide-gray-800/60">
+                <div
+                  v-for="(row, idx) in activeWord.lughowi[selectedLughowiForm]"
+                  :key="idx"
+                  class="p-4 flex items-center justify-between hover:bg-blue-50/10 dark:hover:bg-blue-950/5 transition-colors"
+                >
+                  <!-- Meaning / Pronoun info -->
+                  <div class="flex flex-col items-start gap-0.5">
+                    <span
+                      class="text-sm font-bold text-gray-800 dark:text-gray-200"
+                    >
+                      {{ getPronounInfo(selectedLughowiForm, idx).pronoun }}
+                    </span>
+                    <span
+                      class="text-xs text-gray-400 dark:text-gray-500 font-medium"
+                    >
+                      {{ getPronounInfo(selectedLughowiForm, idx).meaning }}
+                    </span>
+                  </div>
 
-            <!-- Empty fallback if form not configured -->
-            <div
-              v-if="
-                !activeWord.lughowi[selectedLughowiForm] ||
-                activeWord.lughowi[selectedLughowiForm].length === 0
-              "
-              class="p-8 text-center text-sm text-gray-400 dark:text-gray-500 italic"
-            >
-              Data lughowi untuk bentuk ini tidak tersedia.
+                  <!-- Arabic Conjugated Text (Blue) -->
+                  <span
+                    class="font-arabic text-2xl font-extrabold text-primary dark:text-blue-400 tracking-wide"
+                  >
+                    {{ typeof row === "string" ? row : row.arabic || "" }}
+                  </span>
+                </div>
+
+                <!-- Empty fallback if form not configured -->
+                <div
+                  v-if="
+                    !activeWord.lughowi[selectedLughowiForm] ||
+                    activeWord.lughowi[selectedLughowiForm].length === 0
+                  "
+                  class="p-8 text-center text-sm text-gray-400 dark:text-gray-500 italic"
+                >
+                  Data lughowi untuk bentuk ini tidak tersedia.
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </main>
   </div>

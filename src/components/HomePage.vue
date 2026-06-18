@@ -17,6 +17,15 @@ const menus = [
     color: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
   },
   {
+    title: "Tashrif",
+    description:
+      "Jelajahi perubahan bentuk kata bahasa Arab dengan tashrif istilahi dan lughawi.",
+    icon: "auto_stories",
+    link: "/tashrif",
+    color:
+      "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
+  },
+  {
     title: "Chat AI",
     description:
       "Tanya jawab seputar tata bahasa Arab dengan asisten AI pintar.",
@@ -40,13 +49,6 @@ const menus = [
     link: "/hiwar",
     color:
       "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-  },
-  {
-    title: "Tashrif",
-    description: "Pelajari konjugasi perubahan kata bahasa Arab (Istilahi & Lughowi).",
-    icon: "auto_stories",
-    link: "/tashrif",
-    color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
   },
   {
     title: "Tentang",
