@@ -1398,6 +1398,7 @@ const getFormTitle = (formId) => {
                 <!-- Translation -->
                 <span
                   class="text-xs text-gray-500 dark:text-gray-400 italic font-medium leading-tight"
+                  dir="ltr"
                 >
                   {{ card.meaning }}
                 </span>
@@ -1471,6 +1472,7 @@ const getFormTitle = (formId) => {
                   </span>
                   <span
                     class="text-xs text-gray-500 dark:text-gray-400 italic leading-tight"
+                    dir="ltr"
                   >
                     {{
                       activeWord.istilahi.find(
