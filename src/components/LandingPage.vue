@@ -133,7 +133,16 @@
           <h3 class="text-3xl font-black text-[#111814] dark:text-white tracking-tight">Apa Kata Mereka?</h3>
         </div>
         
-        <div class="marquee-container">
+        <div 
+          class="marquee-container"
+          ref="marqueeContainer"
+          @mousedown="onMouseDown"
+          @mouseleave="onMouseLeave"
+          @mouseup="onMouseUp"
+          @mousemove="onMouseMove"
+          @mouseenter="onMouseEnter"
+          @scroll="onScroll"
+        >
           <!-- First track -->
           <div class="marquee-content">
             <div v-for="review in reviews" :key="review.id" class="flex flex-col bg-white dark:bg-background-dark/60 p-6 rounded-2xl border border-[#dbe6e0] dark:border-white/10 shadow-sm w-80 shrink-0 transition-transform hover:-translate-y-1">
@@ -387,10 +396,98 @@
 <script setup>
 import { user, getVisibleReviews, getTotalUsers } from '../lib/supabase.js'
 import { useHead } from '@unhead/vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
 const reviews = ref([])
 const totalUsers = ref(0)
+const marqueeContainer = ref(null)
+
+let isDown = false
+let isHovering = false
+let startX
+let scrollLeft
+let animationFrameId
+const speed = 0.5 // Kecepatan scroll, ubah lebih kecil untuk lebih lambat
+
+const animateMarquee = () => {
+  if (!isDown && !isHovering && marqueeContainer.value) {
+    marqueeContainer.value.scrollLeft += speed
+    checkScrollLimits()
+  }
+  animationFrameId = requestAnimationFrame(animateMarquee)
+}
+
+const checkScrollLimits = () => {
+  if (!marqueeContainer.value) return
+  const firstTrack = marqueeContainer.value.children[0]
+  if (firstTrack) {
+    // 24px adalah gap 1.5rem
+    const scrollLimit = firstTrack.offsetWidth + 24
+    if (marqueeContainer.value.scrollLeft >= scrollLimit) {
+      marqueeContainer.value.scrollLeft -= scrollLimit
+    }
+  }
+}
+
+const onMouseDown = (e) => {
+  e.preventDefault()
+  isDown = true
+  if (marqueeContainer.value) {
+    marqueeContainer.value.style.cursor = 'grabbing'
+    startX = e.pageX - marqueeContainer.value.offsetLeft
+    scrollLeft = marqueeContainer.value.scrollLeft
+  }
+}
+
+const onMouseLeave = () => {
+  isDown = false
+  isHovering = false
+  if (marqueeContainer.value) {
+    marqueeContainer.value.style.cursor = 'grab'
+  }
+}
+
+const onMouseUp = () => {
+  isDown = false
+  if (marqueeContainer.value) {
+    marqueeContainer.value.style.cursor = 'grab'
+  }
+}
+
+const onMouseEnter = () => {
+  isHovering = true
+}
+
+const onMouseMove = (e) => {
+  if (!isDown || !marqueeContainer.value) return
+  e.preventDefault()
+  const x = e.pageX - marqueeContainer.value.offsetLeft
+  const walk = (x - startX) * 1.5 // Sensitivitas geser
+  
+  let targetScroll = scrollLeft - walk
+  
+  const firstTrack = marqueeContainer.value.children[0]
+  if (firstTrack) {
+    const scrollLimit = firstTrack.offsetWidth + 24
+    if (targetScroll <= 0) {
+      targetScroll += scrollLimit
+      startX = x
+      scrollLeft = targetScroll
+    } else if (targetScroll >= scrollLimit) {
+      targetScroll -= scrollLimit
+      startX = x
+      scrollLeft = targetScroll
+    }
+  }
+  
+  marqueeContainer.value.scrollLeft = targetScroll
+}
+
+const onScroll = () => {
+  if (!isDown) {
+    checkScrollLimits()
+  }
+}
 
 onMounted(async () => {
   try {
@@ -404,8 +501,19 @@ onMounted(async () => {
     } else {
       reviews.value = data || []
     }
+
+    await nextTick()
+    if (reviews.value.length > 0) {
+       animationFrameId = requestAnimationFrame(animateMarquee)
+    }
   } catch (err) {
     console.error('Error fetching reviews:', err)
+  }
+})
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
   }
 })
 
@@ -431,10 +539,16 @@ useHead({
 <style scoped>
 .marquee-container {
   display: flex;
-  overflow: hidden;
+  overflow-x: auto;
   user-select: none;
   gap: 1.5rem;
   padding-left: 1.5rem;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  cursor: grab;
+}
+.marquee-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 .marquee-content {
   flex-shrink: 0;
@@ -442,17 +556,5 @@ useHead({
   justify-content: space-around;
   min-width: 100%;
   gap: 1.5rem;
-  animation: scroll 80s linear infinite;
-}
-.marquee-container:hover .marquee-content {
-  animation-play-state: paused;
-}
-@keyframes scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(calc(-100% - 1.5rem));
-  }
 }
 </style>
