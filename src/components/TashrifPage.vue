@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useHead } from "@unhead/vue";
 import TheNavbar from "./TheNavbar.vue";
 import { getRandomTashrifWords } from "../lib/supabase.js";
@@ -16,6 +16,7 @@ useHead({
 });
 
 const router = useRouter();
+const route = useRoute();
 
 // Tab state: 'istilahi' | 'lughowi'
 const activeTab = ref("istilahi");
@@ -1142,6 +1143,16 @@ const getFormTitle = (formId) => {
   };
   return titles[formId] || formId;
 };
+// Add onMounted at the end of the script to handle query parameter 'q'
+onMounted(() => {
+  if (route.query.q) {
+    searchQuery.value = route.query.q;
+    // Slight delay to ensure UI is ready
+    setTimeout(() => {
+      performSearch();
+    }, 100);
+  }
+});
 </script>
 
 <template>
@@ -1157,9 +1168,9 @@ const getFormTitle = (formId) => {
       >
         <div class="flex items-center gap-3">
           <button
-            @click="router.push('/home')"
+            @click="router.back()"
             class="p-2 bg-gray-100/50 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-xl transition-all active:scale-95 flex items-center justify-center text-[#111814] dark:text-white"
-            title="Kembali ke Dashboard"
+            title="Kembali"
           >
             <span class="material-symbols-outlined font-bold">arrow_back</span>
           </button>

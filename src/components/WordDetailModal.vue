@@ -212,12 +212,22 @@
               class="bg-primary/5 rounded-xl p-4 border border-primary/10"
               v-if="word?.detail?.tashrif && word?.detail?.tashrif !== '-'"
             >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="block text-xs font-bold text-primary uppercase tracking-wider"
+                  >Tashrif</span
+                >
+                <button
+                  v-if="canShowTashrif(word)"
+                  @click="goToTashrif(word?.kata)"
+                  class="flex items-center gap-1 text-xs font-bold text-white bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg transition-colors active:scale-95 shadow-sm"
+                >
+                  <span class="material-symbols-outlined text-[14px]">table_rows</span>
+                  Tashrif Lengkap
+                </button>
+              </div>
               <span
-                class="block text-xs font-bold text-primary uppercase tracking-wider mb-2"
-                >Tashrif</span
-              >
-              <span
-                class="arabic-text text-2xl text-[#111814] dark:text-white block text-right leading-relaxed"
+                class="arabic-text text-2xl text-[#111814] dark:text-white block text-right leading-relaxed mt-2"
                 dir="rtl"
                 >{{ word?.detail?.tashrif }}</span
               >
@@ -230,7 +240,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { useRouter } from "vue-router";
+
+const props = defineProps({
   show: {
     type: Boolean,
     default: false,
@@ -241,7 +253,43 @@ defineProps({
   },
 });
 
-defineEmits(["close"]);
+const emit = defineEmits(["close"]);
+const router = useRouter();
+
+const canShowTashrif = (wordObj) => {
+  if (!wordObj?.detail) return false;
+  const jenis = (wordObj.detail.jenis_kata || '').toLowerCase();
+  const shighat = (wordObj.detail.shighat || '').toLowerCase();
+  
+  // Jika teridentifikasi sebagai Huruf, Jamid, atau kelompok Isim Mabni, maka tidak bisa ditashrif
+  const forbiddenKeywords = [
+    'huruf', 'jamid', 'dzat', 'mabni', 'isyarah', 'dhomir', 
+    'maushul', 'istifham', 'syarat'
+  ];
+  
+  if (forbiddenKeywords.some(keyword => jenis.includes(keyword) || shighat.includes(keyword))) {
+    return false;
+  }
+  
+  // Jika memiliki urutan tashrif yang valid dari API, berarti bisa ditashrif
+  if (wordObj.detail.tashrif && wordObj.detail.tashrif !== '-') {
+    return true;
+  }
+  
+  // Fallback checking keyword shighat yang bisa ditashrif
+  const validKeywords = [
+    'musytaq', "fi'il", 'fiil', "fa'il", 'fail', "maf'ul", 'maful', 
+    'zaman', 'makan', 'alat', 'alah', 'masdar', 'mashdar', 'mudhari', 
+    'madhi', 'amr', 'nahyi', 'nahi'
+  ];
+  
+  return validKeywords.some(keyword => jenis.includes(keyword) || shighat.includes(keyword));
+};
+
+const goToTashrif = (kata) => {
+  emit("close");
+  router.push({ path: '/tashrif', query: { q: kata } });
+};
 </script>
 
 <style scoped>
