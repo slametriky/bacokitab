@@ -306,3 +306,18 @@ export const getTokenPackages = async () => {
   }
   return data
 }
+
+export const getRandomTashrifWords = async (limit = 3) => {
+  const { data, error } = await supabase
+    .from('tashrif')
+    .select('id, madhi')
+
+  if (error) {
+    console.error('Error fetching random tashrif words:', error)
+    return []
+  }
+
+  // Shuffle array and pick n elements
+  const shuffled = data.sort(() => 0.5 - Math.random())
+  return shuffled.slice(0, limit)
+}

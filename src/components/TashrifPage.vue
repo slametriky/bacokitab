@@ -1,8 +1,15 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useHead } from "@unhead/vue";
 import TheNavbar from "./TheNavbar.vue";
+import { getRandomTashrifWords } from "../lib/supabase.js";
+
+const recommendations = ref([]);
+
+onMounted(async () => {
+  recommendations.value = await getRandomTashrifWords(3);
+});
 
 useHead({
   title: "Tashrif - BacoKitab",
@@ -1006,8 +1013,8 @@ const isSearching = ref(false);
 const activeWord = ref(null);
 
 // Select word from suggestion pills
-const selectWord = (wordKey) => {
-  searchQuery.value = tashrifData[wordKey].arabic;
+const selectWord = (wordValue) => {
+  searchQuery.value = wordValue;
   showKeyboard.value = false;
   performSearch();
 };
@@ -1277,6 +1284,7 @@ const getFormTitle = (formId) => {
 
         <!-- Suggestions/Examples pills inside search card -->
         <div
+          v-if="recommendations.length > 0"
           class="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-gray-100 dark:border-gray-800"
         >
           <span
@@ -1284,37 +1292,17 @@ const getFormTitle = (formId) => {
             >Rekomendasi:</span
           >
           <button
-            @click="selectWord('nasara')"
+            v-for="word in recommendations"
+            :key="word.id"
+            @click="selectWord(word.madhi)"
             :class="[
               'px-3.5 py-1.5 rounded-full text-xs font-bold font-arabic flex items-center gap-1 border transition-all active:scale-95 shadow-sm',
-              currentWordKey === 'nasara'
+              searchQuery === word.madhi
                 ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300'
                 : 'bg-white border-gray-200 text-gray-750 hover:bg-gray-50 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-300',
             ]"
           >
-            نصر
-          </button>
-          <button
-            @click="selectWord('khatama')"
-            :class="[
-              'px-3.5 py-1.5 rounded-full text-xs font-bold font-arabic flex items-center gap-1 border transition-all active:scale-95 shadow-sm',
-              currentWordKey === 'khatama'
-                ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300'
-                : 'bg-white border-gray-200 text-gray-750 hover:bg-gray-50 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-300',
-            ]"
-          >
-            ختم
-          </button>
-          <button
-            @click="selectWord('kataba')"
-            :class="[
-              'px-3.5 py-1.5 rounded-full text-xs font-bold font-arabic flex items-center gap-1 border transition-all active:scale-95 shadow-sm',
-              currentWordKey === 'kataba'
-                ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300'
-                : 'bg-white border-gray-200 text-gray-750 hover:bg-gray-50 dark:bg-gray-900 dark:border-gray-800 dark:text-gray-300',
-            ]"
-          >
-            كتب
+            {{ word.madhi }}
           </button>
         </div>
       </div>
