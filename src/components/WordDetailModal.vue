@@ -69,7 +69,7 @@
               class="mt-2 flex flex-wrap justify-center gap-2"
               v-if="word?.detail"
             >
-              <!-- Jenis Kata -->
+              <!-- Jenis Kata (Legacy) -->
               <span
                 v-if="
                   word?.detail?.jenis_kata && word?.detail?.jenis_kata !== '-'
@@ -80,6 +80,18 @@
                   >account_tree</span
                 >
                 {{ word.detail.jenis_kata }}
+              </span>
+
+              <!-- Shighat -->
+              <span
+                v-if="
+                  word?.detail?.shighat &&
+                  word?.detail?.shighat !== '-'
+                "
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800"
+              >
+                <span class="material-symbols-outlined text-[14px]">sell</span>
+                {{ word.detail.shighat }}
               </span>
 
               <!-- Kategori Huruf -->
@@ -96,20 +108,19 @@
                 {{ word.detail.kategori_huruf }}
               </span>
 
-              <!-- Shighat -->
+              <!-- Jenis Jama -->
               <span
                 v-if="
-                  word?.detail?.shighat &&
-                  word?.detail?.shighat !== '-' &&
-                  word?.detail?.jenis_kata !== 'Huruf'
+                  word?.detail?.jenis_jama &&
+                  word?.detail?.jenis_jama !== '-'
                 "
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
               >
-                <span class="material-symbols-outlined text-[14px]">sell</span>
-                {{ word.detail.shighat }}
+                <span class="material-symbols-outlined text-[14px]">groups</span>
+                {{ word.detail.jenis_jama }}
               </span>
 
-              <!-- Bina -->
+              <!-- Bina (Legacy) -->
               <span
                 v-if="word?.detail?.bina && word?.detail?.bina !== '-'"
                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
