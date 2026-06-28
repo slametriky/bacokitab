@@ -66,6 +66,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'HistoryPage' });
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { user, getAnalysisHistory } from '../lib/supabase.js'

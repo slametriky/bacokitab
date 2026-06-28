@@ -1,4 +1,5 @@
 <script setup>
+defineOptions({ name: 'AppPage' });
 import { computed, onMounted, ref, watch } from "vue";
 import TheNavbar from "./TheNavbar.vue";
 import TheFooter from "./TheFooter.vue";

@@ -142,7 +142,11 @@ const dismissInstall = () => {
     </div>
   </Transition>
 
-  <router-view></router-view>
+  <router-view v-slot="{ Component }">
+    <keep-alive include="AppPage,HistoryPage">
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
 
   <!-- Custom PWA Install Banner -->
   <Transition
