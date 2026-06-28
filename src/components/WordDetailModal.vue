@@ -264,7 +264,7 @@ const canShowTashrif = (wordObj) => {
   // Jika teridentifikasi sebagai Huruf, Jamid, atau kelompok Isim Mabni, maka tidak bisa ditashrif
   const forbiddenKeywords = [
     'huruf', 'jamid', 'dzat', 'mabni', 'isyarah', 'dhomir', 
-    'maushul', 'istifham', 'syarat'
+    'maushul', 'istifham', 'syarat', 'tafdhil'
   ];
   
   if (forbiddenKeywords.some(keyword => jenis.includes(keyword) || shighat.includes(keyword))) {
