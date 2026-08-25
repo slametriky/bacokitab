@@ -41,7 +41,40 @@
         </div>
       </div>
 
+      <div v-if="result.isShort" class="flex items-center gap-2 text-xs text-primary bg-primary/5 px-3 py-2 rounded-lg border border-primary/10 self-start mb-1 animate-pulse">
+        <span class="material-symbols-outlined text-[16px]">touch_app</span>
+        <span>Sentuh/klik kata Arab di bawah untuk melihat I'rab</span>
+      </div>
+
+      <div
+        v-if="result.isShort && result.analisis_irab && result.analisis_irab.length > 0"
+        class="flex flex-wrap gap-x-2 gap-y-4 justify-start text-right px-2 pb-2 arabic-text" 
+        dir="rtl"
+      >
+        <div
+          v-for="(item, index) in result.analisis_irab"
+          :key="index"
+          class="group relative inline-block cursor-pointer"
+          @click="handleWordClick(index, $event)"
+        >
+          <span class="text-[#111814] dark:text-white text-xl md:text-2xl leading-[3.5rem] md:leading-[3.5rem] border-b border-dashed border-primary/30 hover:text-primary transition-colors">{{ item.kata }}</span>
+          
+          <!-- Tooltip -->
+          <div 
+            :class="[
+              'transition-all duration-200 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[280px] bg-gray-900 dark:bg-gray-700 text-white text-base rounded-xl py-3 px-4 shadow-xl z-20 text-center',
+              activeTooltipIndex === index ? 'opacity-100 visible' : 'opacity-0 invisible md:group-hover:opacity-100 md:group-hover:visible'
+            ]"
+            @click.stop
+          >
+            <div class="arabic-text leading-relaxed">{{ item.irab || item.irab_lengkap }}</div>
+            <!-- Arrow -->
+            <div class="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+          </div>
+        </div>
+      </div>
       <p
+        v-else
         class="arabic-text leading-[3.5rem] md:leading-[3.5rem] text-[#111814] dark:text-white text-xl md:text-2xl px-2 pb-2 text-right"
         dir="rtl"
       >
@@ -68,6 +101,7 @@
 
     <!-- Analysis Table -->
     <div
+      v-if="!result.isShort"
       class="overflow-hidden rounded-xl border border-primary/10 shadow-sm bg-white dark:bg-gray-900"
     >
       <div class="overflow-x-auto">
@@ -171,7 +205,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import WordDetailModal from "./WordDetailModal.vue";
 import { getWordDetail } from "../services/api";
 
@@ -189,6 +223,33 @@ let toastTimeout = null;
 const showDetailModal = ref(false);
 const selectedWordDetail = ref(null);
 const loadingWordIndex = ref(null);
+const activeTooltipIndex = ref(null);
+
+const handleWordClick = (index, event) => {
+  event.stopPropagation();
+  if (activeTooltipIndex.value === index) {
+    activeTooltipIndex.value = null; // Toggle off
+  } else {
+    activeTooltipIndex.value = index;
+  }
+};
+
+const closeTooltip = () => {
+  activeTooltipIndex.value = null;
+};
+
+const openDetailFromTooltip = (item, index) => {
+  activeTooltipIndex.value = null;
+  showWordDetail(item, index);
+};
+
+onMounted(() => {
+  document.addEventListener('click', closeTooltip);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeTooltip);
+});
 
 const showWordDetail = async (item, index) => {
   if (loadingWordIndex.value !== null) return;

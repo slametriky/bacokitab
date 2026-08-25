@@ -5,7 +5,7 @@ const getAuthHeaders = async () => {
   return session ? { 'x-auth': `Bearer ${session.access_token}` } : {};
 };
 
-export const analyzeText = async (text) => {
+export const analyzeText = async (text, isShort = true) => {
   try {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
     const authHeaders = await getAuthHeaders();
@@ -16,7 +16,7 @@ export const analyzeText = async (text) => {
         'Content-Type': 'application/json',
         ...authHeaders
       },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, type: isShort ? 'ringkas' : 'detail' }),
     });
 
     if (!response.ok) {

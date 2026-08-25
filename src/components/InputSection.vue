@@ -97,8 +97,21 @@
         </div>
       </div>
     </div>
+    
+    <div class="flex items-center gap-2 px-1 py-2 mb-2">
+      <input
+        type="checkbox"
+        id="shortIrab"
+        v-model="isShortIrab"
+        class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-900 focus:ring-2 dark:bg-gray-800 dark:border-gray-600 cursor-pointer"
+      />
+      <label for="shortIrab" class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+        I'rab Ringkas
+      </label>
+    </div>
+
     <button
-      @click="(tokenStats?.isLimitReached ?? false) ? $emit('limit-reached') : $emit('analyze', inputText)"
+      @click="(tokenStats?.isLimitReached ?? false) ? $emit('limit-reached') : $emit('analyze', inputText, isShortIrab)"
       :disabled="isLoading || (!inputText.trim() && !(tokenStats?.isLimitReached ?? false))"
       :class="[
         'w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all text-white disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]',
@@ -362,6 +375,7 @@ const props = defineProps({
 const emit = defineEmits(["analyze", "refresh-stats"]);
 
 const inputText = ref("");
+const isShortIrab = ref(true);
 const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
 const maxCharacters = 400;
 const textareaRef = ref(null);

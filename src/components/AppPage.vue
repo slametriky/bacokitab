@@ -35,6 +35,7 @@ const showReviewModal = ref(false);
 const reviewSource = ref("");
 const reviewFeedback = ref("");
 const pendingAnalyzeText = ref("");
+const pendingAnalyzeIsShort = ref(true);
 const GUEST_REVIEW_KEY = "bacokitab_review_submitted_guest";
 const HAS_ANALYZED_KEY = "bacokitab_has_analyzed_guest";
 const showToast = ref(false);
@@ -67,18 +68,18 @@ const buyPackage = (pkg) => {
 };
 
 
-const runAnalyze = async (text) => {
+const runAnalyze = async (text, isShort) => {
   isLoading.value = true;
   result.value = null; // Reset result
   try {
-    const response = await analyzeText(text);
-    result.value = response;
+    const response = await analyzeText(text, isShort);
+    result.value = { ...response, isShort };
     hasAnalyzedBefore.value = true;
     localStorage.setItem(HAS_ANALYZED_KEY, "1");
     
     // Save to history if logged in
     if (user.value) {
-      await saveAnalysisToHistory(user.value.id, text, response);
+      await saveAnalysisToHistory(user.value.id, text, result.value);
       tokenStats.value = await getUserTokenStats();
     }
   } catch (error) {
@@ -88,14 +89,15 @@ const runAnalyze = async (text) => {
   }
 };
 
-const handleAnalyze = async (text) => {
+const handleAnalyze = async (text, isShort) => {
   if (hasAnalyzedBefore.value && !reviewSubmitted.value) {
     pendingAnalyzeText.value = text;
+    pendingAnalyzeIsShort.value = isShort;
     showReviewModal.value = true;
     return;
   }
 
-  await runAnalyze(text);
+  await runAnalyze(text, isShort);
 };
 
 const refreshReviewStatus = async () => {
@@ -142,8 +144,9 @@ const submitReviewAndContinue = async () => {
   triggerToast("Terima kasih! Review Anda berhasil dikirim.");
 
   const nextText = pendingAnalyzeText.value;
+  const isShort = pendingAnalyzeIsShort.value;
   pendingAnalyzeText.value = "";
-  if (nextText) await runAnalyze(nextText);
+  if (nextText) await runAnalyze(nextText, isShort);
 };
 
 onMounted(() => {
