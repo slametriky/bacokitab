@@ -12,6 +12,7 @@ import TransactionLogsPage from '../components/TransactionLogsPage.vue';
 import ChatPage from '../components/ChatPage.vue';
 import HomePage from '../components/HomePage.vue';
 import TashrifPage from '../components/TashrifPage.vue';
+import ReadBookPage from '../components/ReadBookPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -84,6 +85,12 @@ const routes = [
     path: '/tashrif',
     name: 'Tashrif',
     component: TashrifPage,
+  },
+  {
+    path: '/read-book',
+    name: 'ReadBook',
+    component: ReadBookPage,
+    meta: { requiresAuth: true },
   },
 ];
 
