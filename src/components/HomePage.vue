@@ -43,7 +43,7 @@ const menus = [
       "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
   },
   {
-    title: "Hubungi Pengembang",
+    title: "Support",
     description: "Butuh bantuan atau punya saran? Silahkan hubungi Developer.",
     icon: "support_agent",
     link: "https://wa.me/62895352414040?text=Assalamualaikum...",
