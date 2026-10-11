@@ -43,11 +43,12 @@ const menus = [
       "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
   },
   {
-    title: "Tentang",
-    description: "Informasi mengenai aplikasi dan fitur BacoKitab.",
-    icon: "info",
-    link: "/about",
-    color: "bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+    title: "Hubungi Pengembang",
+    description: "Butuh bantuan atau punya saran? Silahkan hubungi Developer.",
+    icon: "support_agent",
+    link: "https://wa.me/6281234567890?text=Assalamualaikum...",
+    color: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+    external: true
   },
 ];
 </script>
@@ -70,34 +71,55 @@ const menus = [
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <router-link
-          v-for="menu in menus"
-          :key="menu.title"
-          :to="menu.link"
-          class="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 hover:border-primary/50 hover:shadow-lg transition-all duration-300 group flex flex-col items-start gap-4 active:scale-[0.98]"
-        >
-          <div
-            :class="[
-              'w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3',
-              menu.color,
-            ]"
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 gap-3 sm:gap-4">
+        <template v-for="menu in menus" :key="menu.title">
+          <router-link
+            v-if="!menu.external"
+            :to="menu.link"
+            class="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-5 border border-gray-100 dark:border-gray-800 hover:border-primary/50 hover:shadow-lg transition-all duration-300 group flex flex-col items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 active:scale-[0.98]"
           >
-            <span class="material-symbols-outlined text-2xl">{{
-              menu.icon
-            }}</span>
-          </div>
-          <div>
-            <h3
-              class="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-primary transition-colors"
+            <div
+              :class="[
+                'w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 mx-auto sm:mx-0',
+                menu.color,
+              ]"
             >
-              {{ menu.title }}
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-              {{ menu.description }}
-            </p>
-          </div>
-        </router-link>
+              <span class="material-symbols-outlined text-2xl">{{ menu.icon }}</span>
+            </div>
+            <div class="w-full">
+              <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                {{ menu.title }}
+              </h3>
+              <p class="hidden sm:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                {{ menu.description }}
+              </p>
+            </div>
+          </router-link>
+          <a
+            v-else
+            :href="menu.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-5 border border-gray-100 dark:border-gray-800 hover:border-primary/50 hover:shadow-lg transition-all duration-300 group flex flex-col items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 active:scale-[0.98]"
+          >
+            <div
+              :class="[
+                'w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 mx-auto sm:mx-0',
+                menu.color,
+              ]"
+            >
+              <span class="material-symbols-outlined text-2xl">{{ menu.icon }}</span>
+            </div>
+            <div class="w-full">
+              <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                {{ menu.title }}
+              </h3>
+              <p class="hidden sm:block text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                {{ menu.description }}
+              </p>
+            </div>
+          </a>
+        </template>
       </div>
     </main>
   </div>
