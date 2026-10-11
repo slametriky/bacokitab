@@ -43,14 +43,6 @@ const menus = [
       "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
   },
   {
-    title: "Hiwar",
-    description: "Praktik percakapan bahasa Arab dengan roleplay AI.",
-    icon: "forum",
-    link: "/hiwar",
-    color:
-      "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-  },
-  {
     title: "Tentang",
     description: "Informasi mengenai aplikasi dan fitur BacoKitab.",
     icon: "info",
