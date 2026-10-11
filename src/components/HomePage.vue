@@ -46,7 +46,7 @@ const menus = [
     title: "Hubungi Pengembang",
     description: "Butuh bantuan atau punya saran? Silahkan hubungi Developer.",
     icon: "support_agent",
-    link: "https://wa.me/6281234567890?text=Assalamualaikum...",
+    link: "https://wa.me/62895352414040?text=Assalamualaikum...",
     color: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400",
     external: true
   },

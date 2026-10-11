@@ -56,40 +56,17 @@
       >
     </router-link>
 
-    <router-link
-      v-if="user"
-      class="flex flex-col items-center gap-1 transition-colors"
-      active-class="text-primary"
-      exact-active-class="text-primary"
-      :class="[
-        $route.path === '/hiwar'
-          ? 'text-primary'
-          : 'text-[#111814] dark:text-white hover:text-primary',
-      ]"
-      to="/hiwar"
+    <a
+      href="https://wa.me/62895352414040?text=Assalamualaikum..."
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex flex-col items-center gap-1 transition-colors text-[#111814] dark:text-white hover:text-primary"
     >
-      <span class="material-symbols-outlined text-[24px] md:text-[28px]">forum</span>
+      <span class="material-symbols-outlined text-[24px] md:text-[28px]">support_agent</span>
       <span class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider md:tracking-widest"
-        >Hiwar</span
+        >Support</span
       >
-    </router-link>
-
-    <router-link
-      class="flex flex-col items-center gap-1 transition-colors"
-      active-class="text-primary"
-      exact-active-class="text-primary"
-      :class="[
-        $route.path === '/about'
-          ? 'text-primary'
-          : 'text-[#111814] dark:text-white hover:text-primary',
-      ]"
-      to="/about"
-    >
-      <span class="material-symbols-outlined text-[24px] md:text-[28px]">info</span>
-      <span class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider md:tracking-widest"
-        >Tentang</span
-      >
-    </router-link>
+    </a>
   </nav>
 </template>
 
