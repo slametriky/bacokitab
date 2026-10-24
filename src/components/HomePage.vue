@@ -54,19 +54,19 @@ const menus = [
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-gradient-to-b from-blue-50/60 via-slate-50 to-slate-100/70 dark:from-slate-950 dark:via-[#0c1222] dark:to-[#080d19]">
+  <div class="min-h-screen flex flex-col bg-gradient-to-b from-[#fbf6ee] via-[#f5ebda] to-[#ecdcc4] dark:from-[#17120a] dark:via-[#221b0e] dark:to-[#16110a]">
     <TheNavbar />
 
     <main class="flex-1 max-w-3xl mx-auto w-full px-4 py-8 pb-24">
       <div class="mb-8 text-center sm:text-left">
         <h1
-          class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight"
+          class="text-2xl md:text-3xl font-extrabold text-[#2e200f] dark:text-[#fcf7ee] mb-2 tracking-tight"
         >
           Selamat datang{{
             user?.email ? ", " + user.email.split("@")[0] : ""
           }}! 👋
         </h1>
-        <p class="text-slate-600 dark:text-slate-400 text-sm md:text-base font-normal">
+        <p class="text-[#83683f] dark:text-[#c9b493] text-sm md:text-base font-normal">
           Pilih menu di bawah ini untuk memulai belajar bahasa Arab.
         </p>
       </div>
@@ -76,7 +76,7 @@ const menus = [
           <router-link
             v-if="!menu.external"
             :to="menu.link"
-            class="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-800/80 hover:border-primary/50 dark:hover:border-primary/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_28px_-6px_rgba(37,99,235,0.15)] transition-all duration-300 group flex flex-col items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 active:scale-[0.98]"
+            class="bg-white dark:bg-[#22190f] rounded-2xl p-4 sm:p-5 border border-[#e5d4b5] dark:border-[#42321c] hover:border-[#c59a3f] dark:hover:border-[#d9ad4f] shadow-[0_6px_22px_-4px_rgba(180,130,40,0.08)] hover:shadow-[0_14px_32px_-6px_rgba(200,145,45,0.22)] hover:-translate-y-0.5 transition-all duration-300 group flex flex-col items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 active:scale-[0.98]"
           >
             <div
               :class="[
@@ -87,10 +87,10 @@ const menus = [
               <span class="material-symbols-outlined text-2xl">{{ menu.icon }}</span>
             </div>
             <div class="w-full">
-              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+              <h3 class="text-base sm:text-lg font-bold text-[#2e200f] dark:text-[#fcf7ee] group-hover:text-[#b38428] dark:group-hover:text-[#e0b75d] transition-colors">
                 {{ menu.title }}
               </h3>
-              <p class="hidden sm:block text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
+              <p class="hidden sm:block text-sm text-[#83683f] dark:text-[#c9b493] leading-relaxed mt-1">
                 {{ menu.description }}
               </p>
             </div>
@@ -100,7 +100,7 @@ const menus = [
             :href="menu.link"
             target="_blank"
             rel="noopener noreferrer"
-            class="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-800/80 hover:border-primary/50 dark:hover:border-primary/50 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_28px_-6px_rgba(37,99,235,0.15)] transition-all duration-300 group flex flex-col items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 active:scale-[0.98]"
+            class="bg-white dark:bg-[#22190f] rounded-2xl p-4 sm:p-5 border border-[#e5d4b5] dark:border-[#42321c] hover:border-[#c59a3f] dark:hover:border-[#d9ad4f] shadow-[0_6px_22px_-4px_rgba(180,130,40,0.08)] hover:shadow-[0_14px_32px_-6px_rgba(200,145,45,0.22)] hover:-translate-y-0.5 transition-all duration-300 group flex flex-col items-center sm:items-start text-center sm:text-left gap-3 sm:gap-4 active:scale-[0.98]"
           >
             <div
               :class="[
@@ -111,10 +111,10 @@ const menus = [
               <span class="material-symbols-outlined text-2xl">{{ menu.icon }}</span>
             </div>
             <div class="w-full">
-              <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+              <h3 class="text-base sm:text-lg font-bold text-[#2e200f] dark:text-[#fcf7ee] group-hover:text-[#b38428] dark:group-hover:text-[#e0b75d] transition-colors">
                 {{ menu.title }}
               </h3>
-              <p class="hidden sm:block text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
+              <p class="hidden sm:block text-sm text-[#83683f] dark:text-[#c9b493] leading-relaxed mt-1">
                 {{ menu.description }}
               </p>
             </div>
