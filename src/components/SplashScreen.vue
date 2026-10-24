@@ -4,22 +4,13 @@ import { ref, onMounted } from 'vue';
 const props = defineProps({
   duration: {
     type: Number,
-    default: 1800
+    default: 1600
   }
 });
 
-// Cek apakah aplikasi dibuka dari PWA yang terinstall di perangkat (mode standalone)
-const isStandalone = typeof window !== 'undefined' && (
-  window.matchMedia('(display-mode: standalone)').matches ||
-  window.navigator.standalone === true
-);
-
-// Di PWA mobile terinstall, jangan tampilkan splash screen web kedua karena OS sudah menampilkan splash native
-const isVisible = ref(!isStandalone);
+const isVisible = ref(true);
 
 onMounted(() => {
-  if (!isVisible.value) return;
-
   const timer = setTimeout(() => {
     isVisible.value = false;
   }, props.duration);
