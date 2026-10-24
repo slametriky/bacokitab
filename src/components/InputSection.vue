@@ -377,7 +377,7 @@ const emit = defineEmits(["analyze", "refresh-stats"]);
 const inputText = ref("");
 const isShortIrab = ref(true);
 const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
-const maxCharacters = 400;
+const maxCharacters = 1000;
 const textareaRef = ref(null);
 
 const adjustTextareaHeight = () => {
@@ -460,9 +460,9 @@ const initSpeechRecognition = () => {
 
     // Commit the accumulated transcript to inputText
     if (tempTranscript) {
-      if (tempTranscript.length > 400) {
-        tempTranscript = tempTranscript.substring(0, 400);
-        triggerToast("Teks dipotong (maks 400 karakter).");
+      if (tempTranscript.length > maxCharacters) {
+        tempTranscript = tempTranscript.substring(0, maxCharacters);
+        triggerToast(`Teks dipotong (maks ${maxCharacters} karakter).`);
       } else {
         triggerToast("Teks berhasil ditambahkan.");
       }
@@ -781,9 +781,9 @@ const processOcr = async (file) => {
       // Clean up common OCR noise and errors for Arabic
       let newText = cleanOcrText(ocrResultText);
 
-      if (newText.length > 400) {
-        newText = newText.substring(0, 400);
-        triggerToast("Teks dipotong (maks 400 karakter).");
+      if (newText.length > maxCharacters) {
+        newText = newText.substring(0, maxCharacters);
+        triggerToast(`Teks dipotong (maks ${maxCharacters} karakter).`);
       } else {
         triggerToast("Teks berhasil diekstrak.");
       }
