@@ -21,21 +21,25 @@ onMounted(() => {
 
 <template>
   <Transition
-    enter-active-class="transition-opacity duration-300"
+    enter-active-class="transition-opacity duration-200"
     leave-active-class="transition-all duration-500 ease-out"
     leave-from-class="opacity-100 scale-100"
     leave-to-class="opacity-0 scale-105 pointer-events-none"
   >
     <div
       v-if="isVisible"
-      class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-[#111814] select-none px-4"
+      class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-[#111814] select-none px-4 w-screen h-screen overflow-hidden"
+      style="position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; transform-origin: center center;"
     >
       <!-- Logo Container -->
       <div class="flex items-center justify-center mb-4">
         <img
           src="/menu_book.svg"
           alt="BacoKitab Logo"
+          width="96"
+          height="96"
           class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-contain shadow-md"
+          style="transform-origin: center center;"
         />
       </div>
 
