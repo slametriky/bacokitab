@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 const props = defineProps({
   duration: {
     type: Number,
-    default: 1600
+    default: 2500 // Durasi 2.5 detik agar animasi loading terlihat jelas dan mulus
   }
 });
 
