@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import SplashScreen from "./components/SplashScreen.vue";
 
 const deferredPrompt = ref(null);
 const showInstallPrompt = ref(false);
@@ -71,6 +72,9 @@ const dismissInstall = () => {
 </script>
 
 <template>
+  <!-- Splash Screen (PWA & App Startup) -->
+  <SplashScreen />
+
   <!-- Old Domain Migration Modal -->
   <Transition
     enter-active-class="transition ease-out duration-300"

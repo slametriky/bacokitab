@@ -21,6 +21,7 @@ export default defineConfig({
         short_name: 'Bacokitab',
         description: 'Bantu bedah tata bahasa Arab',
         theme_color: '#ffffff',
+        background_color: '#ffffff',
         icons: [
           {
             src: 'pwa-192x192.png',
