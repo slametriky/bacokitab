@@ -91,9 +91,12 @@
               <span class="material-symbols-outlined">delete</span>
             </button>
           </div>
-          <span class="text-xs text-gray-500 font-medium"
-            >{{ inputText.length }} / {{ maxCharacters }} karakter</span
-          >
+          <div class="flex items-center gap-1.5 text-xs font-medium">
+            <span
+              :class="inputText.length >= maxCharacters ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-gray-500 dark:text-gray-400'"
+            >{{ inputText.length }} / {{ maxCharacters }} karakter</span>
+            
+          </div>
         </div>
       </div>
     </div>
@@ -377,7 +380,9 @@ const emit = defineEmits(["analyze", "refresh-stats"]);
 const inputText = ref("");
 const isShortIrab = ref(true);
 const isArabicText = computed(() => /[\u0600-\u06FF]/.test(inputText.value));
-const maxCharacters = 1000;
+const maxCharacters = computed(() => {
+  return props.tokenStats?.isPremium ? 1000 : 400;
+});
 const textareaRef = ref(null);
 
 const adjustTextareaHeight = () => {
@@ -460,9 +465,13 @@ const initSpeechRecognition = () => {
 
     // Commit the accumulated transcript to inputText
     if (tempTranscript) {
-      if (tempTranscript.length > maxCharacters) {
-        tempTranscript = tempTranscript.substring(0, maxCharacters);
-        triggerToast(`Teks dipotong (maks ${maxCharacters} karakter).`);
+      if (tempTranscript.length > maxCharacters.value) {
+        tempTranscript = tempTranscript.substring(0, maxCharacters.value);
+        if (props.tokenStats?.isPremium) {
+          triggerToast(`Teks dipotong (maks ${maxCharacters.value} karakter).`);
+        } else {
+          triggerToast("Teks dipotong (maks 400 karakter). Upgrade ke Premium untuk batas 1.000 karakter.");
+        }
       } else {
         triggerToast("Teks berhasil ditambahkan.");
       }
@@ -781,9 +790,13 @@ const processOcr = async (file) => {
       // Clean up common OCR noise and errors for Arabic
       let newText = cleanOcrText(ocrResultText);
 
-      if (newText.length > maxCharacters) {
-        newText = newText.substring(0, maxCharacters);
-        triggerToast(`Teks dipotong (maks ${maxCharacters} karakter).`);
+      if (newText.length > maxCharacters.value) {
+        newText = newText.substring(0, maxCharacters.value);
+        if (props.tokenStats?.isPremium) {
+          triggerToast(`Teks dipotong (maks ${maxCharacters.value} karakter).`);
+        } else {
+          triggerToast("Teks dipotong (maks 400 karakter). Upgrade ke Premium untuk batas 1.000 karakter.");
+        }
       } else {
         triggerToast("Teks berhasil diekstrak.");
       }

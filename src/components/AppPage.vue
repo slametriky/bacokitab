@@ -244,7 +244,7 @@ watch(
               <div class="mt-3 flex gap-2 items-start bg-amber-50 dark:bg-amber-900/20 p-2.5 rounded-lg border border-amber-100 dark:border-amber-900/30">
                 <span class="material-symbols-outlined text-amber-500 text-[18px] mt-0.5">workspace_premium</span>
                 <p class="text-[11px] sm:text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-                  <strong class="font-semibold">Kelebihan Token Premium:</strong> Nikmati hasil analisa yang lebih akurat, mendalam, dan detail dibandingkan token gratis.
+                  <strong class="font-semibold">Kelebihan Token Premium:</strong> Input hingga 1.000 karakter per analisa (Free 400 karakter), serta hasil analisa yang lebih akurat, mendalam, dan detail.
                 </p>
               </div>
             </div>
