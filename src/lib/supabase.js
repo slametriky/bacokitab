@@ -7,14 +7,47 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export const user = ref(null)
+export const isAdmin = ref(false)
+
+export const checkCurrentUserIsAdmin = async () => {
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (!currentUser) {
+    isAdmin.value = false
+    return false
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('is_admin')
+    .eq('id', currentUser.id)
+    .single()
+
+  if (error || !data) {
+    isAdmin.value = false
+    return false
+  }
+
+  isAdmin.value = !!data.is_admin
+  return isAdmin.value
+}
 
 // Initialize user state and set up listener
 supabase.auth.getSession().then(({ data: { session } }) => {
   user.value = session?.user || null
+  if (session?.user) {
+    checkCurrentUserIsAdmin()
+  } else {
+    isAdmin.value = false
+  }
 })
 
 supabase.auth.onAuthStateChange((_, session) => {
   user.value = session?.user || null
+  if (session?.user) {
+    checkCurrentUserIsAdmin()
+  } else {
+    isAdmin.value = false
+  }
 })
 
 export const signInWithGoogle = async () => {
@@ -320,4 +353,79 @@ export const getRandomTashrifWords = async (limit = 3) => {
   // Shuffle array and pick n elements
   const shuffled = data.sort(() => 0.5 - Math.random())
   return shuffled.slice(0, limit)
+}
+
+export const getAdminUsersList = async (search = '', filter = 'all', limit = 50, offset = 0) => {
+  const { data, error } = await supabase.rpc('get_admin_users_list', {
+    p_search: search,
+    p_filter: filter,
+    p_limit: limit,
+    p_offset: offset
+  })
+
+  if (error) {
+    console.error('Error fetching admin users list:', error)
+    throw error
+  }
+  return data
+}
+
+export const adminUpdateUser = async (userId, payload) => {
+  const { data, error } = await supabase.rpc('admin_update_user', {
+    p_user_id: userId,
+    p_plan_type: payload.plan_type,
+    p_is_admin: payload.is_admin,
+    p_max_premium_tokens: payload.max_premium_tokens,
+    p_daily_token_limit: payload.daily_token_limit
+  })
+
+  if (error) {
+    console.error('Error updating user as admin:', error)
+    throw error
+  }
+  return data
+}
+
+export const getAdminReviewsList = async (search = '', status = 'all', limit = 50, offset = 0) => {
+  const { data, error } = await supabase.rpc('get_admin_reviews_list', {
+    p_search: search,
+    p_status: status,
+    p_limit: limit,
+    p_offset: offset
+  })
+
+  if (error) {
+    console.error('Error fetching admin reviews list:', error)
+    throw error
+  }
+  return data
+}
+
+export const adminToggleReviewVisibility = async (reviewId, isVisible) => {
+  const { data, error } = await supabase.rpc('admin_toggle_review_visibility', {
+    p_review_id: reviewId,
+    p_is_visible: isVisible
+  })
+
+  if (error) {
+    console.error('Error toggling review visibility:', error)
+    throw error
+  }
+  return data
+}
+
+export const getAdminTransactionsList = async (search = '', feature = 'all', date = '', limit = 50, offset = 0) => {
+  const { data, error } = await supabase.rpc('get_admin_transactions_list', {
+    p_search: search,
+    p_feature: feature,
+    p_date: date,
+    p_limit: limit,
+    p_offset: offset
+  })
+
+  if (error) {
+    console.error('Error fetching admin transactions list:', error)
+    throw error
+  }
+  return data
 }

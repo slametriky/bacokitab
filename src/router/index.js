@@ -12,6 +12,7 @@ import TransactionLogsPage from '../components/TransactionLogsPage.vue';
 import ChatPage from '../components/ChatPage.vue';
 import HomePage from '../components/HomePage.vue';
 import TashrifPage from '../components/TashrifPage.vue';
+import AdminUsersPage from '../components/AdminUsersPage.vue';
 import { supabase } from '../lib/supabase.js';
 
 const routes = [
@@ -85,6 +86,16 @@ const routes = [
     name: 'Tashrif',
     component: TashrifPage,
   },
+  {
+    path: '/admin',
+    redirect: '/admin/users',
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminUsers',
+    component: AdminUsersPage,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
 ];
 
 const router = createRouter({
@@ -98,6 +109,22 @@ router.beforeEach(async (to, from, next) => {
   // Jika user sudah login dan mencoba ke halaman login atau landing, redirect ke home
   if ((to.name === 'Login' || to.name === 'Landing') && session) {
     return next({ name: 'Home' });
+  }
+
+  // Jika halaman butuh admin
+  if (to.meta.requiresAdmin) {
+    if (!session) {
+      return next({ name: 'Login' });
+    }
+    const { data: userData } = await supabase
+      .from('users')
+      .select('is_admin')
+      .eq('id', session.user.id)
+      .single();
+
+    if (!userData?.is_admin) {
+      return next({ name: 'Home' });
+    }
   }
 
   // Jika halaman butuh auth tetapi user belum login, redirect ke login
