@@ -468,15 +468,15 @@ watch(
 </script>
 
 <template>
-  <div class="h-screen flex flex-col bg-[#fbf6ee] dark:bg-[#17120a] overflow-hidden">
+  <div class="h-screen flex flex-col bg-gray-50 dark:bg-background-dark overflow-hidden">
     <!-- Top Reader Toolbar -->
-    <header class="flex-shrink-0 bg-white/95 dark:bg-[#22190f]/95 backdrop-blur-md border-b border-[#e5d4b5] dark:border-[#42321c] px-3 sm:px-5 py-2.5 z-30">
+    <header class="flex-shrink-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 px-3 sm:px-5 py-2.5 z-30">
       <div class="max-w-full mx-auto flex flex-wrap items-center justify-between gap-2">
         <!-- Left: Back + Title -->
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <router-link
             to="/kitab"
-            class="p-2 hover:bg-[#fbf6ee] dark:hover:bg-[#2d2114] rounded-xl transition-colors text-[#6e5530] dark:text-[#d9c3a3] flex-shrink-0"
+            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors text-gray-600 dark:text-gray-300 flex-shrink-0"
             title="Kembali ke Pustaka Kitab"
           >
             <span class="material-symbols-outlined block text-[22px]">arrow_back</span>
@@ -485,22 +485,22 @@ watch(
           <div v-if="kitab" class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
               <h1
-                class="text-sm sm:text-base font-bold text-[#2e200f] dark:text-[#fcf7ee] truncate"
+                class="text-sm sm:text-base font-bold text-gray-900 dark:text-white truncate"
                 dir="auto"
               >
                 {{ kitab.title }}
               </h1>
-              <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50 flex-shrink-0">
+              <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 flex-shrink-0">
                 {{ kitab.theme }}
               </span>
             </div>
-            <p class="text-[11px] sm:text-xs text-[#83683f] dark:text-[#c9b493] truncate" dir="auto">
+            <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 truncate" dir="auto">
               {{ kitab.author }}
               <span class="mx-1">•</span>
               <span>{{ kitab.is_public ? "Publik" : "Privat" }}</span>
             </p>
           </div>
-          <div v-else class="text-sm font-bold text-[#2e200f] dark:text-[#fcf7ee]">
+          <div v-else class="text-sm font-bold text-gray-900 dark:text-white">
             Baca Kitab PDF
           </div>
         </div>
@@ -515,7 +515,7 @@ watch(
               'inline-flex items-center gap-1.5 px-3 py-2 font-bold text-xs rounded-xl transition-all shadow-sm border',
               isSnipMode
                 ? 'bg-emerald-600 text-white border-emerald-600 animate-pulse'
-                : 'bg-white dark:bg-[#17120a] text-[#6e5530] dark:text-[#d9c3a3] border-[#e5d4b5] dark:border-[#42321c] hover:bg-[#fbf6ee]'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             ]"
             title="Tarik kotak di atas teks Arab (terutama PDF hasil scan) untuk mengekstrak teks ke input OCR"
           >
@@ -529,8 +529,8 @@ watch(
             :class="[
               'inline-flex items-center gap-1.5 px-3 py-2 font-bold text-xs rounded-xl transition-all shadow-sm border',
               isAnalyzeOpen
-                ? 'bg-amber-600 text-white border-amber-600 hover:bg-amber-700'
-                : 'bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/50 hover:bg-amber-100'
+                ? 'bg-primary text-white border-primary hover:bg-primary/90'
+                : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
             ]"
             title="Buka/Tutup Panel Analisa I'rab"
           >
@@ -542,7 +542,7 @@ watch(
             :href="kitab.pdf_url"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl shadow-sm transition-colors"
+            class="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-bold text-xs rounded-xl shadow-sm transition-colors"
             title="Buka PDF di Tab Baru"
           >
             <span class="material-symbols-outlined text-[16px]">open_in_new</span>
@@ -559,7 +559,7 @@ watch(
         <!-- Loading Kitab Metadata -->
         <div v-if="isLoading" class="flex-1 flex flex-col items-center justify-center p-6">
           <span class="material-symbols-outlined animate-spin text-4xl text-primary mb-3">progress_activity</span>
-          <p class="text-sm font-medium text-[#83683f] dark:text-[#c9b493]">Menyiapkan kitab...</p>
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Menyiapkan kitab...</p>
         </div>
 
         <!-- Error / Not Found -->
@@ -567,8 +567,8 @@ watch(
           <div class="w-16 h-16 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-2xl flex items-center justify-center mb-4">
             <span class="material-symbols-outlined text-4xl">menu_book</span>
           </div>
-          <h2 class="text-lg font-bold text-[#2e200f] dark:text-[#fcf7ee]">Tidak Dapat Membuka Kitab</h2>
-          <p class="text-sm text-[#83683f] dark:text-[#c9b493] mt-1 max-w-md">
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">Tidak Dapat Membuka Kitab</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-md">
             {{ errorMessage || "Link PDF tidak valid." }}
           </p>
           <router-link
@@ -584,9 +584,9 @@ watch(
           <!-- Loading PDF Bytes Overlay -->
           <div v-if="isPdfLoading" class="flex-1 flex flex-col items-center justify-center p-6 text-center">
             <span class="material-symbols-outlined animate-spin text-4xl text-primary mb-3">progress_activity</span>
-            <p class="text-sm font-semibold text-[#6e5530] dark:text-[#d9c3a3]">Mengunduh & merender halaman PDF...</p>
-            <p class="text-xs text-[#83683f] dark:text-[#c9b493] mt-1">
-              Sedang menyiapkan teks agar bisa langsung diklik dan diblok.
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">Mengunduh & merender halaman PDF...</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Sedang menyiapkan halaman kitab.
             </p>
           </div>
 
@@ -595,14 +595,14 @@ watch(
             <div class="w-16 h-16 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded-2xl flex items-center justify-center mb-4">
               <span class="material-symbols-outlined text-4xl">warning</span>
             </div>
-            <h2 class="text-lg font-bold text-[#2e200f] dark:text-[#fcf7ee]">Gagal Memuat PDF Langsung</h2>
-            <p class="text-sm text-[#83683f] dark:text-[#c9b493] mt-1 max-w-md">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Gagal Memuat PDF Langsung</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-md">
               {{ pdfLoadError }}
             </p>
             <div class="flex flex-wrap items-center justify-center gap-3 mt-5">
               <button
                 @click="loadPdfWithPdfJs(kitab.pdf_url)"
-                class="px-4 py-2.5 bg-white dark:bg-[#22190f] border border-[#e5d4b5] dark:border-[#42321c] text-[#2e200f] dark:text-[#fcf7ee] font-bold text-sm rounded-xl shadow-sm hover:bg-[#fbf6ee] transition-all flex items-center gap-1.5"
+                class="px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold text-sm rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center gap-1.5"
               >
                 <span class="material-symbols-outlined text-[18px]">refresh</span>
                 Coba Muat Ulang
@@ -726,13 +726,13 @@ watch(
             </Transition>
 
             <!-- Bottom Page & Zoom Bar -->
-            <div class="flex-shrink-0 bg-white/95 dark:bg-[#22190f]/95 border-t border-[#e5d4b5] dark:border-[#42321c] px-3 sm:px-5 py-2 flex items-center justify-between gap-2 text-xs">
+            <div class="flex-shrink-0 bg-white/95 dark:bg-gray-800/95 border-t border-gray-200 dark:border-gray-700 px-3 sm:px-5 py-2 flex items-center justify-between gap-2 text-xs">
               <!-- Page Controls -->
               <div class="flex items-center gap-1.5">
                 <button
                   @click="goToPage(currentPage - 1)"
                   :disabled="currentPage <= 1 || isRenderingPage"
-                  class="p-1.5 rounded-lg border border-[#e5d4b5] dark:border-[#42321c] text-[#6e5530] dark:text-[#d9c3a3] hover:bg-[#fbf6ee] disabled:opacity-40"
+                  class="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40"
                   title="Halaman Sebelumnya"
                 >
                   <span class="material-symbols-outlined block text-[18px]">chevron_left</span>
@@ -747,33 +747,28 @@ watch(
                     @input="handlePageInput"
                     @blur="commitPageInput"
                     @focus="$event.target.select()"
-                    class="w-14 sm:w-16 px-1.5 py-1 text-center text-xs sm:text-sm bg-[#fbf6ee] dark:bg-[#17120a] border border-[#e5d4b5] dark:border-[#42321c] rounded-lg font-bold text-[#2e200f] dark:text-[#fcf7ee] focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                    class="w-14 sm:w-16 px-1.5 py-1 text-center text-xs sm:text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg font-bold text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     aria-label="Nomor halaman"
                   />
-                  <span class="text-[#83683f] dark:text-[#c9b493] font-medium whitespace-nowrap">/ {{ totalPages }}</span>
+                  <span class="text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">/ {{ totalPages }}</span>
                 </form>
 
                 <button
                   @click="goToPage(currentPage + 1)"
                   :disabled="currentPage >= totalPages || isRenderingPage"
-                  class="p-1.5 rounded-lg border border-[#e5d4b5] dark:border-[#42321c] text-[#6e5530] dark:text-[#d9c3a3] hover:bg-[#fbf6ee] disabled:opacity-40"
+                  class="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40"
                   title="Halaman Berikutnya"
                 >
                   <span class="material-symbols-outlined block text-[18px]">chevron_right</span>
                 </button>
               </div>
 
-              <!-- Tip on desktop -->
-              <span class="hidden md:inline text-[11px] text-[#83683f] dark:text-[#c9b493] truncate">
-                Blok teks Arab langsung di halaman, atau gunakan <strong>Blok Area (OCR)</strong> untuk kitab hasil scan.
-              </span>
-
               <!-- Zoom Controls -->
               <div class="flex items-center gap-1">
                 <button
                   @click="fitToWidth()"
                   :disabled="isRenderingPage"
-                  class="p-1.5 rounded-lg border border-[#e5d4b5] dark:border-[#42321c] text-[#6e5530] dark:text-[#d9c3a3] hover:bg-[#fbf6ee] disabled:opacity-40"
+                  class="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40"
                   title="Sesuaikan Lebar Layar"
                 >
                   <span class="material-symbols-outlined block text-[18px]">fit_screen</span>
@@ -781,18 +776,18 @@ watch(
                 <button
                   @click="zoomOut"
                   :disabled="scale <= 0.4 || isRenderingPage"
-                  class="p-1.5 rounded-lg border border-[#e5d4b5] dark:border-[#42321c] text-[#6e5530] dark:text-[#d9c3a3] hover:bg-[#fbf6ee] disabled:opacity-40"
+                  class="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40"
                   title="Perkecil"
                 >
                   <span class="material-symbols-outlined block text-[18px]">zoom_out</span>
                 </button>
-                <span class="w-11 text-center font-bold text-[#2e200f] dark:text-[#fcf7ee]">
+                <span class="w-11 text-center font-bold text-gray-900 dark:text-white">
                   {{ Math.round(scale * 100) }}%
                 </span>
                 <button
                   @click="zoomIn"
                   :disabled="scale >= 2.5 || isRenderingPage"
-                  class="p-1.5 rounded-lg border border-[#e5d4b5] dark:border-[#42321c] text-[#6e5530] dark:text-[#d9c3a3] hover:bg-[#fbf6ee] disabled:opacity-40"
+                  class="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40"
                   title="Perbesar"
                 >
                   <span class="material-symbols-outlined block text-[18px]">zoom_in</span>
@@ -813,13 +808,13 @@ watch(
       <!-- Unified Responsive Analyze Panel (Desktop Side Panel / Mobile Bottom Drawer) -->
       <aside
         v-show="kitab && isAnalyzeOpen"
-        class="fixed inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t shadow-2xl z-40 flex flex-col bg-[#fbf6ee] dark:bg-[#17120a] border-[#e5d4b5] dark:border-[#42321c] lg:static lg:max-h-none lg:rounded-none lg:border-t-0 lg:border-l lg:shadow-none lg:w-[460px] xl:w-[520px] flex-shrink-0 overflow-hidden"
+        class="fixed inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t shadow-2xl z-40 flex flex-col bg-gray-50 dark:bg-background-dark border-gray-200 dark:border-gray-700 lg:static lg:max-h-none lg:rounded-none lg:border-t-0 lg:border-l lg:shadow-none lg:w-[460px] xl:w-[520px] flex-shrink-0 overflow-hidden"
       >
         <!-- Mobile Drawer Header -->
-        <div class="flex lg:hidden items-center justify-between px-4 py-3 bg-white/90 dark:bg-[#22190f]/95 border-b border-[#e5d4b5] dark:border-[#42321c]">
+        <div class="flex lg:hidden items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-[20px]">analytics</span>
-            <h2 class="font-bold text-sm text-[#2e200f] dark:text-[#fcf7ee]">
+            <h2 class="font-bold text-sm text-gray-900 dark:text-white">
               Analisa I'rab & OCR
             </h2>
           </div>
