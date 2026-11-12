@@ -9,26 +9,18 @@ const devPdfProxyPlugin = () => ({
     server.middlewares.use('/api/pdf-proxy', async (req, res) => {
       const urlObj = new URL(req.url, 'http://localhost');
       req.query = Object.fromEntries(urlObj.searchParams.entries());
-      const wrappedRes = {
-        statusCode: 200,
-        setHeader: (k, v) => res.setHeader(k, v),
-        status(code) {
-          this.statusCode = code;
-          res.statusCode = code;
-          return this;
-        },
-        json(obj) {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(obj));
-        },
-        send(buf) {
-          res.end(buf);
-        },
-        end(data) {
-          res.end(data);
-        },
+      res.status = (code) => {
+        res.statusCode = code;
+        return res;
       };
-      await pdfProxyHandler(req, wrappedRes);
+      res.json = (obj) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(obj));
+      };
+      res.send = (buf) => {
+        res.end(buf);
+      };
+      await pdfProxyHandler(req, res);
     });
   },
 });

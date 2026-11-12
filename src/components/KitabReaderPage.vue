@@ -40,10 +40,6 @@ const pageWrapperRef = ref(null);
 const scrollContainerRef = ref(null);
 let currentTextLayer = null;
 let renderTask = null;
-let selectionDebounce = null;
-
-// Direct Text Selection State
-const selectedText = ref("");
 
 // Region Snip / Area Block (OCR) State
 const isSnipMode = ref(false);
@@ -161,7 +157,6 @@ const renderPage = async (pageNum) => {
   if (!pdfDoc || !canvasRef.value || !textLayerRef.value) return;
 
   isRenderingPage.value = true;
-  selectedText.value = "";
 
   try {
     if (renderTask) {
@@ -217,10 +212,37 @@ const renderPage = async (pageNum) => {
 };
 
 const goToPage = async (num) => {
-  const target = Math.max(1, Math.min(totalPages.value, Number(num) || 1));
+  if (pageJumpTimer) {
+    clearTimeout(pageJumpTimer);
+    pageJumpTimer = null;
+  }
+  const parsed = parseInt(String(num).replace(/\D/g, ""), 10);
+  const target = Math.max(1, Math.min(totalPages.value, parsed || 1));
   currentPage.value = target;
   pageInput.value = target;
   await renderPage(target);
+};
+
+let pageJumpTimer = null;
+const handlePageInput = () => {
+  if (pageJumpTimer) clearTimeout(pageJumpTimer);
+  const raw = String(pageInput.value || "").replace(/\D/g, "");
+  if (!raw) return;
+  pageJumpTimer = setTimeout(() => {
+    const parsed = parseInt(raw, 10);
+    if (parsed >= 1 && parsed <= totalPages.value && parsed !== currentPage.value) {
+      goToPage(parsed);
+    }
+  }, 600);
+};
+
+const commitPageInput = () => {
+  const raw = String(pageInput.value || "").replace(/\D/g, "");
+  if (!raw) {
+    pageInput.value = currentPage.value;
+    return;
+  }
+  goToPage(raw);
 };
 
 const fitToWidth = async (pageNum = currentPage.value, shouldRender = true) => {
@@ -251,42 +273,10 @@ const zoomOut = async () => {
 };
 
 // ==========================================
-// DIRECT TEXT SELECTION ("BLOK TEKS LANGSUNG")
-// ==========================================
-const checkSelection = () => {
-  if (isSnipMode.value) return;
-  if (selectionDebounce) clearTimeout(selectionDebounce);
-  selectionDebounce = setTimeout(() => {
-    const sel = window.getSelection();
-    const text = (sel?.toString() || "").trim();
-    selectedText.value = text;
-  }, 120);
-};
-
-const analyzeSelectedText = async (autoRun = true) => {
-  const textToAnalyze = selectedText.value.trim();
-  if (!textToAnalyze) return;
-
-  isAnalyzeOpen.value = true;
-  selectedText.value = "";
-  window.getSelection()?.removeAllRanges();
-
-  await nextTick();
-  if (inputSectionRef.value) {
-    const finalClean = inputSectionRef.value.setText(textToAnalyze);
-    if (autoRun && finalClean) {
-      const isShort = inputSectionRef.value.isShortIrab ?? true;
-      await handleAnalyze(finalClean, isShort);
-    }
-  }
-};
-
-// ==========================================
 // REGION SNIP ("BLOK AREA OCR LANGSUNG")
 // ==========================================
 const toggleSnipMode = () => {
   isSnipMode.value = !isSnipMode.value;
-  selectedText.value = "";
   window.getSelection()?.removeAllRanges();
 };
 
@@ -396,12 +386,9 @@ const handleLimitReached = () => {
 onMounted(() => {
   fetchKitab();
   refreshTokenStats();
-  document.addEventListener("selectionchange", checkSelection);
 });
 
 onUnmounted(() => {
-  document.removeEventListener("selectionchange", checkSelection);
-  if (selectionDebounce) clearTimeout(selectionDebounce);
   cleanupPdf();
 });
 
@@ -582,8 +569,6 @@ watch(
             <div
               ref="scrollContainerRef"
               class="flex-1 overflow-auto p-3 sm:p-6 flex items-start"
-              @mouseup="checkSelection"
-              @touchend="checkSelection"
             >
               <div
                 ref="pageWrapperRef"
@@ -606,39 +591,6 @@ watch(
               </div>
             </div>
 
-            <!-- Floating Action Pill when Text is Selected -->
-            <Transition
-              enter-active-class="transition ease-out duration-150"
-              enter-from-class="opacity-0 translate-y-2"
-              enter-to-class="opacity-100 translate-y-0"
-              leave-active-class="transition ease-in duration-100"
-              leave-from-class="opacity-100 translate-y-0"
-              leave-to-class="opacity-0 translate-y-2"
-            >
-              <div
-                v-if="selectedText"
-                class="absolute bottom-14 left-1/2 -translate-x-1/2 z-30 bg-[#2e200f] text-white px-3 py-2 rounded-2xl shadow-2xl border border-amber-500/40 flex items-center gap-2 max-w-[92vw]"
-              >
-                <span class="text-xs text-amber-200 font-medium truncate max-w-[140px] sm:max-w-[220px]" dir="auto">
-                  "{{ selectedText }}"
-                </span>
-                <button
-                  @click="analyzeSelectedText(true)"
-                  class="px-3 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-xl flex items-center gap-1 whitespace-nowrap shadow-sm"
-                >
-                  <span class="material-symbols-outlined text-[15px]">analytics</span>
-                  <span>Analisa Sekarang</span>
-                </button>
-                <button
-                  @click="analyzeSelectedText(false)"
-                  class="px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-xl whitespace-nowrap"
-                  title="Salin ke kotak input tanpa langsung analisa"
-                >
-                  Salin
-                </button>
-              </div>
-            </Transition>
-
             <!-- Bottom Page & Zoom Bar -->
             <div class="flex-shrink-0 bg-white/95 dark:bg-[#22190f]/95 border-t border-[#e5d4b5] dark:border-[#42321c] px-3 sm:px-5 py-2 flex items-center justify-between gap-2 text-xs">
               <!-- Page Controls -->
@@ -652,15 +604,19 @@ watch(
                   <span class="material-symbols-outlined block text-[18px]">chevron_left</span>
                 </button>
 
-                <form @submit.prevent="goToPage(pageInput)" class="flex items-center gap-1">
+                <form @submit.prevent="commitPageInput" class="flex items-center gap-1.5">
                   <input
-                    type="number"
+                    type="text"
+                    inputmode="numeric"
+                    enterkeyhint="go"
                     v-model="pageInput"
-                    min="1"
-                    :max="totalPages"
-                    class="w-12 text-center py-1 bg-[#fbf6ee] dark:bg-[#17120a] border border-[#e5d4b5] dark:border-[#42321c] rounded-lg font-bold text-[#2e200f] dark:text-[#fcf7ee] outline-none"
+                    @input="handlePageInput"
+                    @blur="commitPageInput"
+                    @focus="$event.target.select()"
+                    class="w-14 sm:w-16 px-1.5 py-1 text-center text-xs sm:text-sm bg-[#fbf6ee] dark:bg-[#17120a] border border-[#e5d4b5] dark:border-[#42321c] rounded-lg font-bold text-[#2e200f] dark:text-[#fcf7ee] focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                    aria-label="Nomor halaman"
                   />
-                  <span class="text-[#83683f] dark:text-[#c9b493] font-medium">/ {{ totalPages }}</span>
+                  <span class="text-[#83683f] dark:text-[#c9b493] font-medium whitespace-nowrap">/ {{ totalPages }}</span>
                 </form>
 
                 <button

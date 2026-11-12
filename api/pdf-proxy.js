@@ -1,3 +1,5 @@
+import { Readable } from 'node:stream';
+
 const MAX_PDF_BYTES = 50 * 1024 * 1024; // 50 MB
 
 const isPrivateOrLocalHost = (hostname) => {
@@ -17,7 +19,7 @@ const resolveDownloadUrl = (rawUrl) => {
   // Google Drive /file/d/ID/...
   const driveFileMatch = clean.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (driveFileMatch) {
-    return `https://drive.google.com/uc?export=download&id=${driveFileMatch[1]}`;
+    return `https://drive.google.com/uc?export=download&confirm=t&id=${driveFileMatch[1]}`;
   }
 
   // Google Drive ?id=ID
@@ -25,7 +27,7 @@ const resolveDownloadUrl = (rawUrl) => {
     try {
       const u = new URL(clean);
       const id = u.searchParams.get('id');
-      if (id) return `https://drive.google.com/uc?export=download&id=${id}`;
+      if (id) return `https://drive.google.com/uc?export=download&confirm=t&id=${id}`;
     } catch {
       // fall through
     }
@@ -70,7 +72,8 @@ export default async function handler(req, res) {
 
   const targetUrl = resolveDownloadUrl(rawUrl);
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  // Timeout only applies to initial connection + headers
+  const connectTimeout = setTimeout(() => controller.abort(), 30000);
 
   try {
     const upstream = await fetch(targetUrl, {
@@ -78,10 +81,12 @@ export default async function handler(req, res) {
       redirect: 'follow',
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; BacoKitabPDFProxy/1.0)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         Accept: 'application/pdf,*/*;q=0.8',
       },
     });
+
+    clearTimeout(connectTimeout);
 
     if (!upstream.ok) {
       return res.status(upstream.status).json({
@@ -94,7 +99,7 @@ export default async function handler(req, res) {
     if (contentType.includes('text/html')) {
       return res.status(422).json({
         error: 'HTML_RESPONSE',
-        message: 'Tautan mengembalikan halaman web (bukan file PDF langsung).',
+        message: 'Tautan mengembalikan halaman web (bukan file PDF langsung). Pastikan akses link publik.',
       });
     }
 
@@ -106,26 +111,46 @@ export default async function handler(req, res) {
       });
     }
 
-    const arrayBuffer = await upstream.arrayBuffer();
-    if (arrayBuffer.byteLength > MAX_PDF_BYTES) {
-      return res.status(413).json({
-        error: 'FILE_TOO_LARGE',
-        message: 'Ukuran PDF melebihi batas 50 MB.',
-      });
-    }
-
-    const buffer = Buffer.from(arrayBuffer);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Cache-Control', 'public, max-age=3600');
-    return res.status(200).send(buffer);
+    if (contentLength > 0) {
+      res.setHeader('Content-Length', String(contentLength));
+    }
+
+    if (!upstream.body) {
+      return res.status(502).json({ error: 'EMPTY_BODY', message: 'Respon PDF kosong.' });
+    }
+
+    const nodeStream = Readable.fromWeb(upstream.body);
+    let totalBytes = 0;
+
+    nodeStream.on('data', (chunk) => {
+      totalBytes += chunk.length;
+      if (totalBytes > MAX_PDF_BYTES) {
+        nodeStream.destroy(new Error('FILE_TOO_LARGE'));
+      }
+    });
+
+    nodeStream.on('error', (err) => {
+      console.error('PDF stream error:', err);
+      if (!res.headersSent) {
+        res.status(err.message === 'FILE_TOO_LARGE' ? 413 : 502).json({
+          error: err.message === 'FILE_TOO_LARGE' ? 'FILE_TOO_LARGE' : 'STREAM_ERROR',
+          message: err.message === 'FILE_TOO_LARGE' ? 'Ukuran PDF melebihi batas 50 MB.' : 'Gagal mengalirkan data PDF.',
+        });
+      } else {
+        res.end();
+      }
+    });
+
+    nodeStream.pipe(res);
   } catch (err) {
+    clearTimeout(connectTimeout);
     const isAbort = err?.name === 'AbortError';
     return res.status(isAbort ? 504 : 502).json({
       error: isAbort ? 'TIMEOUT' : 'PROXY_FETCH_FAILED',
-      message: isAbort ? 'Waktu tunggu mengunduh PDF habis.' : 'Gagal terhubung ke sumber PDF.',
+      message: isAbort ? 'Waktu tunggu koneksi ke sumber PDF habis.' : 'Gagal terhubung ke sumber PDF.',
     });
-  } finally {
-    clearTimeout(timeout);
   }
 }
