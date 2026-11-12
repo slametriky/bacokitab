@@ -40,47 +40,49 @@
 
         <div class="flex items-center justify-between mt-2 px-1">
           <div class="flex gap-2">
-            <button
-              @click="triggerFileInput"
-              :disabled="isOcrLoading || (tokenStats?.isLimitReached ?? false)"
-              class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors border border-primary/20 flex items-center justify-center disabled:opacity-50 disabled:cursor-wait"
-              :title="(tokenStats?.isLimitReached ?? false) ? 'Limit token habis' : 'Ambil Foto / OCR'"
-            >
-              <span v-if="isOcrLoading" class="material-symbols-outlined animate-spin">progress_activity</span>
-              <span v-else class="material-symbols-outlined">photo_camera</span>
-            </button>
-            <!-- Camera Input (Direct Capture) -->
-            <input
-              ref="cameraInput"
-              type="file"
-              class="hidden"
-              accept="image/*"
-              capture="environment"
-              @change="handleImageUpload"
-            />
-            <!-- Gallery Input (File Picker) -->
-            <input
-              ref="galleryInput"
-              type="file"
-              class="hidden"
-              accept="image/*"
-              @change="handleImageUpload"
-            />
-            <button
-              @click="toggleSpeech"
-              :disabled="tokenStats?.isLimitReached ?? false"
-              class="p-2 rounded-lg transition-colors border flex items-center justify-center transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              :class="
-                isListening
-                  ? 'bg-red-500 text-white border-red-500 animate-pulse ring-2 ring-red-300'
-                  : 'text-primary hover:bg-primary/10 border-primary/20'
-              "
-              :title="(tokenStats?.isLimitReached ?? false) ? 'Limit token habis' : 'Input Suara'"
-            >
-              <span class="material-symbols-outlined">{{
-                isListening ? "mic_off" : "mic"
-              }}</span>
-            </button>
+            <template v-if="!hideMediaActions">
+              <button
+                @click="triggerFileInput"
+                :disabled="isOcrLoading || (tokenStats?.isLimitReached ?? false)"
+                class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors border border-primary/20 flex items-center justify-center disabled:opacity-50 disabled:cursor-wait"
+                :title="(tokenStats?.isLimitReached ?? false) ? 'Limit token habis' : 'Ambil Foto / OCR'"
+              >
+                <span v-if="isOcrLoading" class="material-symbols-outlined animate-spin">progress_activity</span>
+                <span v-else class="material-symbols-outlined">photo_camera</span>
+              </button>
+              <!-- Camera Input (Direct Capture) -->
+              <input
+                ref="cameraInput"
+                type="file"
+                class="hidden"
+                accept="image/*"
+                capture="environment"
+                @change="handleImageUpload"
+              />
+              <!-- Gallery Input (File Picker) -->
+              <input
+                ref="galleryInput"
+                type="file"
+                class="hidden"
+                accept="image/*"
+                @change="handleImageUpload"
+              />
+              <button
+                @click="toggleSpeech"
+                :disabled="tokenStats?.isLimitReached ?? false"
+                class="p-2 rounded-lg transition-colors border flex items-center justify-center transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                :class="
+                  isListening
+                    ? 'bg-red-500 text-white border-red-500 animate-pulse ring-2 ring-red-300'
+                    : 'text-primary hover:bg-primary/10 border-primary/20'
+                "
+                :title="(tokenStats?.isLimitReached ?? false) ? 'Limit token habis' : 'Input Suara'"
+              >
+                <span class="material-symbols-outlined">{{
+                  isListening ? "mic_off" : "mic"
+                }}</span>
+              </button>
+            </template>
             <button
               v-if="inputText.length > 0"
               @click="inputText = ''"
@@ -372,6 +374,10 @@ const props = defineProps({
   tokenStats: {
     type: Object,
     default: null
+  },
+  hideMediaActions: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -871,6 +877,7 @@ const runOcrFile = async (file) => {
 defineExpose({
   setText,
   runOcrFile,
+  openCropModal,
   isShortIrab,
 });
 

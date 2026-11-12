@@ -358,7 +358,7 @@ const onSnipPointerUp = async () => {
       isAnalyzeOpen.value = true;
       await nextTick();
       if (inputSectionRef.value) {
-        await inputSectionRef.value.runOcrFile(file);
+        inputSectionRef.value.openCropModal(file);
       }
     },
     "image/jpeg",
@@ -743,13 +743,6 @@ watch(
 
         <!-- Scrollable Analyze Content -->
         <div class="flex-1 overflow-y-auto p-4 space-y-5 pb-8">
-          <div class="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/90 dark:bg-amber-900/20 border border-amber-200/80 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200">
-            <span class="material-symbols-outlined text-[18px] text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5">tips_and_updates</span>
-            <p class="leading-relaxed">
-              Blok teks langsung di halaman kitab untuk analisa instan, atau gunakan tombol <strong>Blok Area (OCR)</strong> untuk kitab hasil scan.
-            </p>
-          </div>
-
           <div
             v-if="analyzeError"
             class="p-3 rounded-xl bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-medium flex items-center justify-between gap-2"
@@ -767,6 +760,7 @@ watch(
             @limit-reached="handleLimitReached"
             :isLoading="isAnalyzing"
             :tokenStats="tokenStats"
+            :hideMediaActions="true"
           />
 
           <ResultSection v-if="analyzeResult" :result="analyzeResult" />
