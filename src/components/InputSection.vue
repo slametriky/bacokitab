@@ -381,7 +381,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(["analyze", "refresh-stats"]);
+const emit = defineEmits(["analyze", "refresh-stats", "limit-reached"]);
 
 const inputText = ref("");
 const isShortIrab = ref(true);
@@ -744,6 +744,12 @@ const getBase64 = (file) => {
 };
 
 const processOcr = async (file) => {
+  if (props.tokenStats?.isLimitReached) {
+    triggerToast("Limit token habis. Tidak dapat memproses OCR.");
+    emit("limit-reached");
+    return;
+  }
+
   isOcrLoading.value = true;
   triggerToast("Memproses gambar...");
 
