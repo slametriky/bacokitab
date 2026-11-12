@@ -1,6 +1,37 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import pdfProxyHandler from './api/pdf-proxy.js'
+
+const devPdfProxyPlugin = () => ({
+  name: 'dev-pdf-proxy',
+  configureServer(server) {
+    server.middlewares.use('/api/pdf-proxy', async (req, res) => {
+      const urlObj = new URL(req.url, 'http://localhost');
+      req.query = Object.fromEntries(urlObj.searchParams.entries());
+      const wrappedRes = {
+        statusCode: 200,
+        setHeader: (k, v) => res.setHeader(k, v),
+        status(code) {
+          this.statusCode = code;
+          res.statusCode = code;
+          return this;
+        },
+        json(obj) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(obj));
+        },
+        send(buf) {
+          res.end(buf);
+        },
+        end(data) {
+          res.end(data);
+        },
+      };
+      await pdfProxyHandler(req, wrappedRes);
+    });
+  },
+});
 
 export default defineConfig({
   server: {
@@ -13,6 +44,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    devPdfProxyPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['vite.svg', 'menu_book.svg', 'pwa-192x192.svg', 'pwa-512x512.svg'],
@@ -45,6 +77,7 @@ export default defineConfig({
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 5000000,
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

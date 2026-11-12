@@ -43,6 +43,14 @@ const menus = [
       "bg-amber-50/80 border border-amber-100 text-amber-600 dark:bg-amber-950/40 dark:border-amber-900/40 dark:text-amber-400",
   },
   {
+    title: "Kitab PDF",
+    description: "Simpan daftar link kitab PDF dan baca langsung di aplikasi.",
+    icon: "picture_as_pdf",
+    link: "/kitab",
+    color:
+      "bg-rose-50/80 border border-rose-100 text-rose-600 dark:bg-rose-950/40 dark:border-rose-900/40 dark:text-rose-400",
+  },
+  {
     title: "Support",
     description: "Butuh bantuan atau punya saran? Silahkan hubungi Developer.",
     icon: "support_agent",
