@@ -265,9 +265,9 @@ watch(
                     <span class="material-symbols-outlined text-xl sm:text-2xl">workspace_premium</span>
                   </div>
                   <div class="flex flex-col min-w-0">
-                    <h4 class="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">{{ pkg.token_amount.toLocaleString('id-ID') }} Token</h4>
-                    <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 mb-0.5 truncate">~{{ ((pkg.token_amount / 5000) * 400).toLocaleString('id-ID') }} karakter</p>
-                    <p class="text-sm sm:text-base text-primary font-bold">Rp {{ pkg.price.toLocaleString('id-ID') }}</p>
+                    <h4 class="font-bold text-base sm:text-lg text-primary truncate">Rp {{ pkg.price.toLocaleString('id-ID') }}</h4>
+                    <p class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white truncate">{{ pkg.token_amount.toLocaleString('id-ID') }} Token</p>
+                    <p class="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 truncate">~{{ ((pkg.token_amount / 5000) * 400).toLocaleString('id-ID') }} karakter</p>
                   </div>
                 </div>
                 <button @click="buyPackage(pkg)" class="flex-shrink-0 bg-primary hover:bg-primary/90 text-white px-4 sm:px-5 py-2 rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-all">
