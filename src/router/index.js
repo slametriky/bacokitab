@@ -14,6 +14,8 @@ import ChatPage from '../components/ChatPage.vue';
 import HomePage from '../components/HomePage.vue';
 import TashrifPage from '../components/TashrifPage.vue';
 import AdminUsersPage from '../components/AdminUsersPage.vue';
+import KitabLibraryPage from '../components/KitabLibraryPage.vue';
+import KitabReaderPage from '../components/KitabReaderPage.vue';
 import { supabase } from '../lib/supabase.js';
 import { trackPageView } from '../lib/analytics.js';
 
@@ -87,6 +89,18 @@ const routes = [
     path: '/tashrif',
     name: 'Tashrif',
     component: TashrifPage,
+  },
+  {
+    path: '/kitab',
+    name: 'KitabLibrary',
+    component: KitabLibraryPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/kitab/:id',
+    name: 'KitabReader',
+    component: KitabReaderPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/admin',

@@ -429,3 +429,89 @@ export const getAdminTransactionsList = async (search = '', feature = 'all', dat
   }
   return data
 }
+
+export const getKitabPdfs = async () => {
+  const { data, error } = await supabase
+    .from('kitab_pdfs')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching kitab PDFs:', error)
+    throw error
+  }
+  return data || []
+}
+
+export const getKitabPdfById = async (id) => {
+  const { data, error } = await supabase
+    .from('kitab_pdfs')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching kitab PDF detail:', error)
+    return null
+  }
+  return data
+}
+
+export const createKitabPdf = async ({ title, author, theme, pdf_url, is_public }) => {
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (!currentUser) throw new Error('Silakan login terlebih dahulu.')
+
+  const { data, error } = await supabase
+    .from('kitab_pdfs')
+    .insert([{
+      user_id: currentUser.id,
+      title: title.trim(),
+      author: author.trim(),
+      theme: theme.trim(),
+      pdf_url: pdf_url.trim(),
+      is_public: !!is_public
+    }])
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error creating kitab PDF:', error)
+    throw error
+  }
+  return data
+}
+
+export const updateKitabPdf = async (id, { title, author, theme, pdf_url, is_public }) => {
+  const { data, error } = await supabase
+    .from('kitab_pdfs')
+    .update({
+      title: title.trim(),
+      author: author.trim(),
+      theme: theme.trim(),
+      pdf_url: pdf_url.trim(),
+      is_public: !!is_public,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error updating kitab PDF:', error)
+    throw error
+  }
+  return data
+}
+
+export const deleteKitabPdf = async (id) => {
+  const { error } = await supabase
+    .from('kitab_pdfs')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error deleting kitab PDF:', error)
+    throw error
+  }
+  return true
+}

@@ -852,6 +852,28 @@ const cleanOcrText = (text) => {
   return cleaned.trim();
 };
 
+const setText = (text) => {
+  let clean = (text || "").trim();
+  if (clean.length > maxCharacters.value) {
+    clean = clean.substring(0, maxCharacters.value);
+    triggerToast(`Teks dipotong (maks ${maxCharacters.value} karakter).`);
+  }
+  inputText.value = clean;
+  return clean;
+};
+
+const runOcrFile = async (file) => {
+  if (!file) return "";
+  await processOcr(file);
+  return inputText.value;
+};
+
+defineExpose({
+  setText,
+  runOcrFile,
+  isShortIrab,
+});
+
 onMounted(() => {
   // Optional: Check support on mount logic if needed
 });
