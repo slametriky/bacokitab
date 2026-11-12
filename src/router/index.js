@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { nextTick } from 'vue';
 import AboutPage from '../components/About.vue';
 import LandingPage from '../components/LandingPage.vue';
 import AppPage from '../components/AppPage.vue';
@@ -14,6 +15,7 @@ import HomePage from '../components/HomePage.vue';
 import TashrifPage from '../components/TashrifPage.vue';
 import AdminUsersPage from '../components/AdminUsersPage.vue';
 import { supabase } from '../lib/supabase.js';
+import { trackPageView } from '../lib/analytics.js';
 
 const routes = [
   {
@@ -133,6 +135,12 @@ router.beforeEach(async (to, from, next) => {
   }
 
   next();
+});
+
+router.afterEach((to) => {
+  nextTick(() => {
+    trackPageView(to.fullPath, document.title);
+  });
 });
 
 export default router;
