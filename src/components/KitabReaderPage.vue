@@ -43,9 +43,19 @@ let renderTask = null;
 
 // Region Snip / Area Block (OCR) State
 const isSnipMode = ref(false);
-const isDrawingSnip = ref(false);
-const snipStart = ref({ x: 0, y: 0 });
-const snipEnd = ref({ x: 0, y: 0 });
+const snipAction = ref(null); // 'draw' | 'move' | 'nw' | 'ne' | 'sw' | 'se' | null
+const snipRect = ref({ x: 0, y: 0, w: 0, h: 0 });
+const snipOrigin = ref({ pointerX: 0, pointerY: 0, rect: { x: 0, y: 0, w: 0, h: 0 } });
+const isExtractingOcr = ref(false);
+
+const hasSnipBox = computed(() => snipRect.value.w >= 16 && snipRect.value.h >= 16);
+
+const snipBoxStyle = computed(() => ({
+  left: `${snipRect.value.x}px`,
+  top: `${snipRect.value.y}px`,
+  width: `${snipRect.value.w}px`,
+  height: `${snipRect.value.h}px`,
+}));
 
 // Side / Drawer Analyze Panel State
 const isAnalyzeOpen = ref(false);
@@ -58,19 +68,6 @@ const inputSectionRef = ref(null);
 useHead(() => ({
   title: kitab.value ? `${kitab.value.title} - BacoKitab` : "Baca Kitab PDF - BacoKitab",
 }));
-
-const snipBoxStyle = computed(() => {
-  const x = Math.min(snipStart.value.x, snipEnd.value.x);
-  const y = Math.min(snipStart.value.y, snipEnd.value.y);
-  const w = Math.abs(snipEnd.value.x - snipStart.value.x);
-  const h = Math.abs(snipEnd.value.y - snipStart.value.y);
-  return {
-    left: `${x}px`,
-    top: `${y}px`,
-    width: `${w}px`,
-    height: `${h}px`,
-  };
-});
 
 // ==========================================
 // DATA FETCHING
@@ -157,6 +154,8 @@ const renderPage = async (pageNum) => {
   if (!pdfDoc || !canvasRef.value || !textLayerRef.value) return;
 
   isRenderingPage.value = true;
+  snipRect.value = { x: 0, y: 0, w: 0, h: 0 };
+  snipAction.value = null;
 
   try {
     if (renderTask) {
@@ -275,8 +274,14 @@ const zoomOut = async () => {
 // ==========================================
 // REGION SNIP ("BLOK AREA OCR LANGSUNG")
 // ==========================================
+const clearSnipBox = () => {
+  snipRect.value = { x: 0, y: 0, w: 0, h: 0 };
+  snipAction.value = null;
+};
+
 const toggleSnipMode = () => {
   isSnipMode.value = !isSnipMode.value;
+  clearSnipBox();
   window.getSelection()?.removeAllRanges();
 };
 
@@ -285,6 +290,8 @@ const getRelativeCoords = (event) => {
   return {
     x: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
     y: Math.max(0, Math.min(rect.height, event.clientY - rect.top)),
+    maxW: rect.width,
+    maxH: rect.height,
   };
 };
 
@@ -293,32 +300,86 @@ const onSnipPointerDown = (event) => {
   event.preventDefault();
   event.currentTarget.setPointerCapture(event.pointerId);
   const pos = getRelativeCoords(event);
-  snipStart.value = pos;
-  snipEnd.value = pos;
-  isDrawingSnip.value = true;
+  snipAction.value = "draw";
+  snipOrigin.value = {
+    pointerX: pos.x,
+    pointerY: pos.y,
+    rect: { x: pos.x, y: pos.y, w: 0, h: 0 },
+  };
+  snipRect.value = { x: pos.x, y: pos.y, w: 0, h: 0 };
+};
+
+const startSnipEdit = (action, event) => {
+  if (!isSnipMode.value || !pageWrapperRef.value) return;
+  event.preventDefault();
+  event.stopPropagation();
+  pageWrapperRef.value.setPointerCapture(event.pointerId);
+  const pos = getRelativeCoords(event);
+  snipAction.value = action;
+  snipOrigin.value = {
+    pointerX: pos.x,
+    pointerY: pos.y,
+    rect: { ...snipRect.value },
+  };
 };
 
 const onSnipPointerMove = (event) => {
-  if (!isDrawingSnip.value) return;
-  snipEnd.value = getRelativeCoords(event);
+  if (!snipAction.value || !pageWrapperRef.value) return;
+  const pos = getRelativeCoords(event);
+  const { pointerX, pointerY, rect: orig } = snipOrigin.value;
+  const dx = pos.x - pointerX;
+  const dy = pos.y - pointerY;
+  const minSize = 20;
+
+  if (snipAction.value === "draw") {
+    snipRect.value = {
+      x: Math.min(pointerX, pos.x),
+      y: Math.min(pointerY, pos.y),
+      w: Math.abs(pos.x - pointerX),
+      h: Math.abs(pos.y - pointerY),
+    };
+  } else if (snipAction.value === "move") {
+    snipRect.value = {
+      x: Math.max(0, Math.min(pos.maxW - orig.w, orig.x + dx)),
+      y: Math.max(0, Math.min(pos.maxH - orig.h, orig.y + dy)),
+      w: orig.w,
+      h: orig.h,
+    };
+  } else {
+    let { x, y, w, h } = orig;
+    if (snipAction.value.includes("w")) {
+      const newX = Math.max(0, Math.min(orig.x + orig.w - minSize, orig.x + dx));
+      w = orig.x + orig.w - newX;
+      x = newX;
+    }
+    if (snipAction.value.includes("e")) {
+      w = Math.max(minSize, Math.min(pos.maxW - orig.x, orig.w + dx));
+    }
+    if (snipAction.value.includes("n")) {
+      const newY = Math.max(0, Math.min(orig.y + orig.h - minSize, orig.y + dy));
+      h = orig.y + orig.h - newY;
+      y = newY;
+    }
+    if (snipAction.value.includes("s")) {
+      h = Math.max(minSize, Math.min(pos.maxH - orig.y, orig.h + dy));
+    }
+    snipRect.value = { x, y, w, h };
+  }
 };
 
-const onSnipPointerUp = async () => {
-  if (!isDrawingSnip.value) return;
-  isDrawingSnip.value = false;
-
-  const x = Math.min(snipStart.value.x, snipEnd.value.x);
-  const y = Math.min(snipStart.value.y, snipEnd.value.y);
-  const w = Math.abs(snipEnd.value.x - snipStart.value.x);
-  const h = Math.abs(snipEnd.value.y - snipStart.value.y);
-
-  if (w < 16 || h < 16 || !canvasRef.value) {
-    return;
+const onSnipPointerUp = () => {
+  if (!snipAction.value) return;
+  snipAction.value = null;
+  if (!hasSnipBox.value) {
+    clearSnipBox();
   }
+};
 
-  isSnipMode.value = false;
+const confirmSnipOcr = () => {
+  if (!hasSnipBox.value || !canvasRef.value) return;
+  const { x, y, w, h } = snipRect.value;
 
-  // Crop directly from rendered PDF canvas (accounting for DPR)
+  isExtractingOcr.value = true;
   const sourceCanvas = canvasRef.value;
   const rect = sourceCanvas.getBoundingClientRect();
   const scaleX = sourceCanvas.width / rect.width;
@@ -343,12 +404,18 @@ const onSnipPointerUp = async () => {
 
   cropCanvas.toBlob(
     async (blob) => {
-      if (!blob) return;
-      const file = new File([blob], "kitab-snip.jpg", { type: "image/jpeg" });
-      isAnalyzeOpen.value = true;
-      await nextTick();
-      if (inputSectionRef.value) {
-        inputSectionRef.value.openCropModal(file);
+      try {
+        if (!blob) return;
+        const file = new File([blob], "kitab-snip.jpg", { type: "image/jpeg" });
+        isSnipMode.value = false;
+        clearSnipBox();
+        isAnalyzeOpen.value = true;
+        await nextTick();
+        if (inputSectionRef.value) {
+          await inputSectionRef.value.runOcrFile(file);
+        }
+      } finally {
+        isExtractingOcr.value = false;
       }
     },
     "image/jpeg",
@@ -582,14 +649,81 @@ watch(
                 <canvas ref="canvasRef" class="block"></canvas>
                 <div ref="textLayerRef" class="textLayer"></div>
 
-                <!-- Snip Rectangle Overlay -->
+                <!-- Editable Snip Rectangle Overlay -->
                 <div
-                  v-if="isDrawingSnip"
-                  class="absolute border-2 border-amber-500 bg-amber-400/20 pointer-events-none z-30"
+                  v-if="isSnipMode && (snipAction === 'draw' || hasSnipBox)"
+                  class="absolute border-2 border-emerald-500 bg-emerald-500/15 z-30 cursor-move touch-none"
                   :style="snipBoxStyle"
-                ></div>
+                  @pointerdown="startSnipEdit('move', $event)"
+                >
+                  <!-- 4 Corner Resize Handles -->
+                  <button
+                    type="button"
+                    aria-label="Ubah ukuran kiri atas"
+                    class="absolute -top-2 -left-2 w-4 h-4 bg-white border-2 border-emerald-600 rounded-full cursor-nwse-resize shadow touch-none"
+                    @pointerdown="startSnipEdit('nw', $event)"
+                  ></button>
+                  <button
+                    type="button"
+                    aria-label="Ubah ukuran kanan atas"
+                    class="absolute -top-2 -right-2 w-4 h-4 bg-white border-2 border-emerald-600 rounded-full cursor-nesw-resize shadow touch-none"
+                    @pointerdown="startSnipEdit('ne', $event)"
+                  ></button>
+                  <button
+                    type="button"
+                    aria-label="Ubah ukuran kiri bawah"
+                    class="absolute -bottom-2 -left-2 w-4 h-4 bg-white border-2 border-emerald-600 rounded-full cursor-nesw-resize shadow touch-none"
+                    @pointerdown="startSnipEdit('sw', $event)"
+                  ></button>
+                  <button
+                    type="button"
+                    aria-label="Ubah ukuran kanan bawah"
+                    class="absolute -bottom-2 -right-2 w-4 h-4 bg-white border-2 border-emerald-600 rounded-full cursor-nwse-resize shadow touch-none"
+                    @pointerdown="startSnipEdit('se', $event)"
+                  ></button>
+                </div>
               </div>
             </div>
+
+            <!-- Floating Confirm / Edit Crop Action Bar -->
+            <Transition
+              enter-active-class="transition ease-out duration-150"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-2"
+            >
+              <div
+                v-if="isSnipMode && hasSnipBox && !snipAction"
+                class="absolute bottom-14 left-1/2 -translate-x-1/2 z-30 bg-[#2e200f] text-white px-3 py-2 rounded-2xl shadow-2xl border border-emerald-400/40 flex items-center gap-2 max-w-[94vw]"
+              >
+                <span class="hidden sm:inline text-xs text-amber-200 font-medium whitespace-nowrap">
+                  Sesuaikan kotak lalu:
+                </span>
+                <button
+                  @click="confirmSnipOcr"
+                  :disabled="isExtractingOcr"
+                  class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 whitespace-nowrap shadow-sm disabled:opacity-50"
+                >
+                  <span v-if="isExtractingOcr" class="material-symbols-outlined animate-spin text-[15px]">progress_activity</span>
+                  <span v-else class="material-symbols-outlined text-[15px]">check_circle</span>
+                  <span>{{ isExtractingOcr ? "Memproses..." : "Pilih & Ekstrak Teks" }}</span>
+                </button>
+                <button
+                  @click="clearSnipBox"
+                  class="px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold rounded-xl whitespace-nowrap"
+                >
+                  Ulangi
+                </button>
+                <button
+                  @click="toggleSnipMode"
+                  class="px-2.5 py-1.5 bg-white/10 hover:bg-red-500/30 text-white text-xs font-semibold rounded-xl whitespace-nowrap"
+                >
+                  Batal
+                </button>
+              </div>
+            </Transition>
 
             <!-- Bottom Page & Zoom Bar -->
             <div class="flex-shrink-0 bg-white/95 dark:bg-[#22190f]/95 border-t border-[#e5d4b5] dark:border-[#42321c] px-3 sm:px-5 py-2 flex items-center justify-between gap-2 text-xs">
