@@ -526,14 +526,17 @@ watch(
             @click="toggleSnipMode"
             :disabled="isTokenLimitReached"
             :class="[
+              'inline-flex items-center gap-1.5 px-3 py-2 font-bold text-xs rounded-xl transition-all shadow-sm border',
               'inline-flex items-center gap-1.5 px-3 py-2 font-bold text-xs rounded-xl transition-all shadow-sm border disabled:opacity-50 disabled:cursor-not-allowed',
               isSnipMode
                 ? 'bg-emerald-600 text-white border-emerald-600 animate-pulse'
                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             ]"
+            title="Tarik kotak di atas teks Arab (terutama PDF hasil scan) untuk mengekstrak teks ke input OCR"
             :title="isTokenLimitReached ? 'Limit token habis. Tidak dapat menggunakan Blok Area (OCR).' : 'Tarik kotak di atas teks Arab (terutama PDF hasil scan) untuk mengekstrak teks ke input OCR'"
           >
             <span class="material-symbols-outlined text-[17px]">crop</span>
+            <span class="hidden sm:inline">{{ isSnipMode ? "Batal Blok Area" : "Blok Area (OCR)" }}</span>
             <span class="hidden sm:inline">{{ isTokenLimitReached ? "Token Habis" : isSnipMode ? "Batal Blok Area" : "Blok Area (OCR)" }}</span>
           </button>
 

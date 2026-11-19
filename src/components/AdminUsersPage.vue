@@ -8,6 +8,7 @@ import {
   adminUpdateUser,
   getAdminReviewsList,
   adminToggleReviewVisibility,
+  adminDeleteReview,
   getAdminTransactionsList,
 } from "../lib/supabase.js";
 import { useHead } from "@unhead/vue";
@@ -225,6 +226,32 @@ const toggleReviewVisibility = async (r) => {
     triggerToast("Gagal mengubah visibilitas ulasan: " + (err.message || err), "error");
   } finally {
     updatingReviewId.value = null;
+  }
+};
+
+// Modal Delete Review Confirmation
+const isDeleteReviewModalOpen = ref(false);
+const reviewToDelete = ref(null);
+const isDeletingReview = ref(false);
+
+const confirmDeleteReview = (r) => {
+  reviewToDelete.value = r;
+  isDeleteReviewModalOpen.value = true;
+};
+
+const handleDeleteReview = async () => {
+  if (!reviewToDelete.value) return;
+  isDeletingReview.value = true;
+  try {
+    await adminDeleteReview(reviewToDelete.value.id);
+    triggerToast("Ulasan berhasil dihapus secara permanen!", "success");
+    isDeleteReviewModalOpen.value = false;
+    reviewToDelete.value = null;
+    await fetchReviews();
+  } catch (err) {
+    triggerToast("Gagal menghapus ulasan: " + (err.message || err), "error");
+  } finally {
+    isDeletingReview.value = false;
   }
 };
 
@@ -951,7 +978,7 @@ onMounted(() => {
                 </div>
               </div>
 
-              <!-- Toggle Visibility Button -->
+              <!-- Action Buttons -->
               <div class="flex items-center gap-2 sm:self-center w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-0 border-gray-100 dark:border-gray-700">
                 <button
                   @click="toggleReviewVisibility(r)"
@@ -974,6 +1001,14 @@ onMounted(() => {
                     {{ r.is_visible ? 'visibility' : 'visibility_off' }}
                   </span>
                   <span>{{ r.is_visible ? 'Tampil di Beranda' : 'Disembunyikan' }}</span>
+                </button>
+
+                <button
+                  @click="confirmDeleteReview(r)"
+                  class="p-2 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30 transition-all active:scale-95 border border-red-200 dark:border-red-800/60 shadow-sm"
+                  title="Hapus ulasan ini"
+                >
+                  <span class="material-symbols-outlined text-[18px] block">delete</span>
                 </button>
               </div>
             </div>
@@ -1540,6 +1575,88 @@ onMounted(() => {
               class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 rounded-xl text-sm font-semibold transition-colors"
             >
               Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ======================================================== -->
+    <!-- MODAL CONFIRM DELETE REVIEW                              -->
+    <!-- ======================================================== -->
+    <Transition
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="isDeleteReviewModalOpen"
+        class="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+        @click.self="!isDeletingReview && (isDeleteReviewModalOpen = false)"
+      >
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-700 space-y-5">
+          <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl">
+                <span class="material-symbols-outlined block text-[22px]">delete_forever</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Ulasan</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  Konfirmasi penghapusan permanen
+                </p>
+              </div>
+            </div>
+            <button
+              @click="!isDeletingReview && (isDeleteReviewModalOpen = false)"
+              :disabled="isDeletingReview"
+              class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+            >
+              <span class="material-symbols-outlined block text-[20px]">close</span>
+            </button>
+          </div>
+
+          <div v-if="reviewToDelete" class="space-y-3">
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+              Apakah Anda yakin ingin menghapus ulasan ini? Data yang telah dihapus tidak dapat dipulihkan.
+            </p>
+
+            <div class="bg-gray-50 dark:bg-gray-900/60 p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-gray-900 dark:text-white">
+                  {{ reviewToDelete.full_name || reviewToDelete.email?.split('@')[0] || 'Pengguna' }}
+                </span>
+                <span class="text-gray-400 text-[11px]">{{ formatDate(reviewToDelete.created_at) }}</span>
+              </div>
+              <p class="text-xs text-gray-600 dark:text-gray-300 italic line-clamp-3">
+                "{{ reviewToDelete.feedback }}"
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              @click="isDeleteReviewModalOpen = false"
+              :disabled="isDeletingReview"
+              class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl text-sm font-semibold transition-colors disabled:opacity-50"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              @click="handleDeleteReview"
+              :disabled="isDeletingReview"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <span v-if="isDeletingReview" class="material-symbols-outlined animate-spin text-[16px]">
+                progress_activity
+              </span>
+              <span v-else class="material-symbols-outlined text-[16px]">delete</span>
+              <span>{{ isDeletingReview ? 'Menghapus...' : 'Ya, Hapus' }}</span>
             </button>
           </div>
         </div>

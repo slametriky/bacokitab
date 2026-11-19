@@ -353,6 +353,39 @@ BEGIN
 END;
 $$;
 
+-- 8b. RPC Function to Delete Review by Admin
+CREATE OR REPLACE FUNCTION public.admin_delete_review(
+  p_review_id uuid
+)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_is_admin boolean;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'Akses ditolak: Silakan login terlebih dahulu.';
+  END IF;
+
+  SELECT COALESCE(is_admin, false) INTO v_is_admin
+  FROM public.users
+  WHERE id = auth.uid();
+
+  IF v_is_admin IS NOT TRUE THEN
+    RAISE EXCEPTION 'Akses ditolak: Hanya admin yang dapat menghapus ulasan.';
+  END IF;
+
+  DELETE FROM public.user_reviews
+  WHERE id = p_review_id;
+
+  RETURN true;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_delete_review(uuid) TO authenticated;
+
 -- 9. RPC Function for Admin Transactions List
 CREATE OR REPLACE FUNCTION public.get_admin_transactions_list(
   p_search text DEFAULT '',

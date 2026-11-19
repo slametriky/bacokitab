@@ -414,6 +414,18 @@ export const adminToggleReviewVisibility = async (reviewId, isVisible) => {
   return data
 }
 
+export const adminDeleteReview = async (reviewId) => {
+  const { data, error } = await supabase.rpc('admin_delete_review', {
+    p_review_id: reviewId
+  })
+
+  if (error) {
+    console.error('Error deleting review:', error)
+    throw error
+  }
+  return data
+}
+
 export const getAdminTransactionsList = async (search = '', feature = 'all', date = '', limit = 50, offset = 0) => {
   const { data, error } = await supabase.rpc('get_admin_transactions_list', {
     p_search: search,
