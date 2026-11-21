@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 import pdfProxyHandler from './api/pdf-proxy.js'
+import turathProxyHandler from './api/turath-proxy.js'
 
 const devPdfProxyPlugin = () => ({
   name: 'dev-pdf-proxy',
@@ -21,6 +22,23 @@ const devPdfProxyPlugin = () => ({
         res.end(buf);
       };
       await pdfProxyHandler(req, res);
+    });
+
+    server.middlewares.use('/api/turath-proxy', async (req, res) => {
+      const urlObj = new URL(req.url, 'http://localhost');
+      req.query = Object.fromEntries(urlObj.searchParams.entries());
+      res.status = (code) => {
+        res.statusCode = code;
+        return res;
+      };
+      res.json = (obj) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(obj));
+      };
+      res.send = (buf) => {
+        res.end(buf);
+      };
+      await turathProxyHandler(req, res);
     });
   },
 });

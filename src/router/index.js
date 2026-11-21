@@ -16,6 +16,8 @@ import TashrifPage from '../components/TashrifPage.vue';
 import AdminUsersPage from '../components/AdminUsersPage.vue';
 import KitabLibraryPage from '../components/KitabLibraryPage.vue';
 import KitabReaderPage from '../components/KitabReaderPage.vue';
+import TurathLibraryPage from '../components/TurathLibraryPage.vue';
+import TurathReaderPage from '../components/TurathReaderPage.vue';
 import { supabase } from '../lib/supabase.js';
 import { trackPageView } from '../lib/analytics.js';
 
@@ -100,6 +102,18 @@ const routes = [
     path: '/kitab/:id',
     name: 'KitabReader',
     component: KitabReaderPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/kitab-digital',
+    name: 'TurathLibrary',
+    component: TurathLibraryPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/kitab-digital/:bookId',
+    name: 'TurathReader',
+    component: TurathReaderPage,
     meta: { requiresAuth: true },
   },
   {

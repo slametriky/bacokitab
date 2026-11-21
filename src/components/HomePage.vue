@@ -43,6 +43,14 @@ const menus = [
       "bg-amber-50/80 border border-amber-100 text-amber-600 dark:bg-amber-950/40 dark:border-amber-900/40 dark:text-amber-400",
   },
   {
+    title: "Kitab Digital",
+    description: "Akses ribuan kitab Arab klasik secara langsung dalam teks digital murni.",
+    icon: "library_books",
+    link: "/kitab-digital",
+    color:
+      "bg-amber-50/80 border border-amber-100 text-amber-600 dark:bg-amber-950/40 dark:border-amber-900/40 dark:text-amber-400",
+  },
+  {
     title: "Kitab PDF",
     description: "Simpan daftar link kitab PDF dan baca langsung di aplikasi.",
     icon: "picture_as_pdf",

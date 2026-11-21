@@ -25,6 +25,11 @@
       <div class="flex items-center gap-4">
 
         <div v-if="user" class="flex items-center gap-2 sm:gap-4">
+          <router-link to="/kitab-digital" class="text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors flex items-center gap-1.5" active-class="text-primary dark:text-primary">
+            <span class="material-symbols-outlined text-[20px]">library_books</span>
+            <span class="hidden md:inline">Kitab Digital</span>
+          </router-link>
+
           <router-link to="/history" class="text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors flex items-center gap-1.5" active-class="text-primary dark:text-primary">
             <span class="material-symbols-outlined text-[20px]">history</span>
             <span class="hidden sm:inline">Riwayat</span>
@@ -88,6 +93,15 @@
                   >
                     <span class="material-symbols-outlined text-[20px] text-red-500">admin_panel_settings</span>
                     Panel Admin
+                  </router-link>
+
+                  <router-link
+                    to="/kitab-digital"
+                    @click="isDropdownOpen = false"
+                    class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800 font-medium flex items-center gap-2 transition-colors border-b border-gray-100 dark:border-gray-700"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">library_books</span>
+                    Kitab Digital (Teks)
                   </router-link>
 
                   <router-link

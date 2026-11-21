@@ -888,7 +888,14 @@ defineExpose({
 });
 
 onMounted(() => {
-  // Optional: Check support on mount logic if needed
+  const pending = sessionStorage.getItem('bacokitab_pending_input');
+  if (pending) {
+    setText(pending);
+    sessionStorage.removeItem('bacokitab_pending_input');
+    nextTick(() => {
+      adjustTextareaHeight();
+    });
+  }
 });
 
 onUnmounted(() => {
