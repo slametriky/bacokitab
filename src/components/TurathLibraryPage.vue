@@ -50,6 +50,18 @@ const handleSelectRecommendation = (book) => {
   executeSearch(book.query);
 };
 
+const quickRecommendations = [
+  { name: "الآجرومية", query: "الآجرومية", desc: "Matan Nahwu populer" },
+  { name: "ألفية ابن مالك", query: "ألفية ابن مالك", desc: "Nadzam Nahwu & Shorof" },
+  { name: "فتح القريب", query: "فتح القريب المجيب", desc: "Fiqih Syafi'i" },
+  { name: "متن أبي شجاع", query: "متن أبي شجاع", desc: "Dasar Fiqih Syafi'i" },
+  { name: "رياض الصالحين", query: "رياض الصالحين", desc: "Hadits Nabawi" },
+  { name: "الأربعون النووية", query: "الأربعون النووية", desc: "40 Hadits Pokok" },
+  { name: "جامع العلوم والحكم", query: "جامع العلوم والحكم", desc: "Hadits & Faidah Ibnu Rajab" },
+  { name: "تفسير الجلالين", query: "تفسير الجلالين", desc: "Tafsir Ringkas Al-Qur'an" },
+  { name: "تفسير ابن كثير", query: "تفسير القرآن العظيم", desc: "Tafsir Al-Qur'an Populer" }
+];
+
 const openBook = (bookId, page = 1) => {
   router.push({
     name: 'TurathReader',
@@ -57,11 +69,6 @@ const openBook = (bookId, page = 1) => {
     query: { page }
   });
 };
-
-onMounted(() => {
-  // Lakukan pencarian default awal agar layar tidak kosong
-  executeSearch('الآجرومية');
-});
 </script>
 
 <template>
@@ -70,7 +77,7 @@ onMounted(() => {
 
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       <!-- Simple Top Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <router-link
             to="/home"
@@ -88,14 +95,6 @@ onMounted(() => {
             </p>
           </div>
         </div>
-
-        <router-link
-          to="/kitab"
-          class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold text-xs shadow-sm transition-colors self-start sm:self-auto"
-        >
-          <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-          <span>Pustaka Kitab PDF</span>
-        </router-link>
       </div>
 
       <!-- Search Section -->
@@ -110,13 +109,14 @@ onMounted(() => {
               v-model="searchQuery"
               placeholder="Ketik judul kitab Arab atau topik (contoh: الآجرومية, رياض الصالحين, نحو)..."
               dir="auto"
-              class="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-base text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary outline-none transition-all"
+              class="w-full pl-11 pr-11 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-base text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary outline-none transition-all"
             />
             <button
               v-if="searchQuery"
               type="button"
-              @click="searchQuery = '';"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              @click="searchQuery = ''"
+              class="absolute inset-y-0 right-0 flex items-center justify-center w-11 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              title="Hapus pencarian"
             >
               <span class="material-symbols-outlined text-lg">close</span>
             </button>
@@ -133,39 +133,30 @@ onMounted(() => {
           </button>
         </form>
 
-        <!-- Rekomendasi Kitab Cepat (Chips) -->
-        <div class="space-y-3 pt-2">
-          <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px]">stars</span>
-            Rekomendasi Cepat (Klik untuk Mencari)
-          </p>
+        <!-- Rekomendasi Kitab Cepat (Ringkas & Ramah HP) -->
+        <div class="space-y-2 pt-2 border-t border-gray-100 dark:border-gray-700/60">
+          <div class="flex items-center gap-1.5 text-xs font-bold text-gray-500 dark:text-gray-400">
+            <span class="material-symbols-outlined text-[15px] text-amber-500">stars</span>
+            <span class="uppercase tracking-wider text-[11px]">Rekomendasi Cepat:</span>
+          </div>
 
-          <div class="space-y-2">
-            <div
-              v-for="cat in POPULAR_RECOMMENDATIONS"
-              :key="cat.category"
-              class="flex flex-wrap items-center gap-2"
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap">
+            <button
+              v-for="b in quickRecommendations"
+              :key="b.name"
+              type="button"
+              @click="handleSelectRecommendation(b)"
+              class="px-2.5 py-1.5 bg-gray-100 hover:bg-amber-100/70 text-gray-800 dark:bg-gray-700/60 dark:hover:bg-amber-950/50 dark:text-gray-200 hover:text-amber-900 dark:hover:text-amber-200 rounded-lg text-xs font-medium transition-colors border border-gray-200 dark:border-gray-700 hover:border-amber-300 flex items-center gap-1 flex-shrink-0 active:scale-95"
+              :title="b.desc"
             >
-              <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 mr-1 min-w-[140px]">
-                {{ cat.category }}:
-              </span>
-              <button
-                v-for="b in cat.books"
-                :key="b.name"
-                type="button"
-                @click="handleSelectRecommendation(b)"
-                class="px-3 py-1.5 bg-gray-100 hover:bg-amber-100 text-gray-800 dark:bg-gray-700/60 dark:hover:bg-amber-900/40 dark:text-gray-200 hover:text-amber-900 dark:hover:text-amber-200 rounded-lg text-xs font-medium transition-colors border border-gray-200 dark:border-gray-700 hover:border-amber-300 flex items-center gap-1"
-                :title="b.desc"
-              >
-                <span class="font-arabic text-sm">{{ b.name }}</span>
-              </button>
-            </div>
+              <span class="font-arabic text-xs sm:text-sm">{{ b.name }}</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Hasil Pencarian -->
-      <div class="space-y-4">
+      <!-- Hasil Pencarian (Hanya muncul setelah ada pencarian) -->
+      <div v-if="hasSearched || isLoading" class="space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">auto_stories</span>

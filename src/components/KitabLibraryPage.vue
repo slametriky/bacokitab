@@ -258,19 +258,6 @@ onMounted(() => {
             <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               Simpan tautan kitab PDF favorit Anda dan baca langsung dari aplikasi.
             </p>
-            <div class="flex items-center gap-2 mt-3">
-              <span class="px-3 py-1 bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300 rounded-lg text-xs font-bold flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">picture_as_pdf</span>
-                Kitab PDF
-              </span>
-              <router-link
-                to="/kitab-digital"
-                class="px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 dark:text-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors border border-amber-200 dark:border-amber-800/50"
-              >
-                <span class="material-symbols-outlined text-[14px]">text_snippet</span>
-                Buka Kitab Digital (Turath)
-              </router-link>
-            </div>
           </div>
         </div>
 
@@ -334,12 +321,13 @@ onMounted(() => {
               type="text"
               v-model="searchQuery"
               placeholder="Cari judul kitab, pengarang, atau tema..."
-              class="w-full pl-10 pr-9 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              class="w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             />
             <button
               v-if="searchQuery"
               @click="searchQuery = ''"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              class="absolute inset-y-0 right-0 flex items-center justify-center w-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              title="Hapus pencarian"
             >
               <span class="material-symbols-outlined text-[18px]">close</span>
             </button>

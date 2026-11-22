@@ -37,7 +37,10 @@ const indexSearchQuery = ref("");
 const selectedText = ref("");
 
 // Resizable Split-View & Analyze Panel State
-const isAnalyzeOpen = ref(true);
+// Di desktop (>= 1024px) terbuka berdampingan (split-view), di layar HP/tablet default tertutup agar tidak menutupi kitab
+const isAnalyzeOpen = ref(
+  typeof window !== "undefined" ? window.innerWidth >= 1024 : false
+);
 const analyzePanelWidth = ref(
   parseInt(localStorage.getItem("turath_split_width"), 10) || 480
 );
@@ -191,16 +194,6 @@ const sendToAnalyzePanel = async (customText = null) => {
     inputSectionRef.value.setText(textToSend.trim());
   }
   selectedText.value = "";
-};
-
-const copyPageText = async () => {
-  if (!pageData.value?.text) return;
-  try {
-    await navigator.clipboard.writeText(pageData.value.text);
-    alert("Teks halaman berhasil disalin!");
-  } catch {
-    alert("Gagal menyalin teks.");
-  }
 };
 
 // ==========================================
@@ -479,27 +472,14 @@ onUnmounted(() => {
             </div>
 
             <!-- Page Footer Actions inside Paper -->
-            <div class="mt-12 pt-6 border-t border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs opacity-80">
-              <span class="text-[11px] text-gray-500 dark:text-gray-400">
-                Teks murni dari Turath (Tanpa OCR)
-              </span>
-
-              <div class="flex items-center gap-2">
-                <button
-                  @click="copyPageText"
-                  class="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 transition-colors flex items-center gap-1 font-medium"
-                >
-                  <span class="material-symbols-outlined text-[15px]">content_copy</span>
-                  Salin Teks
-                </button>
-                <button
-                  @click="sendToAnalyzePanel(pageData?.text)"
-                  class="px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors flex items-center gap-1 font-bold shadow-sm"
-                >
-                  <span class="material-symbols-outlined text-[15px]">analytics</span>
-                  Analisa Seluruh Halaman
-                </button>
-              </div>
+            <div class="mt-12 pt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-end gap-2 text-xs opacity-80">
+              <button
+                @click="sendToAnalyzePanel(pageData?.text)"
+                class="px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors flex items-center gap-1 font-bold shadow-sm"
+              >
+                <span class="material-symbols-outlined text-[15px]">analytics</span>
+                Analisa Seluruh Halaman
+              </button>
             </div>
           </article>
         </div>
